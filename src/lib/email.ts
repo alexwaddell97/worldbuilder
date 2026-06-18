@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { APP_NAME } from "@/config/app";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -10,9 +11,9 @@ export async function sendVerificationEmail(email: string, url: string): Promise
   const result = await resend.emails.send({
     from: process.env.EMAIL_FROM!,
     to: email,
-    subject: "Verify your Odin's Archive account",
+    subject: `Verify your ${APP_NAME} account`,
     html: `
-      <p>Thanks for signing up for Odin's Archive.</p>
+      <p>Thanks for signing up for ${APP_NAME}.</p>
       <p>Click the link below to verify your email address:</p>
       <p><a href="${url}">Verify email</a></p>
       <p>This link expires in 24 hours. If you didn't sign up, you can ignore this email.</p>

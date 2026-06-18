@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
+import { APP_NAME, APP_TAGLINE } from "@/config/app";
 
 export const metadata: Metadata = {
-  title: "Odin's Archive",
-  description: "Build richer worlds. Own your lore.",
+  title: APP_NAME,
+  description: APP_TAGLINE,
 };
 
 export default function RootLayout({

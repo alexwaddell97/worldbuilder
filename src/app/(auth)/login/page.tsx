@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn, authClient } from "@/lib/auth/client";
+import { APP_NAME } from "@/config/app";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -52,7 +53,7 @@ export default function LoginPage() {
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight">Sign in</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Welcome back to Odin&apos;s Archive
+          Welcome back to {APP_NAME}
         </p>
       </div>
 

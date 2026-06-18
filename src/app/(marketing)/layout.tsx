@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APP_NAME } from "@/config/app";
 
 export default function MarketingLayout({
   children,
@@ -13,7 +14,7 @@ export default function MarketingLayout({
             href="/"
             className="text-sm font-semibold tracking-tight text-foreground"
           >
-            Odin&apos;s Archive
+            {APP_NAME}
           </Link>
           <nav className="flex items-center gap-6">
             <a

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APP_NAME } from "@/config/app";
 
 export default function AuthLayout({
   children,
@@ -13,7 +14,7 @@ export default function AuthLayout({
             href="/"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            ← Odin&apos;s Archive
+            ← {APP_NAME}
           </Link>
         </div>
         {children}

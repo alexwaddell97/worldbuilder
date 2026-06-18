@@ -8,6 +8,7 @@ import {
   ChevronRight,
   LogOut,
 } from "lucide-react";
+import { APP_NAME } from "@/config/app";
 import { useUIStore } from "@/stores/use-ui-store";
 import { signOut } from "@/lib/auth/client";
 
@@ -47,7 +48,7 @@ export function Sidebar() {
       <div className="h-14 flex items-center px-3 border-b border-border shrink-0">
         {sidebarOpen ? (
           <span className="text-sm font-semibold tracking-tight text-foreground truncate">
-            Odin&apos;s Archive
+            {APP_NAME}
           </span>
         ) : null}
       </div>
