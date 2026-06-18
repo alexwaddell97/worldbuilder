@@ -15,7 +15,25 @@ export default function MarketingLayout({
           >
             Worldbuilder
           </Link>
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-6">
+            <a
+              href="#features"
+              className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Features
+            </a>
+            <a
+              href="#how-it-works"
+              className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              How it works
+            </a>
+            <a
+              href="#data-ownership"
+              className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Data ownership
+            </a>
             <Link
               href="/login"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -24,7 +42,7 @@ export default function MarketingLayout({
             </Link>
             <Link
               href="/signup"
-              className="text-sm font-medium text-foreground"
+              className="text-sm font-medium text-foreground bg-primary text-primary-foreground px-3 py-1.5 rounded-md hover:opacity-90 transition-opacity"
             >
               Sign up
             </Link>
