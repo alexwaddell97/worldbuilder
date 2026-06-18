@@ -8,7 +8,7 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      <header className="sticky top-0 z-10 bg-background border-b border-border">
+      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link
             href="/"
