@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "@/lib/auth/client";
+import { signIn, authClient } from "@/lib/auth/client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,15 +14,22 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showResend, setShowResend] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setShowResend(false);
     setIsLoading(true);
     try {
       const result = await signIn.email({ email, password });
       if (result.error) {
-        setError(result.error.message ?? "Invalid credentials. Please try again.");
+        const msg = result.error.message ?? "Invalid credentials. Please try again.";
+        setError(msg);
+        if (msg.toLowerCase().includes("verif")) {
+          setShowResend(true);
+        }
       } else {
         router.push("/dashboard");
       }
@@ -31,6 +38,13 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  async function handleResend() {
+    setResendSent(false);
+    await authClient.sendVerificationEmail({ email, callbackURL: "/dashboard" });
+    setResendSent(true);
+    setShowResend(false);
   }
 
   return (
@@ -85,7 +99,24 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <p className="text-sm text-destructive">{error}</p>
+          <div className="text-sm text-destructive space-y-1">
+            <p>{error}</p>
+            {showResend && (
+              <button
+                type="button"
+                onClick={handleResend}
+                className="text-foreground underline underline-offset-2 hover:no-underline"
+              >
+                Resend verification email →
+              </button>
+            )}
+          </div>
+        )}
+
+        {resendSent && (
+          <p className="text-sm text-muted-foreground">
+            Verification email sent — check your inbox.
+          </p>
         )}
 
         <Button type="submit" className="w-full" disabled={isLoading}>
