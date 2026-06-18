@@ -52,7 +52,7 @@ export default function LoginPage() {
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight">Sign in</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Welcome back to Worldbuilder
+          Welcome back to Odin&apos;s Archive
         </p>
       </div>
 

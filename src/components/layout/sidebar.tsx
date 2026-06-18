@@ -47,7 +47,7 @@ export function Sidebar() {
       <div className="h-14 flex items-center px-3 border-b border-border shrink-0">
         {sidebarOpen ? (
           <span className="text-sm font-semibold tracking-tight text-foreground truncate">
-            Worldbuilder
+            Odin&apos;s Archive
           </span>
         ) : null}
       </div>

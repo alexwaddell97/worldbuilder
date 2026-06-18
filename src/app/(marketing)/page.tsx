@@ -227,7 +227,7 @@ export default async function HomePage() {
       <footer id="footer" className="py-12 border-t border-border">
         <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <p className="font-semibold text-foreground">Worldbuilder</p>
+            <p className="font-semibold text-foreground">Odin&apos;s Archive</p>
             <p className="text-xs text-muted-foreground mt-0.5">
               Your world. Your data. Always.
             </p>
@@ -239,7 +239,7 @@ export default async function HomePage() {
             <a href="/terms" className="hover:text-foreground transition-colors">
               Terms of Service
             </a>
-            <span>© 2026 Worldbuilder</span>
+            <span>© 2026 Odin&apos;s Archive</span>
           </div>
         </div>
       </footer>

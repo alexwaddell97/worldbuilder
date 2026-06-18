@@ -13,7 +13,7 @@ export default function AuthLayout({
             href="/"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            ← Worldbuilder
+            ← Odin&apos;s Archive
           </Link>
         </div>
         {children}
