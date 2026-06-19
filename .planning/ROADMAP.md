@@ -43,12 +43,12 @@
 - World-scoped routing: `/worlds/[slug]/...` as the root for all world content
 - Multiple worlds per account (no artificial limits in v1)
 
-**Plans:** 4 plans
+**Plans:** 2/4 plans executed
 Plans:
 **Wave 1**
 
-- [ ] 02-01-PLAN.md — Schema migration (per-user slug), Zod schemas, query helpers, world Server Actions
-- [ ] 02-02-PLAN.md — Install shadcn primitives (card, dialog, alert-dialog, textarea, badge, dropdown-menu, separator, switch)
+- [x] 02-01-PLAN.md — Schema migration (per-user slug), Zod schemas, query helpers, world Server Actions
+- [x] 02-02-PLAN.md — Install shadcn primitives (card, dialog, alert-dialog, textarea, badge, dropdown-menu, separator, switch)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
