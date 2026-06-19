@@ -43,9 +43,17 @@ export default function LoginPage() {
 
   async function handleResend() {
     setResendSent(false);
-    await authClient.sendVerificationEmail({ email, callbackURL: "/dashboard" });
-    setResendSent(true);
-    setShowResend(false);
+    setIsLoading(true);
+    try {
+      const result = await authClient.sendVerificationEmail({ email, callbackURL: "/dashboard" });
+      if (result?.error) throw new Error(result.error.message);
+      setResendSent(true);
+      setShowResend(false);
+    } catch {
+      setError("Failed to resend verification email. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -106,9 +114,10 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={handleResend}
-                className="text-foreground underline underline-offset-2 hover:no-underline"
+                disabled={isLoading}
+                className="text-foreground underline underline-offset-2 hover:no-underline disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Resend verification email →
+                {isLoading ? "Sending…" : "Resend verification email →"}
               </button>
             )}
           </div>
