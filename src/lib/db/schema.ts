@@ -59,7 +59,8 @@ export const entityTypes = pgTable(
 
 export * from "./auth-schema";
 
-export const schema = { worlds, entityTypes };
+export const appSchema = { worlds, entityTypes };
+export type AppSchema = typeof appSchema;
 
 export type World = typeof worlds.$inferSelect;
 export type NewWorld = typeof worlds.$inferInsert;
