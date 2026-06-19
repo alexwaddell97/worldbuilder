@@ -3,22 +3,39 @@ import { APP_NAME } from "@/config/app";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
-export async function sendVerificationEmail(email: string, url: string): Promise<void> {
-  console.log("[email] sendVerificationEmail called for:", email);
-  console.log("[email] RESEND_API_KEY set:", !!process.env.RESEND_API_KEY);
-  console.log("[email] EMAIL_FROM:", process.env.EMAIL_FROM);
+/**
+ * Validates that the URL belongs to the expected origin and encodes HTML
+ * special characters to prevent injection via crafted URLs.
+ */
+function safeHref(url: string, expectedOrigin: string): string {
+  try {
+    const parsed = new URL(url);
+    if (parsed.origin !== expectedOrigin) {
+      throw new Error(`Unexpected origin: ${parsed.origin}`);
+    }
+    return url.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  } catch (err) {
+    throw new Error(`sendVerificationEmail: invalid url: ${url} — ${err instanceof Error ? err.message : err}`);
+  }
+}
 
-  const result = await resend.emails.send({
+export async function sendVerificationEmail(email: string, url: string): Promise<void> {
+  const expectedOrigin = `https://${process.env.APP_DOMAIN ?? "odinsarchive.com"}`;
+  const safeUrl = safeHref(url, expectedOrigin);
+
+  const { error } = await resend.emails.send({
     from: process.env.EMAIL_FROM!,
     to: email,
     subject: `Verify your ${APP_NAME} account`,
     html: `
       <p>Thanks for signing up for ${APP_NAME}.</p>
       <p>Click the link below to verify your email address:</p>
-      <p><a href="${url}">Verify email</a></p>
+      <p><a href="${safeUrl}">Verify email</a></p>
       <p>This link expires in 24 hours. If you didn't sign up, you can ignore this email.</p>
     `,
   });
 
-  console.log("[email] Resend result:", JSON.stringify(result));
+  if (error) {
+    throw new Error(`Failed to send verification email: ${error.message}`);
+  }
 }
