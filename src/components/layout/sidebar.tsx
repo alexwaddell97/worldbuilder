@@ -32,8 +32,15 @@ export function Sidebar() {
   const router = useRouter();
 
   async function handleSignOut() {
-    await signOut();
-    router.push("/login");
+    try {
+      await signOut();
+    } catch (err) {
+      console.error("[sidebar] signOut error:", err);
+    } finally {
+      // Always navigate to login — session state is cleared client-side
+      // regardless of whether the server-side invalidation succeeded.
+      router.push("/login");
+    }
   }
 
   return (
