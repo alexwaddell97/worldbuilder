@@ -14,20 +14,30 @@ import {
 
 // ─── worlds ───────────────────────────────────────────────────────────────────
 
-export const worlds = pgTable("worlds", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  // globally unique URL slug (e.g. "my-fantasy-world")
-  slug: text("slug").notNull().unique(),
-  // references Better Auth user.id — text not uuid (Better Auth uses CUID/text IDs)
-  // No FK constraint here: Better Auth manages its own table separately.
-  // Referential integrity enforced at the application layer.
-  ownerId: text("owner_id").notNull(),
-  name: text("name").notNull(),
-  description: text("description"),
-  isPublic: boolean("is_public").default(false).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
-});
+export const worlds = pgTable(
+  "worlds",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    // per-user unique URL slug (e.g. "my-fantasy-world") — uniqueness enforced per owner via composite constraint below
+    slug: text("slug").notNull(),
+    // references Better Auth user.id — text not uuid (Better Auth uses CUID/text IDs)
+    // No FK constraint here: Better Auth manages its own table separately.
+    // Referential integrity enforced at the application layer.
+    ownerId: text("owner_id").notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    isPublic: boolean("is_public").default(false).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
+  },
+  (table) => ({
+    // composite: slug unique per owner (not globally) — Phase 2 UAT-5
+    ownerSlugUnique: unique("worlds_owner_id_slug_unique").on(
+      table.ownerId,
+      table.slug
+    ),
+  })
+);
 
 // ─── entity_types ─────────────────────────────────────────────────────────────
 
