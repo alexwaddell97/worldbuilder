@@ -38,6 +38,14 @@
 - World-scoped routing: `/worlds/[slug]/...` as the root for all world content
 - Multiple worlds per account (no artificial limits in v1)
 
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Schema migration (per-user slug), Zod schemas, query helpers, world Server Actions
+- [ ] 02-02-PLAN.md — Install shadcn primitives (card, dialog, alert-dialog, textarea, badge, dropdown-menu, separator, switch)
+- [ ] 02-03-PLAN.md — World CRUD UI: dashboard list, create/edit/delete dialogs, privacy toggle, world card
+- [ ] 02-04-PLAN.md — World-scoped routing: proxy guard, `/worlds/[slug]` layout + detail shell
+
 **UAT:**
 - [ ] Builder can create a world with a name, description, and auto-generated slug
 - [ ] Builder's dashboard lists all their worlds
