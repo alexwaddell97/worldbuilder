@@ -8,7 +8,7 @@
 
 ---
 
-### Phase 1 — Project Foundation
+### Phase 1: Project Foundation
 **Goal:** Runnable Next.js app with database, auth shell, and design system configured.
 
 **Scope:**
@@ -28,7 +28,7 @@
 
 ---
 
-### Phase 2 — World Management
+### Phase 2: World Management
 **Goal:** A Builder can create and manage multiple worlds.
 
 **Scope:**
@@ -48,7 +48,7 @@
 
 ---
 
-### Phase 3 — Entity Types & Entity Management
+### Phase 3: Entity Types & Entity Management
 **Goal:** A Builder can define entity types and create/manage entities within a world.
 
 **Scope:**
@@ -71,7 +71,7 @@
 
 ---
 
-### Phase 4 — Content Editor (Tiptap + Wikilinks)
+### Phase 4: Content Editor (Tiptap + Wikilinks)
 **Goal:** A Builder can write rich content in entities with inline wikilinks that survive renames.
 
 **Scope:**
@@ -94,7 +94,7 @@
 
 ---
 
-### Phase 5 — Relationship Graph
+### Phase 5: Relationship Graph
 **Goal:** A Builder can define and visualise typed relationships between entities.
 
 **Scope:**
@@ -113,7 +113,7 @@
 
 ---
 
-### Phase 6 — Obsidian Export
+### Phase 6: Obsidian Export
 **Goal:** A Builder can export their entire world as Obsidian-compatible markdown, fulfilling the no-lock-in promise.
 
 **Scope:**
