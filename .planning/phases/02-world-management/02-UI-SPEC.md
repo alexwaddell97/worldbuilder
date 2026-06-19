@@ -138,6 +138,8 @@ Run `npx shadcn@latest add <component>` for each. If CLI fails with Tailwind v4 
 
 ## Surface Specifications
 
+**Focal point:** "Create World" primary button in the dashboard header row. This is the single highest-priority interactive element on the dashboard — all surrounding layout defers to it visually.
+
 ### 1. World Dashboard (`/dashboard`)
 
 **Layout:** Full-width content area (`flex-1 overflow-y-auto`), padding `p-8` (matches existing dashboard shell).
@@ -201,7 +203,7 @@ Run `npx shadcn@latest add <component>` for each. If CLI fails with Tailwind v4 
 **Field error display:** `text-sm text-destructive mt-1` below each field. Powered by `useActionState` error shape.
 
 **Footer buttons (DialogFooter):**
-- Cancel: `variant="outline"` — closes dialog, no mutation
+- Discard changes: `variant="outline"` — closes dialog, no mutation
 - Create World: `variant="default"` (primary) — `disabled={pending}`, text changes to "Creating..." when pending
 
 ### 4. Edit World Dialog (`EditWorldDialog`)
@@ -218,7 +220,7 @@ Same structure as Create World Dialog with these differences:
 - Slug: read-only display, same format as Create — slug is immutable after creation
 
 **Footer buttons:**
-- Cancel: `variant="outline"`
+- Discard changes: `variant="outline"`
 - Save Changes: `variant="default"`, `disabled={pending}`, text changes to "Saving..." when pending
 
 ### 5. Delete World Confirmation (`DeleteWorldDialog`)
@@ -234,7 +236,7 @@ Uses shadcn AlertDialog (not Dialog). AlertDialog is the correct component for d
 - Max description width: `max-w-sm`
 
 **Footer buttons:**
-- Cancel: `variant="outline"` — always left button
+- Keep world: `variant="outline"` — always left button
 - Delete: `variant="destructive"`, label "Delete world", `disabled={pending}`, text changes to "Deleting..." when pending
 
 **No secondary confirmation required** (e.g., no "type world name to confirm") — a single AlertDialog click is sufficient for v1.
@@ -282,10 +284,13 @@ Phase 2 delivers only the shell. Entities come in Phase 3.
 | Empty state CTA | "Create World" (same Button as dashboard header — can be duplicated inline in empty state) |
 | Create dialog title | "Create a new world" |
 | Create dialog description | "Give your world a name. A URL slug is generated automatically." |
+| Create dialog dismiss button | "Discard changes" |
 | Edit dialog title | "Edit world" |
 | Edit dialog description | "Update your world's name or description. The slug cannot be changed after creation." |
+| Edit dialog dismiss button | "Discard changes" |
 | Delete dialog title | "Delete world?" |
 | Delete dialog description | "This will permanently delete **{worldName}** and all its content. This action cannot be undone." |
+| Delete dialog dismiss button | "Keep world" |
 | Delete confirm button | "Delete world" |
 | Create pending state | "Creating..." (button label during pending) |
 | Save pending state | "Saving..." (button label during pending) |
