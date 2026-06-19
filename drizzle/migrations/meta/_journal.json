@@ -15,6 +15,13 @@
       "when": 1781799928893,
       "tag": "0001_optimal_purifiers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781880351745,
+      "tag": "0002_dazzling_piledriver",
+      "breakpoints": true
     }
   ]
 }
