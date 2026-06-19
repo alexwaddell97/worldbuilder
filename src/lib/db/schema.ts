@@ -26,7 +26,7 @@ export const worlds = pgTable("worlds", {
   description: text("description"),
   isPublic: boolean("is_public").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
 });
 
 // ─── entity_types ─────────────────────────────────────────────────────────────
