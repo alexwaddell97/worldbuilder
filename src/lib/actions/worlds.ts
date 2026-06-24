@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import { updateTag, revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { worlds } from "@/lib/db/schema";
+import { worlds, entityTypes } from "@/lib/db/schema";
 import { eq, and, like } from "drizzle-orm";
 import slugify from "slugify";
 import {
@@ -17,6 +17,7 @@ import {
   UpdateWorldSchema,
   WorldActionState,
 } from "@/lib/validations/worlds";
+import { BUILT_IN_ENTITY_TYPES } from "@/lib/constants/entity-types";
 
 // ─── Slug Generation ──────────────────────────────────────────────────────────
 
@@ -66,12 +67,27 @@ export async function createWorldAction(
   const { name, description } = validated.data;
   const slug = await generateUniqueSlug(name, session.user.id);
 
-  await db.insert(worlds).values({
-    name,
-    description: description ?? null,
-    slug,
-    ownerId: session.user.id,
-    isPublic: false,
+  await db.transaction(async (tx) => {
+    const [world] = await tx
+      .insert(worlds)
+      .values({
+        name,
+        description: description ?? null,
+        slug,
+        ownerId: session.user.id,
+        isPublic: false,
+      })
+      .returning();
+
+    await tx.insert(entityTypes).values(
+      BUILT_IN_ENTITY_TYPES.map((t) => ({
+        worldId: world.id,
+        name: t.name,
+        slug: t.slug,
+        icon: t.icon,
+        isBuiltIn: true,
+      }))
+    );
   });
 
   // updateTag for read-your-writes — defensive (consumers use force-dynamic; see file header)
