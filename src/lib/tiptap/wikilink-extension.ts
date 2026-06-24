@@ -7,8 +7,6 @@ import { WikilinkNodeView } from "@/components/tiptap/wikilink-node";
 
 export type WikilinkAttrs = { id: string; label: string; dead: boolean };
 
-// Markdown serializer/parser registered in TiptapEditor via Markdown.configure({ extensions })
-
 export const WikilinkExtension = Node.create({
   name: "wikilink",
   group: "inline",
@@ -51,6 +49,47 @@ export const WikilinkExtension = Node.create({
 
   addNodeView() {
     return ReactNodeViewRenderer(WikilinkNodeView);
+  },
+
+  // Markdown serializer/parser registered here — picked up by @tiptap/markdown
+  // via getExtensionField when the Markdown extension initialises the MarkdownManager.
+  parseMarkdown(token: any, helpers: any) {
+    return helpers.createNode("wikilink", {
+      id: token.id,
+      label: token.label,
+      dead: false,
+    });
+  },
+
+  renderMarkdown(node: any) {
+    return `[[${node.attrs?.label ?? ""}|${node.attrs?.id ?? ""}]]`;
+  },
+
+  markdownTokenizer: {
+    name: "wikilink",
+    level: "inline" as const,
+    start(src: string) {
+      return src.indexOf("[[");
+    },
+    tokenize(src: string) {
+      const openIdx = src.indexOf("[[");
+      if (openIdx !== 0) return undefined;
+      const closeIdx = src.indexOf("]]", 2);
+      if (closeIdx === -1) return undefined;
+      const inner = src.slice(2, closeIdx);
+      const pipeIdx = inner.lastIndexOf("|");
+      if (pipeIdx === -1) return undefined;
+      const label = inner.slice(0, pipeIdx);
+      const id = inner.slice(pipeIdx + 1);
+      if (!label || !id) return undefined;
+      return {
+        type: "wikilink",
+        raw: src.slice(0, closeIdx + 2),
+        label,
+        id,
+        tokens: [],
+      };
+    },
   },
 
   addProseMirrorPlugins() {

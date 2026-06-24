@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { EntityDetailActions } from "@/components/entities/entity-detail-actions";
 import type { CustomFieldValues } from "@/lib/db/schema";
+import { TiptapEditor } from "@/components/tiptap/tiptap-editor";
 
 export const dynamic = "force-dynamic";
 
@@ -81,9 +82,14 @@ export default async function EntityDetailPage({
         </div>
       )}
 
-      {/* Content placeholder (Phase 4 will replace this with Tiptap editor) */}
-      <div className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground mb-6">
-        Rich text editor will appear here in Phase 4.
+      {/* Content editor */}
+      <div className="mb-6">
+        <TiptapEditor
+          entityId={entity.id}
+          worldId={world.id}
+          worldSlug={slug}
+          initialContent={entity.content}
+        />
       </div>
 
       {/* Custom fields */}
