@@ -141,15 +141,15 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — Install Tiptap packages, query helpers (getEntitiesForAutocomplete, updateWikilinkLabels), saveEntityContentAction, autocomplete route handler
+- [x] 04-01-PLAN.md — Install Tiptap packages, query helpers (getEntitiesForAutocomplete, updateWikilinkLabels), saveEntityContentAction, autocomplete route handler
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 04-02-PLAN.md — WikilinkExtension (Node.create with markdown handlers) + WikilinkNodeView React component
+- [x] 04-02-PLAN.md — WikilinkExtension (Node.create with markdown handlers) + WikilinkNodeView React component
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 04-03-PLAN.md — TiptapEditor client component + entity detail page integration
+- [x] 04-03-PLAN.md — TiptapEditor client component + entity detail page integration
 
 ---
 
