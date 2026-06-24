@@ -83,9 +83,27 @@ Plans:
 - Tags: attach free-form tags to entities; filter entity list by tag
 - Custom fields: JSONB-backed, defined per entity type, rendered as form fields on entity edit
 
+**Plans:** 1/4 plans executed
+Plans:
+**Wave 1**
+
+- [x] 03-01-PLAN.md — Schema extension (entities table, customFieldsSchema), query helpers, transaction seeding
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 03-02-PLAN.md — Install shadcn primitives (select, tabs, scroll-area, tooltip, popover), icon-picker constants, entity + entity-type server actions
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 03-03-PLAN.md — Icon picker component, entity type dialogs, entity types management page, sidebar entity type nav links
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 03-04-PLAN.md — Entity form, CRUD dialogs, entity card, entity list page (URL-driven filters), entity detail page, world overview update
+
 **UAT:**
 
-- [ ] World is seeded with 5 built-in entity types on creation
+- [x] World is seeded with 5 built-in entity types on creation
 - [ ] Builder can create a custom entity type with name and icon
 - [ ] Builder can create an entity of any type
 - [ ] Entity list filters by type and by tag
