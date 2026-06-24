@@ -11,6 +11,8 @@ import {
 import { APP_NAME } from "@/config/app";
 import { useUIStore } from "@/stores/use-ui-store";
 import { signOut } from "@/lib/auth/client";
+import { DynamicIcon } from "@/components/entity-types/icon-picker";
+import type { EntityType } from "@/lib/db/schema";
 
 interface NavItem {
   href: string;
@@ -26,7 +28,13 @@ const navItems: NavItem[] = [
   },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  worldSlug?: string;
+  worldName?: string;
+  worldEntityTypes?: EntityType[];
+}
+
+export function Sidebar({ worldSlug, worldName, worldEntityTypes }: SidebarProps = {}) {
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const pathname = usePathname();
   const router = useRouter();
@@ -85,6 +93,57 @@ export function Sidebar() {
             </Link>
           );
         })}
+
+        {/* World entity type nav — shown only when worldEntityTypes are provided */}
+        {worldEntityTypes && worldSlug && (
+          <div className="mt-3 pt-3 border-t border-border">
+            {sidebarOpen && (
+              <p className="px-2 pb-1 text-sm font-semibold text-foreground truncate">
+                {worldName}
+              </p>
+            )}
+            {worldEntityTypes.map((type) => {
+              const href = `/worlds/${worldSlug}/entities/${type.slug}`;
+              const isActive = pathname.startsWith(href);
+              return (
+                <Link
+                  key={type.id}
+                  href={href}
+                  title={!sidebarOpen ? type.name : undefined}
+                  className={`
+                    flex items-center gap-3 px-2 py-2 rounded-md text-sm transition-colors
+                    ${isActive
+                      ? "bg-muted text-foreground font-medium"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }
+                  `}
+                >
+                  <span className="shrink-0">
+                    <DynamicIcon name={type.icon ?? ""} size={16} />
+                  </span>
+                  {sidebarOpen && <span className="truncate">{type.name}</span>}
+                </Link>
+              );
+            })}
+            {sidebarOpen && (
+              <>
+                <div className="border-t border-border mt-2 mb-1" />
+                <Link
+                  href={`/worlds/${worldSlug}/entity-types`}
+                  className={`
+                    flex items-center gap-3 px-2 py-1.5 rounded-md text-xs transition-colors
+                    ${pathname === `/worlds/${worldSlug}/entity-types`
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                    }
+                  `}
+                >
+                  Settings
+                </Link>
+              </>
+            )}
+          </div>
+        )}
       </nav>
 
       {/* Sign out button */}
