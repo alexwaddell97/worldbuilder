@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getWorldBySlug } from "@/lib/db/queries/worlds";
-import { getEntitiesForAutocomplete } from "@/lib/db/queries/entities";
+import { getEntityTypesByWorld } from "@/lib/db/queries/entity-types";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +20,8 @@ export async function GET(
     return Response.json({ error: "Not found" }, { status: 404 });
   }
 
-  const url = new URL(request.url);
-  const q = url.searchParams.get("q") ?? "";
-  const typeId = url.searchParams.get("typeId") ?? undefined;
-  const results = await getEntitiesForAutocomplete(world.id, q, typeId);
-
-  return Response.json(results);
+  const types = await getEntityTypesByWorld(world.id);
+  return Response.json(
+    types.map((t) => ({ id: t.id, name: t.name, icon: t.icon, slug: t.slug }))
+  );
 }

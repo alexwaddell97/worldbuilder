@@ -5,11 +5,11 @@ export const CreateEntitySchema = z.object({
     .string()
     .min(1, { error: "Entity name is required." })
     .max(100, { error: "Name must be 100 characters or fewer." }),
-  // Comma-separated tags — split server-side into string[]
   tags: z
     .string()
     .max(500, { error: "Tags string too long." })
     .optional(),
+  imageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
 });
 
 export const UpdateEntitySchema = z.object({
@@ -21,6 +21,7 @@ export const UpdateEntitySchema = z.object({
     .string()
     .max(500, { error: "Tags string too long." })
     .optional(),
+  imageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
 });
 
 export type CreateEntityInput = z.infer<typeof CreateEntitySchema>;

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/ui/image-upload";
 import type { WorldActionState } from "@/lib/validations/worlds";
 
 function deriveSlugPreview(name: string): string {
@@ -18,9 +19,11 @@ function deriveSlugPreview(name: string): string {
 
 interface WorldFormProps {
   action: (prevState: WorldActionState, formData: FormData) => Promise<WorldActionState>;
-  initialValues?: { name: string; description: string };
+  initialValues?: { name: string; description: string; imageUrl?: string | null };
   /** When provided (edit mode), the slug is shown as-is and never re-derived from the name. */
   fixedSlug?: string;
+  /** Preset ID to include as a hidden field (create mode only). */
+  preset?: string;
   submitLabel: string;
   pendingLabel: string;
   onSuccess?: () => void;
@@ -30,6 +33,7 @@ export function WorldForm({
   action,
   initialValues,
   fixedSlug,
+  preset,
   submitLabel,
   pendingLabel,
   onSuccess,
@@ -46,6 +50,13 @@ export function WorldForm({
 
   return (
     <form action={formAction} className="space-y-4">
+      {preset && <input type="hidden" name="preset" value={preset} />}
+      {initialValues && (
+        <div className="space-y-1.5">
+          <Label>Cover image</Label>
+          <ImageUpload name="imageUrl" currentUrl={initialValues?.imageUrl} />
+        </div>
+      )}
       <div className="space-y-1.5">
         <Label htmlFor="name">World name</Label>
         <Input

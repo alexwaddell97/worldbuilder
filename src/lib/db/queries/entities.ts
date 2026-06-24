@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { entities } from "@/lib/db/schema";
+import { entities, entityTypes } from "@/lib/db/schema";
 import { eq, and, like, ne, asc, ilike, arrayContains, isNotNull } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import slugify from "slugify";
@@ -89,16 +89,39 @@ export async function generateUniqueEntitySlug(
  * Returns entities for wikilink autocomplete — name substring search, world-scoped.
  * Never queries across worlds.
  */
+export type AutocompleteResult = {
+  id: string;
+  name: string;
+  slug: string;
+  entityTypeId: string;
+  entityTypeName: string;
+  entityTypeIcon: string | null;
+};
+
 export async function getEntitiesForAutocomplete(
   worldId: string,
   search: string,
-  limit = 20
-): Promise<Array<{ id: string; name: string; slug: string }>> {
+  typeId?: string,
+  limit = 40
+): Promise<AutocompleteResult[]> {
+  const conditions = [
+    eq(entities.worldId, worldId),
+    ilike(entities.name, `%${search}%`),
+    ...(typeId ? [eq(entities.entityTypeId, typeId)] : []),
+  ];
   return db
-    .select({ id: entities.id, name: entities.name, slug: entities.slug })
+    .select({
+      id: entities.id,
+      name: entities.name,
+      slug: entities.slug,
+      entityTypeId: entityTypes.id,
+      entityTypeName: entityTypes.name,
+      entityTypeIcon: entityTypes.icon,
+    })
     .from(entities)
-    .where(and(eq(entities.worldId, worldId), ilike(entities.name, `%${search}%`)))
-    .orderBy(asc(entities.name))
+    .innerJoin(entityTypes, eq(entities.entityTypeId, entityTypes.id))
+    .where(and(...conditions))
+    .orderBy(asc(entityTypes.name), asc(entities.name))
     .limit(limit);
 }
 

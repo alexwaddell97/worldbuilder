@@ -44,13 +44,14 @@ export async function createEntityAction(
   const validated = CreateEntitySchema.safeParse({
     name: formData.get("name"),
     tags: formData.get("tags") || undefined,
+    imageUrl: formData.get("imageUrl") || undefined,
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, tags: rawTags } = validated.data;
+  const { name, tags: rawTags, imageUrl } = validated.data;
 
   // Normalize tags: split on comma, trim, lowercase, deduplicate, remove empty
   const tags = rawTags
@@ -72,6 +73,7 @@ export async function createEntityAction(
     name,
     slug,
     tags,
+    imageUrl: imageUrl || null,
     customFields: {},
   });
 
@@ -97,13 +99,14 @@ export async function updateEntityAction(
   const validated = UpdateEntitySchema.safeParse({
     name: formData.get("name"),
     tags: formData.get("tags") || undefined,
+    imageUrl: formData.get("imageUrl") || undefined,
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, tags: rawTags } = validated.data;
+  const { name, tags: rawTags, imageUrl } = validated.data;
 
   const tags = rawTags
     ? [
@@ -129,7 +132,7 @@ export async function updateEntityAction(
   // IDOR-safe: scope update to both entityId AND worldId
   await db
     .update(entities)
-    .set({ name, slug, tags })
+    .set({ name, slug, tags, imageUrl: imageUrl || null })
     .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)));
 
   // Fan out updated label to all wikilink nodes in the world

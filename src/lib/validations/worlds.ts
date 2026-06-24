@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PRESET_IDS } from "@/lib/constants/entity-types";
 
 // IMPORTANT: Zod v4 uses { error: '...' } not { message: '...' }
 
@@ -11,6 +12,7 @@ export const CreateWorldSchema = z.object({
     .string()
     .max(500, { error: "Description must be 500 characters or fewer." })
     .optional(),
+  preset: z.enum(PRESET_IDS as [string, ...string[]]).default("blank"),
 });
 
 export const UpdateWorldSchema = z.object({
@@ -22,6 +24,7 @@ export const UpdateWorldSchema = z.object({
     .string()
     .max(500, { error: "Description must be 500 characters or fewer." })
     .optional(),
+  imageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
 });
 
 export type CreateWorldInput = z.infer<typeof CreateWorldSchema>;

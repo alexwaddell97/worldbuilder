@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { CustomFieldsForm } from "@/components/entities/custom-fields-form";
+import { ImageUpload } from "@/components/ui/image-upload";
 import type { EntityActionState } from "@/lib/validations/entities";
 import type { CustomFieldDef, CustomFieldValues } from "@/lib/db/schema";
 
@@ -17,7 +18,7 @@ interface EntityFormProps {
     prevState: EntityActionState,
     formData: FormData
   ) => Promise<EntityActionState>;
-  initialValues?: { name: string; tags: string[]; customFields?: CustomFieldValues };
+  initialValues?: { name: string; tags: string[]; customFields?: CustomFieldValues; imageUrl?: string | null };
   customFieldDefs?: CustomFieldDef[];
   submitLabel: string;
   pendingLabel: string;
@@ -67,6 +68,11 @@ export function EntityForm({
     <form action={formAction} className="space-y-4">
       {/* Tags submitted as comma-separated hidden input */}
       <input type="hidden" name="tags" value={tags.join(",")} />
+
+      <div className="space-y-1.5">
+        <Label>Image</Label>
+        <ImageUpload name="imageUrl" currentUrl={initialValues?.imageUrl} />
+      </div>
 
       <div className="space-y-1.5">
         <Label htmlFor="entity-name">Name</Label>

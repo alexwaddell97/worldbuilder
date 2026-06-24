@@ -29,6 +29,8 @@
     "@tiptap/react": "^3.27.1",
     "@tiptap/starter-kit": "^3.27.1",
     "@tiptap/suggestion": "^3.27.1",
+    "@types/ws": "^8.18.1",
+    "@vercel/blob": "^2.4.1",
     "better-auth": "^1.6.19",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -43,6 +45,7 @@
     "slugify": "^1.6.9",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.1",
+    "ws": "^8.21.0",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },

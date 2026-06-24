@@ -17,7 +17,8 @@ import {
   UpdateWorldSchema,
   WorldActionState,
 } from "@/lib/validations/worlds";
-import { BUILT_IN_ENTITY_TYPES } from "@/lib/constants/entity-types";
+import { WORLD_PRESETS } from "@/lib/constants/entity-types";
+import type { PresetId } from "@/lib/constants/entity-types";
 
 // ─── Slug Generation ──────────────────────────────────────────────────────────
 
@@ -58,14 +59,16 @@ export async function createWorldAction(
   const validated = CreateWorldSchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description"),
+    preset: formData.get("preset") ?? "blank",
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, description } = validated.data;
+  const { name, description, preset } = validated.data;
   const slug = await generateUniqueSlug(name, session.user.id);
+  const presetTypes = WORLD_PRESETS[preset as PresetId]?.entityTypes ?? [];
 
   await db.transaction(async (tx) => {
     const [world] = await tx
@@ -79,15 +82,17 @@ export async function createWorldAction(
       })
       .returning();
 
-    await tx.insert(entityTypes).values(
-      BUILT_IN_ENTITY_TYPES.map((t) => ({
-        worldId: world.id,
-        name: t.name,
-        slug: t.slug,
-        icon: t.icon,
-        isBuiltIn: true,
-      }))
-    );
+    if (presetTypes.length > 0) {
+      await tx.insert(entityTypes).values(
+        presetTypes.map((t) => ({
+          worldId: world.id,
+          name: t.name,
+          slug: t.slug,
+          icon: t.icon,
+          isBuiltIn: true,
+        }))
+      );
+    }
   });
 
   // updateTag for read-your-writes — defensive (consumers use force-dynamic; see file header)
@@ -110,18 +115,19 @@ export async function updateWorldAction(
   const validated = UpdateWorldSchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description"),
+    imageUrl: formData.get("imageUrl") || undefined,
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, description } = validated.data;
+  const { name, description, imageUrl } = validated.data;
 
   // IDOR-safe: scope update to both worldId AND ownerId — non-owner's worldId matches zero rows
   await db
     .update(worlds)
-    .set({ name, description: description ?? null })
+    .set({ name, description: description ?? null, imageUrl: imageUrl || null })
     .where(and(eq(worlds.id, worldId), eq(worlds.ownerId, session.user.id)));
 
   // Slug is NOT regenerated on edit — URL stability after creation

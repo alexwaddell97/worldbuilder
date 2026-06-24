@@ -38,6 +38,7 @@ export function EditWorldDialog({ world, open, onOpenChange }: EditWorldDialogPr
           initialValues={{
             name: world.name,
             description: world.description ?? "",
+            imageUrl: world.imageUrl,
           }}
           fixedSlug={world.slug}
           submitLabel="Save Changes"

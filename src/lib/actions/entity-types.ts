@@ -107,15 +107,14 @@ export async function updateEntityTypeAction(
   const { name, icon } = validated.data;
 
   // Slug is NOT regenerated on edit (URL stability).
-  // IDOR-safe: scope update to entityTypeId + worldId; never mutate built-in types.
+  // IDOR-safe: scope update to entityTypeId + worldId.
   await db
     .update(entityTypes)
     .set({ name, icon: icon ?? null })
     .where(
       and(
         eq(entityTypes.id, entityTypeId),
-        eq(entityTypes.worldId, verified),
-        eq(entityTypes.isBuiltIn, false)
+        eq(entityTypes.worldId, verified)
       )
     );
 
@@ -151,7 +150,7 @@ export async function deleteEntityTypeAction(
     };
   }
 
-  // IDOR-safe: scope delete to entityTypeId + worldId; never delete built-in types.
+  // IDOR-safe: scope delete to entityTypeId + worldId.
   await db
     .delete(entityTypes)
     .where(

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,8 +36,19 @@ export function EntityCard({
 
   return (
     <>
-      <Card className="p-5 hover:shadow-sm transition-shadow">
-        <CardContent className="p-0">
+      <Card className="overflow-hidden hover:shadow-sm transition-shadow">
+        {entity.imageUrl && (
+          <div className="relative w-full h-24">
+            <Image
+              src={entity.imageUrl}
+              alt={`${entity.name} image`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 300px"
+            />
+          </div>
+        )}
+        <CardContent className="p-5">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
               <Link

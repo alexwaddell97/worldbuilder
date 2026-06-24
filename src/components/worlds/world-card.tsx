@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { MoreHorizontal, Pencil, Trash2, Lock, Globe } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,8 +24,20 @@ export function WorldCard({ world }: { world: World }) {
 
   return (
     <>
-      <Card className="p-6 hover:shadow-sm transition-shadow">
-        <CardContent className="p-0">
+      <Card className="overflow-hidden hover:shadow-sm transition-shadow">
+        {/* Cover image */}
+        {world.imageUrl && (
+          <div className="relative w-full h-32">
+            <Image
+              src={world.imageUrl}
+              alt={`${world.name} cover`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 400px"
+            />
+          </div>
+        )}
+        <CardContent className="p-6">
           {/* Header row */}
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">

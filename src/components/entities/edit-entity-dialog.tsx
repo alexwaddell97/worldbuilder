@@ -40,6 +40,7 @@ export function EditEntityDialog({
             name: entity.name,
             tags: entity.tags,
             customFields: entity.customFields as CustomFieldValues,
+            imageUrl: entity.imageUrl,
           }}
           customFieldDefs={entityType.customFieldsSchema.fields}
           submitLabel="Save changes"

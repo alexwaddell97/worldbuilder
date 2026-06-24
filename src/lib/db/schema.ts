@@ -36,6 +36,7 @@ export const worlds = pgTable(
     name: text("name").notNull(),
     description: text("description"),
     isPublic: boolean("is_public").default(false).notNull(),
+    imageUrl: text("image_url"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
   },
@@ -95,6 +96,7 @@ export const entities = pgTable(
     // Phase 4 Tiptap JSON — nullable, not populated in Phase 3
     content: jsonb("content"),
     tags: text("tags").array().default([]).notNull(),
+    imageUrl: text("image_url"),
     customFields: jsonb("custom_fields")
       .$type<CustomFieldValues>()
       .default({})
