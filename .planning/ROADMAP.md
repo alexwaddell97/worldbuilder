@@ -137,6 +137,20 @@ Plans:
 - [ ] Deleting a linked entity renders the wikilink as a broken-link indicator (not silently removed)
 - [ ] Content auto-saves; no data loss on tab close after 2-second idle
 
+**Plans:** 3 plans
+Plans:
+**Wave 1**
+
+- [ ] 04-01-PLAN.md — Install Tiptap packages, query helpers (getEntitiesForAutocomplete, updateWikilinkLabels), saveEntityContentAction, autocomplete route handler
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 04-02-PLAN.md — WikilinkExtension (Node.create with markdown handlers) + WikilinkNodeView React component
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 04-03-PLAN.md — TiptapEditor client component + entity detail page integration
+
 ---
 
 ### Phase 5: Relationship Graph
