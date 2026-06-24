@@ -83,7 +83,7 @@ Plans:
 - Tags: attach free-form tags to entities; filter entity list by tag
 - Custom fields: JSONB-backed, defined per entity type, rendered as form fields on entity edit
 
-**Plans:** 1/4 plans executed
+**Plans:** 4/4 plans executed
 Plans:
 **Wave 1**
 
@@ -91,25 +91,25 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 03-02-PLAN.md — Install shadcn primitives (select, tabs, scroll-area, tooltip, popover), icon-picker constants, entity + entity-type server actions
+- [x] 03-02-PLAN.md — Install shadcn primitives (select, tabs, scroll-area, tooltip, popover), icon-picker constants, entity + entity-type server actions
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 03-03-PLAN.md — Icon picker component, entity type dialogs, entity types management page, sidebar entity type nav links
+- [x] 03-03-PLAN.md — Icon picker component, entity type dialogs, entity types management page, sidebar entity type nav links
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 03-04-PLAN.md — Entity form, CRUD dialogs, entity card, entity list page (URL-driven filters), entity detail page, world overview update
+- [x] 03-04-PLAN.md — Entity form, CRUD dialogs, entity card, entity list page (URL-driven filters), entity detail page, world overview update
 
 **UAT:**
 
 - [x] World is seeded with 5 built-in entity types on creation
-- [ ] Builder can create a custom entity type with name and icon
-- [ ] Builder can create an entity of any type
-- [ ] Entity list filters by type and by tag
-- [ ] Full-text search returns matching entities by name
-- [ ] Renaming an entity updates its slug and the slug remains stable for existing wikilinks (UUID-backed)
-- [ ] Custom fields defined on an entity type appear on the entity edit form
+- [x] Builder can create a custom entity type with name and icon
+- [x] Builder can create an entity of any type
+- [x] Entity list filters by type and by tag
+- [x] Full-text search returns matching entities by name
+- [x] Renaming an entity updates its slug and the slug remains stable for existing wikilinks (UUID-backed)
+- [x] Custom fields defined on an entity type appear on the entity edit form
 
 ---
 
