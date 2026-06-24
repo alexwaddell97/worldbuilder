@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn, authClient } from "@/lib/auth/client";
 import { APP_NAME } from "@/config/app";
+import { GoogleIcon } from "@/components/ui/google-icon";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -71,6 +72,7 @@ export default function LoginPage() {
         onClick={() => signIn.social({ provider: "google" })}
         type="button"
       >
+        <GoogleIcon />
         Continue with Google
       </Button>
 

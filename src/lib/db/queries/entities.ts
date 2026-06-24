@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { entities } from "@/lib/db/schema";
-import { eq, and, like, ne, asc, ilike, arrayContains } from "drizzle-orm";
+import { eq, and, like, ne, asc, ilike, arrayContains, isNotNull } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import slugify from "slugify";
 import type { Entity } from "@/lib/db/schema";
@@ -83,4 +83,109 @@ export async function generateUniqueEntitySlug(
   let i = 2;
   while (existing.some((r) => r.slug === `${base}-${i}`)) i++;
   return `${base}-${i}`;
+}
+
+/**
+ * Returns entities for wikilink autocomplete — name substring search, world-scoped.
+ * Never queries across worlds.
+ */
+export async function getEntitiesForAutocomplete(
+  worldId: string,
+  search: string,
+  limit = 20
+): Promise<Array<{ id: string; name: string; slug: string }>> {
+  return db
+    .select({ id: entities.id, name: entities.name, slug: entities.slug })
+    .from(entities)
+    .where(and(eq(entities.worldId, worldId), ilike(entities.name, `%${search}%`)))
+    .orderBy(asc(entities.name))
+    .limit(limit);
+}
+
+function walkAndUpdate(node: unknown, entityId: string, newLabel: string): boolean {
+  if (!node || typeof node !== "object") return false;
+  const n = node as Record<string, unknown>;
+  let changed = false;
+  if (n.type === "wikilink" && n.attrs && typeof n.attrs === "object") {
+    const attrs = n.attrs as Record<string, unknown>;
+    if (attrs.id === entityId) {
+      attrs.label = newLabel;
+      changed = true;
+    }
+  }
+  if (Array.isArray(n.content)) {
+    for (const child of n.content) {
+      if (walkAndUpdate(child, entityId, newLabel)) changed = true;
+    }
+  }
+  return changed;
+}
+
+/**
+ * Fan-out label update: walks Tiptap JSON across all entities in a world,
+ * updating wikilink nodes that reference entityId with newLabel.
+ */
+export async function updateWikilinkLabels(
+  worldId: string,
+  entityId: string,
+  newLabel: string
+): Promise<void> {
+  const rows = await db
+    .select({ id: entities.id, content: entities.content })
+    .from(entities)
+    .where(and(eq(entities.worldId, worldId), isNotNull(entities.content)));
+
+  for (const row of rows) {
+    const content = row.content as Record<string, unknown>;
+    if (walkAndUpdate(content, entityId, newLabel)) {
+      await db
+        .update(entities)
+        .set({ content })
+        .where(and(eq(entities.id, row.id), eq(entities.worldId, worldId)));
+    }
+  }
+}
+
+function walkAndMarkDead(node: unknown, entityId: string): boolean {
+  if (!node || typeof node !== "object") return false;
+  const n = node as Record<string, unknown>;
+  let changed = false;
+  if (n.type === "wikilink" && n.attrs && typeof n.attrs === "object") {
+    const attrs = n.attrs as Record<string, unknown>;
+    if (attrs.id === entityId) {
+      attrs.dead = true;
+      changed = true;
+    }
+  }
+  if (Array.isArray(n.content)) {
+    for (const child of n.content) {
+      if (walkAndMarkDead(child, entityId)) changed = true;
+    }
+  }
+  return changed;
+}
+
+/**
+ * Fan-out dead-link marking: walks Tiptap JSON across all entities in a world,
+ * marking wikilink nodes referencing entityId as dead=true.
+ * MUST be called before the entity is deleted.
+ */
+export async function markWikilinksDead(
+  worldId: string,
+  entityId: string
+): Promise<void> {
+  const rows = await db
+    .select({ id: entities.id, content: entities.content })
+    .from(entities)
+    .where(and(eq(entities.worldId, worldId), isNotNull(entities.content)));
+
+  for (const row of rows) {
+    const content = row.content as Record<string, unknown>;
+    if (walkAndMarkDead(content, entityId)) {
+      await db
+        .update(entities)
+        .set({ content })
+        .where(and(eq(entities.id, row.id), eq(entities.worldId, worldId)));
+    }
+  }
 }

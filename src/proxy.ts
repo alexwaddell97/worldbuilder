@@ -15,7 +15,8 @@ export async function proxy(request: NextRequest) {
   }
 
   // Protected paths: require authenticated session
-  if (!session && pathname.startsWith("/dashboard")) {
+  const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/worlds");
+  if (!session && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

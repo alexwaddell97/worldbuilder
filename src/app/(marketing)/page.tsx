@@ -8,6 +8,9 @@ import {
   Link2,
   Download,
   FileText,
+  ArrowRight,
+  PenLine,
+  Swords,
 } from "lucide-react";
 
 export default async function HomePage() {
@@ -37,9 +40,10 @@ export default async function HomePage() {
         <div className="flex gap-4 justify-center mt-8 flex-wrap">
           <Link
             href="/signup"
-            className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity"
           >
             Start building — it&apos;s free
+            <ArrowRight size={16} />
           </Link>
           <a
             href="#features"
@@ -185,9 +189,12 @@ export default async function HomePage() {
             id="for-fiction-authors"
             className="bg-card border border-border rounded-lg p-8"
           >
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
-              Fiction Authors
-            </span>
+            <div className="flex items-center gap-2">
+              <PenLine size={16} className="text-muted-foreground" />
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
+                Fiction Authors
+              </span>
+            </div>
             <h3 className="text-xl font-semibold text-foreground mt-3">
               Build the full mythology of your novel universe.
             </h3>
@@ -206,9 +213,12 @@ export default async function HomePage() {
             id="for-ttrpg-gms"
             className="bg-card border border-border rounded-lg p-8"
           >
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
-              TTRPG Game Masters
-            </span>
+            <div className="flex items-center gap-2">
+              <Swords size={16} className="text-muted-foreground" />
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
+                TTRPG Game Masters
+              </span>
+            </div>
             <h3 className="text-xl font-semibold text-foreground mt-3">
               Run richer campaigns. Reveal lore on your terms.
             </h3>

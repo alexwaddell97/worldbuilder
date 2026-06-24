@@ -11,7 +11,7 @@ import {
   UpdateEntitySchema,
   type EntityActionState,
 } from "@/lib/validations/entities";
-import { generateUniqueEntitySlug } from "@/lib/db/queries/entities";
+import { generateUniqueEntitySlug, updateWikilinkLabels, markWikilinksDead } from "@/lib/db/queries/entities";
 
 // ─── Ownership verification helper ────────────────────────────────────────────
 
@@ -119,11 +119,23 @@ export async function updateEntityAction(
   // Regenerate slug on rename — excludeId prevents self-collision
   const slug = await generateUniqueEntitySlug(name, verified, entityId);
 
+  // Capture previous name for wikilink label fan-out on rename
+  const [existing] = await db
+    .select({ name: entities.name })
+    .from(entities)
+    .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)))
+    .limit(1);
+
   // IDOR-safe: scope update to both entityId AND worldId
   await db
     .update(entities)
     .set({ name, slug, tags })
     .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)));
+
+  // Fan out updated label to all wikilink nodes in the world
+  if (existing && existing.name !== name) {
+    await updateWikilinkLabels(verified, entityId, name);
+  }
 
   revalidatePath("/worlds");
 
@@ -142,10 +154,33 @@ export async function deleteEntityAction(
   const verified = await verifyWorldOwnership(worldId, session.user.id);
   if (!verified) return;
 
+  // Mark all wikilinks referencing this entity as dead BEFORE deleting
+  await markWikilinksDead(verified, entityId);
+
   // IDOR-safe: scope delete to both entityId AND worldId
   await db
     .delete(entities)
     .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)));
 
   revalidatePath("/worlds");
+}
+
+// ─── saveEntityContentAction ──────────────────────────────────────────────────
+
+export async function saveEntityContentAction(
+  entityId: string,
+  worldId: string,
+  content: unknown
+): Promise<void> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) throw new Error("Unauthorized");
+
+  const verified = await verifyWorldOwnership(worldId, session.user.id);
+  if (!verified) return;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await db
+    .update(entities)
+    .set({ content: content as any })
+    .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)));
 }
