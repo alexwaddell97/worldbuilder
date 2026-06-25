@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
+import type { Editor } from "@tiptap/core";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Markdown } from "@tiptap/markdown";
 import { WikilinkExtension } from "@/lib/tiptap/wikilink-extension";
@@ -90,23 +91,26 @@ export function TiptapEditor({
     [entityId, worldId]
   );
 
+  const syncEditorRef = useCallback((e: Editor): void => {
+    (editorRef as React.MutableRefObject<Editor>).current = e;
+  }, []);
+
   const editor = useEditor({
     immediatelyRender: false,
-    onCreate({ editor: e }) { (editorRef as React.MutableRefObject<typeof e>).current = e; },
-    onUpdate({ editor: e }) { (editorRef as React.MutableRefObject<typeof e>).current = e; },
+    onCreate({ editor: e }) { syncEditorRef(e); },
     extensions: [
       StarterKit,
       Markdown,
       WikilinkExtension.configure({
         suggestion: {
           char: "[[",
-          items: async ({ query }: { query: string }) => {
+          items: (async ({ query }: { query: string }) => {
             const res = await fetch(
               `/api/worlds/${worldSlug}/entities/autocomplete?q=${encodeURIComponent(query)}`
             );
             if (!res.ok) return [];
             return res.json();
-          },
+          }) as unknown as () => Promise<{ id: string; name: string; slug: string }[]>,
           render: () => ({
             onStart: (props: any) => {
               setSuggestionProps({
@@ -149,6 +153,7 @@ export function TiptapEditor({
       save(e.getJSON());
     },
     onUpdate: ({ editor: e }: any) => {
+      syncEditorRef(e);
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = setTimeout(() => save(e.getJSON()), 2000);
     },
@@ -270,7 +275,7 @@ export function TiptapEditor({
             <ToolbarSeparator />
 
             {/* Wikilink */}
-            <InsertWikilinkButton editor={editor} worldSlug={worldSlug} />
+            <InsertWikilinkButton editor={editor!} worldSlug={worldSlug} />
           </div>
         )}
 

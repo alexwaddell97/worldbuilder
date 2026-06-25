@@ -263,7 +263,7 @@ export function MapPinFloatingPanel({
               </button>
             ))}
           </div>
-          {!iconsExpanded && !ICON_PICKER_OPTIONS.slice(0, 16).includes(icon) && (
+          {!iconsExpanded && !(ICON_PICKER_OPTIONS as readonly string[]).slice(0, 16).includes(icon) && (
             <p className="text-[10px] text-muted-foreground">
               Selected: <span className="font-medium">{icon}</span> — click &ldquo;Show all&rdquo; to change
             </p>
