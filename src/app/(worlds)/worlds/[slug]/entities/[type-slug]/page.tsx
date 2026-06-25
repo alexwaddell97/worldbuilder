@@ -4,9 +4,10 @@ import { auth } from "@/lib/auth";
 import { getWorldBySlug } from "@/lib/db/queries/worlds";
 import { getEntityTypeBySlug } from "@/lib/db/queries/entity-types";
 import { getEntitiesByType } from "@/lib/db/queries/entities";
-import { EntityCard } from "@/components/entities/entity-card";
+import { EntityListView } from "@/components/entities/entity-list-view";
 import { CreateEntityDialog } from "@/components/entities/create-entity-dialog";
 import { EntityListFilters } from "@/components/entities/entity-list-filters";
+import { pluralize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -41,10 +42,10 @@ export default async function EntityListPage({
   ].sort();
 
   return (
-    <div className="p-8">
+    <div className="p-8 max-w-3xl mx-auto">
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">{entityType.name}s</h1>
+        <h1 className="text-2xl font-semibold">{pluralize(entityType.name)}</h1>
         <CreateEntityDialog worldId={world.id} entityType={entityType} />
       </div>
 
@@ -58,25 +59,19 @@ export default async function EntityListPage({
         availableTags={availableTags}
       />
 
-      {/* Entity grid */}
+      {/* Entity list */}
       {filteredEntities.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredEntities.map((entity) => (
-            <EntityCard
-              key={entity.id}
-              entity={entity}
-              entityType={entityType}
-              worldId={world.id}
-              worldSlug={slug}
-            />
-          ))}
-        </div>
+        <EntityListView
+          entities={filteredEntities}
+          entityType={entityType}
+          worldSlug={slug}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-16 gap-4">
           <p className="text-sm font-medium text-foreground">
             {q || tag
-              ? `No ${entityType.name}s match your filters`
-              : `No ${entityType.name}s yet`}
+              ? `No ${pluralize(entityType.name)} match your filters`
+              : `No ${pluralize(entityType.name)} yet`}
           </p>
           <p className="text-sm text-muted-foreground">
             {q || tag

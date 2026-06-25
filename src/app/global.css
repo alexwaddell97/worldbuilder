@@ -1,10 +1,12 @@
 /* Tailwind CSS v4 — CSS-first configuration */
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
 /* Bridge CSS variables to Tailwind v4 utility classes.
    Without this block, utility classes like bg-background, text-foreground,
    bg-primary, etc. produce no CSS output. */
 @theme inline {
+  --font-sans: var(--font-ubuntu);
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -27,42 +29,42 @@
   --radius: var(--radius);
 }
 
-/* shadcn/ui design tokens — Apple-clean neutral palette (D-14, D-15, D-17) */
+/* shadcn/ui design tokens — Sub-creation brand palette: deep navy + warm ivory */
 /* All colors are CSS variables. NO hardcoded hex/rgb/hsl values anywhere else. */
 /* Dark mode is intentionally omitted — add a .dark {} block in a future phase. */
 @layer base {
   :root {
-    --background: 0 0% 99%;
-    --foreground: 0 0% 9%;
+    --background: 42 30% 97%;          /* warm ivory  #faf8f3 */
+    --foreground: 218 52% 11%;         /* deep navy   #0d1828 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
+    --card: 42 40% 99%;
+    --card-foreground: 218 52% 11%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
+    --popover: 42 40% 99%;
+    --popover-foreground: 218 52% 11%;
 
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 218 52% 11%;            /* navy CTA buttons */
+    --primary-foreground: 42 30% 97%;  /* ivory text on navy */
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 38 18% 92%;           /* warm light tan */
+    --secondary-foreground: 218 52% 11%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 38 18% 92%;
+    --muted-foreground: 215 14% 48%;   /* muted navy-gray */
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 43 75% 48%;              /* warm gold  — for ✦ accents */
+    --accent-foreground: 42 30% 97%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 9%;
+    --border: 38 14% 84%;              /* subtle warm border */
+    --input: 38 14% 84%;
+    --ring: 218 52% 11%;
 
     --radius: 0.5rem;
 
-    --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+    --font-sans: var(--font-ubuntu), "Ubuntu", ui-sans-serif, system-ui, sans-serif;
     --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
   }
 }
@@ -75,8 +77,15 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: var(--font-sans);
+    font-family: var(--font-ubuntu), "Ubuntu", ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Marketing page headings use the Playfair Display editorial font */
+  .marketing-content h1,
+  .marketing-content h2,
+  .marketing-content h3 {
+    font-family: var(--font-sans);
   }
 }

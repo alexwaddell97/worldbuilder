@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EditEntityDialog } from "@/components/entities/edit-entity-dialog";
 import { DeleteEntityDialog } from "@/components/entities/delete-entity-dialog";
+import { blobDisplayUrl } from "@/lib/utils";
 import type { Entity, EntityType } from "@/lib/db/schema";
 
 interface EntityCardProps {
@@ -39,12 +39,11 @@ export function EntityCard({
       <Card className="overflow-hidden hover:shadow-sm transition-shadow">
         {entity.imageUrl && (
           <div className="relative w-full h-24">
-            <Image
-              src={entity.imageUrl}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={blobDisplayUrl(entity.imageUrl)}
               alt={`${entity.name} image`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 300px"
+              className="h-full w-full object-cover"
             />
           </div>
         )}

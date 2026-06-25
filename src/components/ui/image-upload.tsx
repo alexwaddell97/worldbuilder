@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
 import { ImageIcon, Loader2, Trash2, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { blobDisplayUrl } from "@/lib/utils";
 
 interface ImageUploadProps {
   /** Hidden input name submitted with the form. */
@@ -74,12 +74,11 @@ export function ImageUpload({ name, currentUrl, className }: ImageUploadProps) {
         )}
 
         {url ? (
-          <Image
-            src={url}
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={blobDisplayUrl(url)}
             alt="Uploaded image"
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 600px"
+            className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
           <>

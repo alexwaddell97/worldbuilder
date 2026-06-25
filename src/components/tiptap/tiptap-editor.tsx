@@ -68,6 +68,7 @@ export function TiptapEditor({
   const [isMarkdownMode, setIsMarkdownMode] = useState(false);
   const [markdownContent, setMarkdownContent] = useState("");
   const isSwitchingRef = useRef(false);
+  const editorRef = useRef<ReturnType<typeof useEditor>>(null);
   const autocompleteRef = useRef<WikilinkAutocompleteHandle>(null);
   const [suggestionProps, setSuggestionProps] = useState<SuggestionPopupState | null>(null);
 
@@ -75,19 +76,24 @@ export function TiptapEditor({
     async (content: unknown) => {
       setSaveStatus("saving");
       try {
-        startTransition(async () => {
-          await saveEntityContentAction(entityId, worldId, content);
-          setSaveStatus("saved");
-          setTimeout(() => setSaveStatus("idle"), 2000);
-        });
+        // Round-trip through JSON to convert ProseMirror's null-prototype attr
+        // objects into plain objects React's server action serializer can handle.
+        // Without this, attrs become "$T" in the flight protocol payload.
+        const serializable = JSON.parse(JSON.stringify(content));
+        await saveEntityContentAction(entityId, worldId, serializable);
+        setSaveStatus("saved");
+        setTimeout(() => setSaveStatus("idle"), 2000);
       } catch {
         setSaveStatus("error");
       }
     },
-    [entityId, worldId, startTransition]
+    [entityId, worldId]
   );
 
   const editor = useEditor({
+    immediatelyRender: false,
+    onCreate({ editor: e }) { (editorRef as React.MutableRefObject<typeof e>).current = e; },
+    onUpdate({ editor: e }) { (editorRef as React.MutableRefObject<typeof e>).current = e; },
     extensions: [
       StarterKit,
       Markdown,
@@ -172,8 +178,14 @@ export function TiptapEditor({
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      // Flush any pending save when navigating away
+      const currentEditor = editorRef.current;
+      if (currentEditor) {
+        const serializable = JSON.parse(JSON.stringify(currentEditor.getJSON()));
+        saveEntityContentAction(entityId, worldId, serializable).catch(() => {});
+      }
     };
-  }, []);
+  }, [entityId, worldId]);
 
   const saveStatusText =
     saveStatus === "saving"
@@ -394,7 +406,7 @@ function InsertWikilinkButton({ editor, worldSlug }: { editor: ReturnType<typeof
         <button
           type="button"
           data-active={editor?.isActive("wikilink")}
-          className="inline-flex items-center justify-center h-7 rounded-sm px-2 gap-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+          className="inline-flex items-center justify-center h-7 rounded-sm px-2 gap-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground cursor-pointer"
           aria-label="Insert wikilink"
         >
           <Link2 className="h-4 w-4" />
@@ -433,8 +445,8 @@ function InsertWikilinkButton({ editor, worldSlug }: { editor: ReturnType<typeof
                 onClick={() => handleTypeFilter(t.id)}
                 className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border transition-colors ${
                   selectedTypeId === t.id
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? "bg-primary text-primary-foreground border-primary cursor-pointer"
+                    : "border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer"
                 }`}
               >
                 {t.icon && <DynamicIcon name={t.icon} size={11} />}
@@ -456,7 +468,7 @@ function InsertWikilinkButton({ editor, worldSlug }: { editor: ReturnType<typeof
               key={item.id}
               type="button"
               onClick={() => insertWikilink(item)}
-              className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
             >
               {item.name}
             </button>
@@ -474,7 +486,7 @@ function InsertWikilinkButton({ editor, worldSlug }: { editor: ReturnType<typeof
                     key={item.id}
                     type="button"
                     onClick={() => insertWikilink(item)}
-                    className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="w-full text-left px-2 py-1.5 text-sm rounded hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
                   >
                     {item.name}
                   </button>
@@ -531,7 +543,7 @@ function MarkdownCheatsheet() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors rounded px-1.5 py-1 hover:bg-accent"
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors rounded px-1.5 py-1 hover:bg-accent cursor-pointer"
           aria-label="Markdown help"
         >
           <HelpCircle className="h-3.5 w-3.5" />
@@ -581,7 +593,7 @@ function ToolbarButton({ label, onClick, active, disabled, children }: ToolbarBu
           onClick={onClick}
           disabled={disabled}
           data-active={active}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-40 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-40 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground cursor-pointer"
           aria-label={label}
         >
           {children}

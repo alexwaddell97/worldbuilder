@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   const ext = file.name.split(".").pop() ?? "jpg";
   const filename = `${session.user.id}/${Date.now()}.${ext}`;
 
-  const blob = await put(filename, file, { access: "public" });
+  const blob = await put(filename, file, { access: "private" });
 
   return Response.json({ url: blob.url });
 }

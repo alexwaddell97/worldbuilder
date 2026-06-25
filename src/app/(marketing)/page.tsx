@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { APP_NAME, APP_TAGLINE, APP_COPYRIGHT_YEAR } from "@/config/app";
+import { AppWordmark } from "@/components/ui/app-wordmark";
 import {
   BookOpen,
   Link2,
@@ -238,7 +239,7 @@ export default async function HomePage() {
       <footer id="footer" className="py-12 border-t border-border">
         <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <p className="font-semibold text-foreground">{APP_NAME}</p>
+            <p className="text-lg text-foreground"><AppWordmark /></p>
             <p className="text-xs text-muted-foreground mt-0.5">
               Your world. Your data. Always.
             </p>
@@ -250,7 +251,7 @@ export default async function HomePage() {
             <a href="/terms" className="hover:text-foreground transition-colors">
               Terms of Service
             </a>
-            <span>© {APP_COPYRIGHT_YEAR} {APP_NAME}</span>
+            <span className="flex items-center gap-1.5">© {APP_COPYRIGHT_YEAR} <AppWordmark height={16} /></span>
           </div>
         </div>
       </footer>

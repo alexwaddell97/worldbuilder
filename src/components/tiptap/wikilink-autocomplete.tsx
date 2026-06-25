@@ -49,11 +49,11 @@ export const WikilinkAutocomplete = forwardRef<
   if (items.length === 0) return null;
 
   return (
-    <div className="absolute z-50 min-w-[200px] rounded-md border bg-popover shadow-md overflow-hidden">
+    <div className="absolute z-50 min-w-50 rounded-md border bg-popover shadow-md overflow-hidden">
       {items.map((item, index) => (
         <button
           key={item.id}
-          className={`w-full text-left px-3 py-1.5 text-sm transition-colors ${
+          className={`w-full text-left px-3 py-1.5 text-sm transition-colors cursor-pointer ${
             index === selectedIndex ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
           }`}
           onClick={() => command({ id: item.id, name: item.name })}

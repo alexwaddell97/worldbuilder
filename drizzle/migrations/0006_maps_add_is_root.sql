@@ -1,0 +1,1 @@
+ALTER TABLE "maps" ADD COLUMN "is_root_map" boolean DEFAULT true NOT NULL;

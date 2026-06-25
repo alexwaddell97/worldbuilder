@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { APP_NAME } from "@/config/app";
+import { AppIcon } from "@/components/ui/app-icon";
 
 export default function AuthLayout({
   children,
@@ -12,9 +12,10 @@ export default function AuthLayout({
         <div className="mb-6">
           <Link
             href="/"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            ← {APP_NAME}
+            <AppIcon size={20} />
+            ← Home
           </Link>
         </div>
         {children}

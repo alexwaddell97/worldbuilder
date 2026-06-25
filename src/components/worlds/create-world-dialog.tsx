@@ -71,7 +71,7 @@ export function CreateWorldDialog() {
                     type="button"
                     onClick={() => setSelectedPreset(id)}
                     className={cn(
-                      "relative flex flex-col gap-2 rounded-lg border p-3.5 text-left transition-all hover:border-primary/60 hover:bg-accent/40",
+                      "relative flex flex-col gap-2 rounded-lg border p-3.5 text-left transition-all hover:border-primary/60 hover:bg-accent/40 cursor-pointer",
                       isSelected
                         ? "border-primary bg-primary/5 ring-1 ring-primary"
                         : "border-border bg-card"
@@ -150,8 +150,7 @@ export function CreateWorldDialog() {
                 <button
                   type="button"
                   onClick={() => setStep("preset")}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Back to preset selection"
+                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   <ArrowLeft size={16} />
                 </button>

@@ -3,10 +3,14 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [
+    localPatterns: [
       {
-        protocol: "https",
-        hostname: "*.public.blob.vercel-storage.com",
+        pathname: "/api/blob",
+        search: "**",
+      },
+      {
+        pathname: "/**",
+        search: "",
       },
     ],
   },

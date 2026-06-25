@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { MoreHorizontal, Pencil, Trash2, Lock, Globe } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +15,7 @@ import {
 import { EditWorldDialog } from "@/components/worlds/edit-world-dialog";
 import { DeleteWorldDialog } from "@/components/worlds/delete-world-dialog";
 import { PrivacyToggle } from "@/components/worlds/privacy-toggle";
+import { blobDisplayUrl } from "@/lib/utils";
 import type { World } from "@/lib/db/schema";
 
 export function WorldCard({ world }: { world: World }) {
@@ -25,18 +25,23 @@ export function WorldCard({ world }: { world: World }) {
   return (
     <>
       <Card className="overflow-hidden hover:shadow-sm transition-shadow">
-        {/* Cover image */}
-        {world.imageUrl && (
-          <div className="relative w-full h-32">
-            <Image
-              src={world.imageUrl}
+        {/* Cover image — always rendered for consistent card height */}
+        <div className="relative w-full h-32 bg-muted">
+          {world.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={blobDisplayUrl(world.imageUrl)}
               alt={`${world.name} cover`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 400px"
+              className="h-full w-full object-cover"
             />
-          </div>
-        )}
+          ) : (
+            <div className="h-full w-full flex items-center justify-center">
+              <span className="text-4xl font-bold text-muted-foreground/30 select-none">
+                {world.name.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+        </div>
         <CardContent className="p-6">
           {/* Header row */}
           <div className="flex items-start justify-between">

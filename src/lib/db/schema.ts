@@ -12,6 +12,7 @@ import {
   unique,
   jsonb,
   index,
+  real,
 } from "drizzle-orm/pg-core";
 
 // ─── custom field types ────────────────────────────────────────────────────────
@@ -116,11 +117,66 @@ export const entities = pgTable(
   })
 );
 
+// ─── maps ─────────────────────────────────────────────────────────────────────
+
+export const maps = pgTable(
+  "maps",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    imageUrl: text("image_url"),
+    description: text("description"),
+    // true = shown in the maps index; false = sub-map only accessible via pins
+    isRootMap: boolean("is_root_map").default(true).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    worldSlugUnique: unique("maps_world_id_slug_unique").on(
+      table.worldId,
+      table.slug
+    ),
+  })
+);
+
+// ─── map_pins ─────────────────────────────────────────────────────────────────
+
+export const mapPins = pgTable("map_pins", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  mapId: uuid("map_id")
+    .notNull()
+    .references(() => maps.id, { onDelete: "cascade" }),
+  // entity this pin points to — nullable (pin may link to a map instead)
+  entityId: uuid("entity_id").references(() => entities.id, {
+    onDelete: "set null",
+  }),
+  // another map this pin drills in to (e.g. a city map)
+  linkedMapId: uuid("linked_map_id").references(() => maps.id, {
+    onDelete: "set null",
+  }),
+  label: text("label"),
+  // position as percentage of image dimensions (0–100)
+  x: real("x").notNull(),
+  y: real("y").notNull(),
+  // lucide icon name — defaults to "map-pin" when null
+  icon: text("icon"),
+  // hex or tailwind colour token (e.g. "#ef4444")
+  color: text("color"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ─── exports ──────────────────────────────────────────────────────────────────
 
 export * from "./auth-schema";
 
-export const appSchema = { worlds, entityTypes, entities };
+export const appSchema = { worlds, entityTypes, entities, maps, mapPins };
 export type AppSchema = typeof appSchema;
 
 export type World = typeof worlds.$inferSelect;
@@ -128,4 +184,8 @@ export type NewWorld = typeof worlds.$inferInsert;
 export type EntityType = typeof entityTypes.$inferSelect;
 export type NewEntityType = typeof entityTypes.$inferInsert;
 export type Entity = typeof entities.$inferSelect;
+export type Map = typeof maps.$inferSelect;
+export type NewMap = typeof maps.$inferInsert;
+export type MapPin = typeof mapPins.$inferSelect;
+export type NewMapPin = typeof mapPins.$inferInsert;
 export type NewEntity = typeof entities.$inferInsert;

@@ -3,7 +3,7 @@ import { entities, entityTypes } from "@/lib/db/schema";
 import { eq, and, like, ne, asc, ilike, arrayContains, isNotNull } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import slugify from "slugify";
-import type { Entity } from "@/lib/db/schema";
+import type { Entity, EntityType } from "@/lib/db/schema";
 
 interface GetEntitiesOptions {
   tag?: string;
@@ -83,6 +83,23 @@ export async function generateUniqueEntitySlug(
   let i = 2;
   while (existing.some((r) => r.slug === `${base}-${i}`)) i++;
   return `${base}-${i}`;
+}
+
+/**
+ * Returns the entity and entity type slugs needed to build a URL, scoped to a world.
+ * Used for wikilink navigation — resolves an entity id to its route segments.
+ */
+export async function getEntitySlugsById(
+  worldId: string,
+  entityId: string
+): Promise<{ entitySlug: string; entityTypeSlug: string } | null> {
+  const [row] = await db
+    .select({ entitySlug: entities.slug, entityTypeSlug: entityTypes.slug })
+    .from(entities)
+    .innerJoin(entityTypes, eq(entities.entityTypeId, entityTypes.id))
+    .where(and(eq(entities.worldId, worldId), eq(entities.id, entityId)))
+    .limit(1);
+  return row ?? null;
 }
 
 /**
@@ -211,4 +228,20 @@ export async function markWikilinksDead(
         .where(and(eq(entities.id, row.id), eq(entities.worldId, worldId)));
     }
   }
+}
+
+/**
+ * Returns all entities in a world with their entity type, ordered by type then name.
+ * Used for map pin entity selection.
+ */
+export async function getAllEntitiesWithTypesByWorld(
+  worldId: string
+): Promise<(Entity & { entityType: EntityType })[]> {
+  const rows = await db
+    .select({ entity: entities, entityType: entityTypes })
+    .from(entities)
+    .innerJoin(entityTypes, eq(entities.entityTypeId, entityTypes.id))
+    .where(eq(entities.worldId, worldId))
+    .orderBy(asc(entityTypes.name), asc(entities.name));
+  return rows.map((r) => ({ ...r.entity, entityType: r.entityType }));
 }

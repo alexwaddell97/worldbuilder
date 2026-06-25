@@ -7,12 +7,18 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  Map,
+  Settings,
 } from "lucide-react";
 import { APP_NAME } from "@/config/app";
+import { AppWordmark } from "@/components/ui/app-wordmark";
+import { AppIcon } from "@/components/ui/app-icon";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { WorldAvatar } from "@/components/ui/world-avatar";
 import { useUIStore } from "@/stores/use-ui-store";
 import { signOut } from "@/lib/auth/client";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
-import type { EntityType } from "@/lib/db/schema";
+import type { EntityType, World } from "@/lib/db/schema";
 
 interface NavItem {
   href: string;
@@ -32,9 +38,20 @@ interface SidebarProps {
   worldSlug?: string;
   worldName?: string;
   worldEntityTypes?: EntityType[];
+  worlds?: World[];
 }
 
-export function Sidebar({ worldSlug, worldName, worldEntityTypes }: SidebarProps = {}) {
+function NavTooltip({ label, collapsed, children }: { label: string; collapsed: boolean; children: React.ReactNode }) {
+  if (!collapsed) return <>{children}</>;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="right" sideOffset={8}>{label}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: SidebarProps = {}) {
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const pathname = usePathname();
   const router = useRouter();
@@ -52,20 +69,17 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes }: SidebarProps
   }
 
   return (
+    <TooltipProvider delayDuration={300}>
     <aside
       className={`
         h-full flex flex-col bg-background border-r border-border overflow-hidden
         transition-[width] duration-200 ease-in-out
-        ${sidebarOpen ? "w-[240px]" : "w-[56px]"}
+        ${sidebarOpen ? "w-60" : "w-14"}
       `}
     >
       {/* Logo / wordmark */}
-      <div className="h-14 flex items-center px-3 border-b border-border shrink-0">
-        {sidebarOpen ? (
-          <span className="text-sm font-semibold tracking-tight text-foreground truncate">
-            {APP_NAME}
-          </span>
-        ) : null}
+      <div className="h-14 flex items-center pl-4 border-b border-border shrink-0 overflow-hidden">
+        {sidebarOpen ? <AppWordmark /> : <AppIcon size={24} />}
       </div>
 
       {/* Nav items */}
@@ -73,94 +87,135 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes }: SidebarProps
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={!sidebarOpen ? item.label : undefined}
-              className={`
-                flex items-center gap-3 px-2 py-2 rounded-md text-sm transition-colors
-                ${
-                  isActive
-                    ? "bg-muted text-foreground font-medium"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }
-              `}
-            >
-              <span className="shrink-0">{item.icon}</span>
-              {sidebarOpen && (
-                <span className="truncate">{item.label}</span>
-              )}
-            </Link>
+            <NavTooltip key={item.href} label={item.label} collapsed={!sidebarOpen}>
+              <Link
+                href={item.href}
+                className={`
+                  flex items-center gap-3 pl-[11px] pr-2 h-9 rounded-md text-sm transition-colors
+                  ${
+                    isActive
+                      ? "bg-muted text-foreground font-medium"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }
+                `}
+              >
+                <span className="shrink-0">{item.icon}</span>
+                {sidebarOpen && <span className="truncate">{item.label}</span>}
+              </Link>
+            </NavTooltip>
           );
         })}
+
+        {/* Worlds list */}
+        {worlds && worlds.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-border">
+            {worlds.map((world) => {
+              const href = `/worlds/${world.slug}`;
+              const isActive = pathname.startsWith(href);
+              return (
+                <NavTooltip key={world.id} label={world.name} collapsed={!sidebarOpen}>
+                  <Link
+                    href={href}
+                    className={`
+                      flex items-center gap-3 pl-[11px] pr-2 h-9 rounded-md text-sm transition-colors
+                      ${isActive
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }
+                    `}
+                  >
+                    <span className="shrink-0">
+                      <WorldAvatar name={world.name} imageUrl={world.imageUrl} size={18} />
+                    </span>
+                    {sidebarOpen && <span className="truncate">{world.name}</span>}
+                  </Link>
+                </NavTooltip>
+              );
+            })}
+          </div>
+        )}
 
         {/* World entity type nav — shown only when worldEntityTypes are provided */}
         {worldEntityTypes && worldSlug && (
           <div className="mt-3 pt-3 border-t border-border">
-            {sidebarOpen && (
-              <p className="px-2 pb-1 text-sm font-semibold text-foreground truncate">
-                {worldName}
-              </p>
-            )}
+            {/* Maps link */}
+            {(() => {
+              const mapsHref = `/worlds/${worldSlug}/maps`;
+              const mapsActive = pathname.startsWith(mapsHref);
+              return (
+                <NavTooltip label="Maps" collapsed={!sidebarOpen}>
+                  <Link
+                    href={mapsHref}
+                    className={`
+                      flex items-center gap-3 pl-[11px] pr-2 h-9 rounded-md text-sm transition-colors
+                      ${mapsActive
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }
+                    `}
+                  >
+                    <span className="shrink-0"><Map size={16} /></span>
+                    {sidebarOpen && <span className="truncate">Maps</span>}
+                  </Link>
+                </NavTooltip>
+              );
+            })()}
+
             {worldEntityTypes.map((type) => {
               const href = `/worlds/${worldSlug}/entities/${type.slug}`;
               const isActive = pathname.startsWith(href);
               return (
-                <Link
-                  key={type.id}
-                  href={href}
-                  title={!sidebarOpen ? type.name : undefined}
-                  className={`
-                    flex items-center gap-3 px-2 py-2 rounded-md text-sm transition-colors
-                    ${isActive
-                      ? "bg-muted text-foreground font-medium"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }
-                  `}
-                >
-                  <span className="shrink-0">
-                    <DynamicIcon name={type.icon ?? ""} size={16} />
-                  </span>
-                  {sidebarOpen && <span className="truncate">{type.name}</span>}
-                </Link>
+                <NavTooltip key={type.id} label={type.name} collapsed={!sidebarOpen}>
+                  <Link
+                    href={href}
+                    className={`
+                      flex items-center gap-3 pl-[11px] pr-2 h-9 rounded-md text-sm transition-colors
+                      ${isActive
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }
+                    `}
+                  >
+                    <span className="shrink-0">
+                      <DynamicIcon name={type.icon ?? ""} size={16} />
+                    </span>
+                    {sidebarOpen && <span className="truncate">{type.name}</span>}
+                  </Link>
+                </NavTooltip>
               );
             })}
-            {sidebarOpen && (
-              <>
-                <div className="border-t border-border mt-2 mb-1" />
-                <Link
-                  href={`/worlds/${worldSlug}/entity-types`}
-                  className={`
-                    flex items-center gap-3 px-2 py-1.5 rounded-md text-xs transition-colors
-                    ${pathname === `/worlds/${worldSlug}/entity-types`
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                    }
-                  `}
-                >
-                  Settings
-                </Link>
-              </>
-            )}
+            <div className="border-t border-border mt-2 mb-1" />
+            <NavTooltip label="Settings" collapsed={!sidebarOpen}>
+              <Link
+                href={`/worlds/${worldSlug}/entity-types`}
+                className={`
+                  flex items-center gap-3 pl-[11px] pr-2 h-8 rounded-md text-xs transition-colors
+                  ${pathname === `/worlds/${worldSlug}/entity-types`
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                  }
+                `}
+              >
+                <span className="shrink-0"><Settings size={16} /></span>
+                {sidebarOpen && <span>Settings</span>}
+              </Link>
+            </NavTooltip>
           </div>
         )}
       </nav>
 
       {/* Sign out button */}
       <div className="px-2 pb-2">
-        <button
-          onClick={handleSignOut}
-          title={!sidebarOpen ? "Sign out" : undefined}
-          className="
-            flex items-center gap-3 px-2 py-2 w-full rounded-md text-sm
-            text-muted-foreground hover:text-destructive transition-colors
-          "
-        >
-          <span className="shrink-0">
-            <LogOut size={18} />
-          </span>
-          {sidebarOpen && <span>Sign out</span>}
-        </button>
+        <NavTooltip label="Sign out" collapsed={!sidebarOpen}>
+          <button
+            onClick={handleSignOut}
+            className={`flex items-center gap-3 pl-[11px] pr-2 h-9 w-full rounded-md text-sm
+              text-muted-foreground hover:text-destructive transition-colors`}
+          >
+            <span className="shrink-0"><LogOut size={18} /></span>
+            {sidebarOpen && <span>Sign out</span>}
+          </button>
+        </NavTooltip>
       </div>
 
       {/* Collapse toggle */}
@@ -174,5 +229,6 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes }: SidebarProps
         </button>
       </div>
     </aside>
+    </TooltipProvider>
   );
 }

@@ -20,7 +20,7 @@ function safeHref(url: string, expectedOrigin: string): string {
 }
 
 export async function sendVerificationEmail(email: string, url: string): Promise<void> {
-  const expectedOrigin = `https://${process.env.APP_DOMAIN ?? "odinsarchive.com"}`;
+  const expectedOrigin = `https://${process.env.APP_DOMAIN ?? "subcreation.app"}`;
   const safeUrl = safeHref(url, expectedOrigin);
 
   const { error } = await resend.emails.send({

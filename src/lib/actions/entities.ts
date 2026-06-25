@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { worlds, entities } from "@/lib/db/schema";
+import { worlds, entities, entityTypes } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import {
   CreateEntitySchema,
@@ -168,6 +168,34 @@ export async function deleteEntityAction(
   revalidatePath("/worlds");
 }
 
+// ─── getEntityWithTypeByIdAction ─────────────────────────────────────────────
+
+import type { Entity, EntityType } from "@/lib/db/schema";
+
+/**
+ * Returns the entity and its entity type for a given entity id, scoped to the world.
+ * Used by wikilink click handlers to load linked entities into the preview drawer.
+ */
+export async function getEntityWithTypeByIdAction(
+  worldId: string,
+  entityId: string
+): Promise<{ entity: Entity; entityType: EntityType } | null> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return null;
+
+  const verified = await verifyWorldOwnership(worldId, session.user.id);
+  if (!verified) return null;
+
+  const [row] = await db
+    .select({ entity: entities, entityType: entityTypes })
+    .from(entities)
+    .innerJoin(entityTypes, eq(entities.entityTypeId, entityTypes.id))
+    .where(and(eq(entities.worldId, verified), eq(entities.id, entityId)))
+    .limit(1);
+
+  return row ?? null;
+}
+
 // ─── saveEntityContentAction ──────────────────────────────────────────────────
 
 export async function saveEntityContentAction(
@@ -186,4 +214,6 @@ export async function saveEntityContentAction(
     .update(entities)
     .set({ content: content as any })
     .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)));
+
+  revalidatePath("/worlds");
 }

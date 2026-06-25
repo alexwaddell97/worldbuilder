@@ -48,7 +48,11 @@ export const WikilinkExtension = Node.create({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(WikilinkNodeView);
+    const { onWikilinkClick } = this.options;
+    return ReactNodeViewRenderer(
+      (props: Parameters<typeof WikilinkNodeView>[0]) =>
+        WikilinkNodeView({ ...props, onWikilinkClick }),
+    );
   },
 
   // Markdown serializer/parser registered here — picked up by @tiptap/markdown
@@ -62,7 +66,11 @@ export const WikilinkExtension = Node.create({
   },
 
   renderMarkdown(node: any) {
-    return `[[${node.attrs?.label ?? ""}|${node.attrs?.id ?? ""}]]`;
+    const id = node.attrs?.id;
+    const label = node.attrs?.label || id;
+    // Don't output [[|]] for wikilinks with missing attrs — it can't round-trip
+    if (!id) return "";
+    return `[[${label}|${id}]]`;
   },
 
   markdownTokenizer: {
@@ -92,12 +100,22 @@ export const WikilinkExtension = Node.create({
     },
   },
 
+  addOptions() {
+    return {
+      suggestion: {
+        char: "[[",
+        items: async () => [] as Array<{ id: string; name: string; slug: string }>,
+        render: () => ({}),
+      },
+      onWikilinkClick: undefined as ((entityId: string) => void) | undefined,
+    };
+  },
+
   addProseMirrorPlugins() {
     return [
       Suggestion({
         editor: this.editor,
-        char: "[[",
-        items: async () => [],
+        ...this.options.suggestion,
         command: ({ editor, range, props }: { editor: any; range: any; props: any }) => {
           editor
             .chain()
@@ -109,7 +127,6 @@ export const WikilinkExtension = Node.create({
             })
             .run();
         },
-        render: () => ({}),
       }),
     ];
   },

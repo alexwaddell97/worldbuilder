@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { APP_NAME } from "@/config/app";
+import { AppWordmark } from "@/components/ui/app-wordmark";
 
 export default function MarketingLayout({
   children,
@@ -10,12 +10,15 @@ export default function MarketingLayout({
     <>
       <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link
-            href="/"
-            className="text-sm font-semibold tracking-tight text-foreground"
-          >
-            {APP_NAME}
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center">
+              <AppWordmark />
+            </Link>
+            <span className="hidden md:block w-px h-5 bg-border" />
+            <span className="hidden md:block text-xs text-muted-foreground">
+              Tolkien&apos;s word for the act of world-making.
+            </span>
+          </div>
           <nav className="flex items-center gap-6">
             <a
               href="#features"
@@ -36,6 +39,12 @@ export default function MarketingLayout({
               Data ownership
             </a>
             <Link
+              href="/pricing"
+              className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Pricing
+            </Link>
+            <Link
               href="/login"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
@@ -50,7 +59,7 @@ export default function MarketingLayout({
           </nav>
         </div>
       </header>
-      <main>{children}</main>
+      <main className="marketing-content">{children}</main>
     </>
   );
 }

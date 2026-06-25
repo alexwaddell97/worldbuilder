@@ -36,6 +36,20 @@
       "when": 1782315592273,
       "tag": "0004_add_image_url",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782343430804,
+      "tag": "0005_add_maps",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782344618315,
+      "tag": "0006_maps_add_is_root",
+      "breakpoints": true
     }
   ]
 }
