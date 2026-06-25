@@ -87,7 +87,7 @@ export async function createWorldAction(
         presetTypes.map((t) => ({
           worldId: world.id,
           name: t.name,
-          namePlural: t.namePlural ?? null,
+          namePlural: (t as { namePlural?: string }).namePlural ?? null,
           slug: t.slug,
           icon: t.icon,
           isBuiltIn: true,

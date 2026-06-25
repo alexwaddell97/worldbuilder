@@ -94,7 +94,8 @@ export async function GET(
       try {
         const blobResult = await getBlobContent(entity.imageUrl, { access: "private" });
         if (blobResult && blobResult.statusCode === 200) {
-          const contentType = blobResult.contentType ?? "image/png";
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const contentType = (blobResult as any).contentType ?? "image/png";
           const rawExt = contentType.split("/")[1]?.split(";")[0] ?? "png";
           const contentTypeExt = rawExt === "svg+xml" ? "svg" : rawExt;
           const urlExt = entity.imageUrl.split(".").pop()?.split("?")[0]?.toLowerCase();
@@ -114,7 +115,8 @@ export async function GET(
       try {
         const blobResult = await getBlobContent(map.imageUrl, { access: "private" });
         if (blobResult && blobResult.statusCode === 200) {
-          const contentType = blobResult.contentType ?? "image/png";
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const contentType = (blobResult as any).contentType ?? "image/png";
           const rawExt = contentType.split("/")[1]?.split(";")[0] ?? "png";
           const contentTypeExt = rawExt === "svg+xml" ? "svg" : rawExt;
           // Prefer the extension from the stored filename — more reliable than content-type
@@ -169,7 +171,7 @@ export async function GET(
   const buffer = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
   const safeName = world.slug;
 
-  return new NextResponse(buffer, {
+  return new NextResponse(buffer as unknown as BodyInit, {
     status: 200,
     headers: {
       "Content-Type": "application/zip",
