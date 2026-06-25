@@ -10,6 +10,7 @@ export const CreateEntitySchema = z.object({
     .max(500, { error: "Tags string too long." })
     .optional(),
   imageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
+  imagePosition: z.string().max(50).optional().or(z.literal("")),
 });
 
 export const UpdateEntitySchema = z.object({
@@ -22,6 +23,7 @@ export const UpdateEntitySchema = z.object({
     .max(500, { error: "Tags string too long." })
     .optional(),
   imageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
+  imagePosition: z.string().max(50).optional().or(z.literal("")),
 });
 
 export type CreateEntityInput = z.infer<typeof CreateEntitySchema>;
@@ -33,4 +35,5 @@ export type EntityActionState = {
     tags?: string[];
   };
   message?: string;
+  slug?: string;
 };

@@ -45,13 +45,14 @@ export async function createEntityAction(
     name: formData.get("name"),
     tags: formData.get("tags") || undefined,
     imageUrl: formData.get("imageUrl") || undefined,
+    imagePosition: formData.get("imageUrlPosition") || undefined,
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, tags: rawTags, imageUrl } = validated.data;
+  const { name, tags: rawTags, imageUrl, imagePosition } = validated.data;
 
   // Normalize tags: split on comma, trim, lowercase, deduplicate, remove empty
   const tags = rawTags
@@ -74,6 +75,7 @@ export async function createEntityAction(
     slug,
     tags,
     imageUrl: imageUrl || null,
+    imagePosition: imagePosition || null,
     customFields: {},
   });
 
@@ -87,6 +89,8 @@ export async function createEntityAction(
 export async function updateEntityAction(
   entityId: string,
   worldId: string,
+  worldSlug: string,
+  entityTypeSlug: string,
   prevState: EntityActionState,
   formData: FormData
 ): Promise<EntityActionState> {
@@ -100,13 +104,14 @@ export async function updateEntityAction(
     name: formData.get("name"),
     tags: formData.get("tags") || undefined,
     imageUrl: formData.get("imageUrl") || undefined,
+    imagePosition: formData.get("imageUrlPosition") || undefined,
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, tags: rawTags, imageUrl } = validated.data;
+  const { name, tags: rawTags, imageUrl, imagePosition } = validated.data;
 
   const tags = rawTags
     ? [
@@ -132,7 +137,7 @@ export async function updateEntityAction(
   // IDOR-safe: scope update to both entityId AND worldId
   await db
     .update(entities)
-    .set({ name, slug, tags, imageUrl: imageUrl || null })
+    .set({ name, slug, tags, imageUrl: imageUrl || null, imagePosition: imagePosition || null })
     .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)));
 
   // Fan out updated label to all wikilink nodes in the world
@@ -142,7 +147,13 @@ export async function updateEntityAction(
 
   revalidatePath("/worlds");
 
-  return { message: "saved" };
+  // Redirect server-side on rename so the client lands on the correct URL
+  if (worldSlug && entityTypeSlug && existing && existing.name !== name) {
+    const { redirect } = await import("next/navigation");
+    redirect(`/worlds/${worldSlug}/entities/${entityTypeSlug}/${slug}`);
+  }
+
+  return { message: "saved", slug };
 }
 
 // ─── deleteEntityAction ───────────────────────────────────────────────────────

@@ -2,6 +2,7 @@ export type EntityTypeDefinition = {
   name: string;
   slug: string;
   icon: string;
+  namePlural?: string;
 };
 
 export type WorldPreset = {
@@ -26,7 +27,7 @@ export const WORLD_PRESETS = {
       { name: "Magic",      slug: "magic",      icon: "wand-2"     },
       { name: "Religion",   slug: "religion",   icon: "sun"        },
       { name: "Event",      slug: "event",      icon: "calendar"   },
-      { name: "Lore",       slug: "lore",       icon: "book-open"  },
+      { name: "Lore",       slug: "lore",       icon: "book-open",  namePlural: "Lore" },
     ],
   },
   "sci-fi": {
@@ -43,7 +44,7 @@ export const WORLD_PRESETS = {
       { name: "Item",        slug: "item",        icon: "gem"            },
       { name: "Vessel",      slug: "vessel",      icon: "globe"          },
       { name: "Event",       slug: "event",       icon: "calendar"       },
-      { name: "Lore",        slug: "lore",        icon: "book-open"      },
+      { name: "Lore",        slug: "lore",        icon: "book-open",      namePlural: "Lore" },
     ],
   },
   horror: {
@@ -58,7 +59,7 @@ export const WORLD_PRESETS = {
       { name: "Item",       slug: "item",       icon: "key"        },
       { name: "Cult",       slug: "cult",       icon: "flame"      },
       { name: "Event",      slug: "event",      icon: "calendar"   },
-      { name: "Lore",       slug: "lore",       icon: "book-open"  },
+      { name: "Lore",       slug: "lore",       icon: "book-open",  namePlural: "Lore" },
       { name: "Mystery",    slug: "mystery",    icon: "star"       },
     ],
   },
@@ -74,7 +75,7 @@ export const WORLD_PRESETS = {
       { name: "Religion",   slug: "religion",   icon: "sun"        },
       { name: "Language",   slug: "language",   icon: "scroll"     },
       { name: "Event",      slug: "event",      icon: "calendar"   },
-      { name: "Lore",       slug: "lore",       icon: "book-open"  },
+      { name: "Lore",       slug: "lore",       icon: "book-open",  namePlural: "Lore" },
     ],
   },
   mythology: {
@@ -103,7 +104,7 @@ export const WORLD_PRESETS = {
       { name: "Item",       slug: "item",       icon: "gem"        },
       { name: "Event",      slug: "event",      icon: "calendar"   },
       { name: "Plot",       slug: "plot",       icon: "network"    },
-      { name: "Lore",       slug: "lore",       icon: "book-open"  },
+      { name: "Lore",       slug: "lore",       icon: "book-open",  namePlural: "Lore" },
     ],
   },
   blank: {

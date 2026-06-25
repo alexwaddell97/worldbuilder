@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn, authClient } from "@/lib/auth/client";
 import { GoogleIcon } from "@/components/ui/google-icon";
+import { ChevronRight } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -118,7 +119,7 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className="text-foreground underline underline-offset-2 hover:no-underline disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Sending…" : "Resend verification email →"}
+                {isLoading ? "Sending…" : <span className="flex items-center gap-1">Resend verification email <ChevronRight size={12} /></span>}
               </button>
             )}
           </div>
@@ -137,8 +138,8 @@ export default function LoginPage() {
 
       <p className="mt-4 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="text-foreground hover:underline font-medium">
-          Sign up →
+        <Link href="/signup" className="text-foreground hover:underline font-medium inline-flex items-center gap-0.5">
+          Sign up <ChevronRight size={12} />
         </Link>
       </p>
     </div>

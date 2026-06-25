@@ -44,6 +44,7 @@ export function EntityCard({
               src={blobDisplayUrl(entity.imageUrl)}
               alt={`${entity.name} image`}
               className="h-full w-full object-cover"
+              style={entity.imagePosition ? { objectPosition: entity.imagePosition } : undefined}
             />
           </div>
         )}

@@ -3,8 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MoreHorizontal, Pencil, Trash2, Lock, Globe } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,56 +16,97 @@ import { PrivacyToggle } from "@/components/worlds/privacy-toggle";
 import { blobDisplayUrl } from "@/lib/utils";
 import type { World } from "@/lib/db/schema";
 
+const AVATAR_COLORS = [
+  { bg: "bg-blue-100",    text: "text-blue-800"    },
+  { bg: "bg-amber-100",   text: "text-amber-800"   },
+  { bg: "bg-emerald-100", text: "text-emerald-800" },
+  { bg: "bg-violet-100",  text: "text-violet-800"  },
+  { bg: "bg-rose-100",    text: "text-rose-800"    },
+  { bg: "bg-cyan-100",    text: "text-cyan-800"    },
+  { bg: "bg-orange-100",  text: "text-orange-800"  },
+  { bg: "bg-teal-100",    text: "text-teal-800"    },
+];
+
+function getAvatarColor(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
 export function WorldCard({ world }: { world: World }) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const avatarColor = getAvatarColor(world.name);
 
   return (
     <>
-      <Card className="overflow-hidden hover:shadow-sm transition-shadow">
-        {/* Cover image — always rendered for consistent card height */}
-        <div className="relative w-full h-32 bg-muted">
+      <div className="group rounded-xl overflow-hidden border border-border/60 bg-card hover:shadow-lg hover:border-border transition-all duration-300">
+
+        {/* Image area — full bleed with gradient overlays */}
+        <Link href={`/worlds/${world.slug}`} className="block relative h-52 bg-muted overflow-hidden">
           {world.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={blobDisplayUrl(world.imageUrl)}
               alt={`${world.name} cover`}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
           ) : (
-            <div className="h-full w-full flex items-center justify-center">
-              <span className="text-4xl font-bold text-muted-foreground/30 select-none">
+            <div className={`h-full w-full flex items-center justify-center ${avatarColor.bg}`}>
+              <span className={`text-7xl font-bold select-none opacity-30 ${avatarColor.text}`}>
                 {world.name.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
-        </div>
-        <CardContent className="p-6">
-          {/* Header row */}
-          <div className="flex items-start justify-between">
-            <div className="min-w-0 flex-1">
-              <Link
-                href={`/worlds/${world.slug}`}
-                className="text-base font-semibold hover:underline underline-offset-4"
-              >
-                {world.name}
-              </Link>
-              <p
-                className="font-mono text-sm text-muted-foreground"
-                aria-label={`World URL: /worlds/${world.slug}`}
-              >
-                /worlds/{world.slug}
-              </p>
-            </div>
+
+          {/* Top scrim — keeps menu button legible */}
+          <div className="absolute inset-x-0 top-0 h-20 bg-linear-to-b from-black/40 to-transparent pointer-events-none" />
+
+          {/* Bottom scrim — title legibility */}
+          <div className="absolute inset-x-0 bottom-0 h-3/4 bg-linear-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
+
+          {/* World name + slug */}
+          <div className="absolute inset-x-0 bottom-0 px-4 pb-4">
+            <h2 className="text-base font-semibold text-white leading-snug">
+              {world.name}
+            </h2>
+            <p className="text-[11px] text-white/55 font-mono mt-0.5">
+              /worlds/{world.slug}
+            </p>
+          </div>
+
+          {/* Privacy pill — top left */}
+          <div className="absolute top-3 left-3">
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-white/80 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full border border-white/10">
+              {world.isPublic ? <Globe size={10} /> : <Lock size={10} />}
+              {world.isPublic ? "Public" : "Private"}
+            </span>
+          </div>
+        </Link>
+
+        {/* Footer */}
+        <div className="px-4 py-3 flex items-center gap-2 min-h-12">
+          {world.description ? (
+            <p className="text-xs text-muted-foreground line-clamp-1 flex-1">
+              {world.description}
+            </p>
+          ) : (
+            <div className="flex-1" />
+          )}
+
+          <div className="flex items-center gap-1 shrink-0">
+            <PrivacyToggle worldId={world.id} isPublic={world.isPublic} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 shrink-0 ml-2"
+                  className="h-7 w-7"
                   aria-label={`World options for ${world.name}`}
                 >
-                  <MoreHorizontal size={16} />
+                  <MoreHorizontal size={14} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -85,34 +124,8 @@ export function WorldCard({ world }: { world: World }) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-
-          {/* Description */}
-          {world.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-4 mt-2">
-              {world.description}
-            </p>
-          )}
-
-          {/* Footer row */}
-          <div className="flex items-center gap-2 mt-4">
-            <Badge variant="outline" className="text-muted-foreground gap-1">
-              {world.isPublic ? (
-                <>
-                  <Globe size={12} />
-                  Public
-                </>
-              ) : (
-                <>
-                  <Lock size={12} />
-                  Private
-                </>
-              )}
-            </Badge>
-            <div className="flex-1" />
-            <PrivacyToggle worldId={world.id} isPublic={world.isPublic} />
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <EditWorldDialog world={world} open={editOpen} onOpenChange={setEditOpen} />
       <DeleteWorldDialog world={world} open={deleteOpen} onOpenChange={setDeleteOpen} />

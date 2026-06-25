@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { CreateEntityTypeDialog } from "@/components/entity-types/create-entity-type-dialog";
 import { EntityTypeRowActions } from "@/components/entity-types/entity-type-row-actions";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,11 @@ export default async function EntityTypesPage({
 
   return (
     <div className="p-8">
+      <Breadcrumb items={[
+        { label: "Your Worlds", href: "/dashboard" },
+        { label: world.name, href: `/worlds/${slug}` },
+        { label: "Entity Types" },
+      ]} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">Entity Types</h1>
         <CreateEntityTypeDialog worldId={world.id} />

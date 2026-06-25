@@ -25,6 +25,7 @@ export const UpdateWorldSchema = z.object({
     .max(500, { error: "Description must be 500 characters or fewer." })
     .optional(),
   imageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
+  backgroundImageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
 });
 
 export type CreateWorldInput = z.infer<typeof CreateWorldSchema>;

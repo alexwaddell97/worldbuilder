@@ -87,6 +87,7 @@ export async function createWorldAction(
         presetTypes.map((t) => ({
           worldId: world.id,
           name: t.name,
+          namePlural: t.namePlural ?? null,
           slug: t.slug,
           icon: t.icon,
           isBuiltIn: true,
@@ -116,18 +117,19 @@ export async function updateWorldAction(
     name: formData.get("name"),
     description: formData.get("description"),
     imageUrl: formData.get("imageUrl") || undefined,
+    backgroundImageUrl: formData.get("backgroundImageUrl") || undefined,
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, description, imageUrl } = validated.data;
+  const { name, description, imageUrl, backgroundImageUrl } = validated.data;
 
   // IDOR-safe: scope update to both worldId AND ownerId — non-owner's worldId matches zero rows
   await db
     .update(worlds)
-    .set({ name, description: description ?? null, imageUrl: imageUrl || null })
+    .set({ name, description: description ?? null, imageUrl: imageUrl || null, backgroundImageUrl: backgroundImageUrl || null })
     .where(and(eq(worlds.id, worldId), eq(worlds.ownerId, session.user.id)));
 
   // Slug is NOT regenerated on edit — URL stability after creation

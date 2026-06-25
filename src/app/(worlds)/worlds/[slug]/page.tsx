@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { WorldDetailActions } from "./world-detail-actions";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -29,14 +30,10 @@ export default async function WorldDetailPage({
 
   return (
     <div className="p-8">
-      {/* Breadcrumb */}
-      <p className="text-sm text-muted-foreground mb-4">
-        <Link href="/dashboard" className="hover:underline underline-offset-4">
-          Your Worlds
-        </Link>
-        {" / "}
-        {world.name}
-      </p>
+      <Breadcrumb items={[
+        { label: "Your Worlds", href: "/dashboard" },
+        { label: world.name },
+      ]} />
 
       {/* Header row */}
       <div className="flex items-center justify-between">

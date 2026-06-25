@@ -4,11 +4,11 @@ import { auth } from "@/lib/auth";
 import { getWorldBySlug } from "@/lib/db/queries/worlds";
 import { getEntityTypeBySlug } from "@/lib/db/queries/entity-types";
 import { getEntityBySlug } from "@/lib/db/queries/entities";
-import { Badge } from "@/components/ui/badge";
-import { DynamicIcon } from "@/components/entity-types/icon-picker";
-import { EntityDetailActions } from "@/components/entities/entity-detail-actions";
 import type { CustomFieldValues } from "@/lib/db/schema";
 import { TiptapEditor } from "@/components/tiptap/tiptap-editor";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { EntityInlineMetadata } from "@/components/entities/entity-inline-metadata";
+import { blobDisplayUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -48,42 +48,22 @@ export default async function EntityDetailPage({
   );
 
   return (
-    <div className="p-8">
-      {/* Page header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold">{entity.name}</h1>
-          <div className="flex items-center gap-2 mt-2">
-            <DynamicIcon
-              name={entityType.icon ?? ""}
-              size={14}
-              className="text-muted-foreground"
-            />
-            <span className="text-sm text-muted-foreground">
-              {entityType.name}
-            </span>
-          </div>
-        </div>
-        <EntityDetailActions
-          entity={entity}
-          entityType={entityType}
-          worldId={world.id}
-        />
-      </div>
+    <div className="p-8 min-h-full flex flex-col">
+      <Breadcrumb items={[
+        { label: "Your Worlds", href: "/dashboard" },
+        { label: world.name, href: `/worlds/${slug}` },
+        { label: entityType.name, href: `/worlds/${slug}/entities/${typeSlug}` },
+        { label: entity.name },
+      ]} />
 
-      {/* Tags */}
-      {entity.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mb-6">
-          {entity.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      )}
+      <EntityInlineMetadata
+        entity={entity}
+        entityType={entityType}
+        worldId={world.id}
+        worldSlug={slug}
+      />
 
-      {/* Content editor */}
-      <div className="mb-6">
+      <div className="flex-1 flex flex-col">
         <TiptapEditor
           entityId={entity.id}
           worldId={world.id}
@@ -91,34 +71,6 @@ export default async function EntityDetailPage({
           initialContent={entity.content}
         />
       </div>
-
-      {/* Custom fields */}
-      {fieldsWithValues.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-sm font-medium text-foreground mb-3">
-            Custom fields
-          </h2>
-          <div className="space-y-3">
-            {fieldsWithValues.map((field) => {
-              const value = customFieldValues[field.key];
-              return (
-                <div key={field.key} className="flex flex-col gap-0.5">
-                  <span className="text-xs text-muted-foreground">
-                    {field.label}
-                  </span>
-                  <span className="text-sm text-foreground">
-                    {field.type === "boolean"
-                      ? value
-                        ? "Yes"
-                        : "No"
-                      : String(value)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Tag, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { pluralize } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -77,7 +76,7 @@ export function EntityListFilters({
         />
         <Input
           className="pl-9"
-          placeholder={`Search ${pluralize(typeName)}…`}
+          placeholder={`Search ${typeName}…`}
           value={searchValue}
           onChange={handleSearchChange}
         />

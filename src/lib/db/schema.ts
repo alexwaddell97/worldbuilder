@@ -13,6 +13,7 @@ import {
   jsonb,
   index,
   real,
+  integer,
 } from "drizzle-orm/pg-core";
 
 // ─── custom field types ────────────────────────────────────────────────────────
@@ -38,6 +39,7 @@ export const worlds = pgTable(
     description: text("description"),
     isPublic: boolean("is_public").default(false).notNull(),
     imageUrl: text("image_url"),
+    backgroundImageUrl: text("background_image_url"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
   },
@@ -60,6 +62,8 @@ export const entityTypes = pgTable(
       .notNull()
       .references(() => worlds.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
+    // user-specified plural form (e.g. "People" for "Person") — falls back to auto-pluralize if null
+    namePlural: text("name_plural"),
     // machine-readable slug (e.g. "character") — unique within a world
     slug: text("slug").notNull(),
     // Lucide icon name string (e.g. "user", "map-pin") — nullable
@@ -98,6 +102,7 @@ export const entities = pgTable(
     content: jsonb("content"),
     tags: text("tags").array().default([]).notNull(),
     imageUrl: text("image_url"),
+    imagePosition: text("image_position"),
     customFields: jsonb("custom_fields")
       .$type<CustomFieldValues>()
       .default({})
@@ -172,11 +177,98 @@ export const mapPins = pgTable("map_pins", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ─── entity_relations (Phase 5) ───────────────────────────────────────────────
+
+export const entityRelations = pgTable(
+  "entity_relations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id, { onDelete: "cascade" }),
+    sourceEntityId: uuid("source_entity_id")
+      .notNull()
+      .references(() => entities.id, { onDelete: "cascade" }),
+    targetEntityId: uuid("target_entity_id")
+      .notNull()
+      .references(() => entities.id, { onDelete: "cascade" }),
+    // free-text label: "father", "ally", "serves", etc.
+    label: text("label").notNull().default("related"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    worldIdx: index("entity_relations_world_id_idx").on(table.worldId),
+    sourceIdx: index("entity_relations_source_entity_id_idx").on(table.sourceEntityId),
+  })
+);
+
+// ─── world_graph_settings ─────────────────────────────────────────────────────
+
+export const worldGraphSettings = pgTable("world_graph_settings", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  worldId: uuid("world_id")
+    .notNull()
+    .references(() => worlds.id, { onDelete: "cascade" })
+    .unique(),
+  nodePositions: jsonb("node_positions")
+    .$type<Record<string, { x: number; y: number }>>()
+    .default({})
+    .notNull(),
+  hiddenEntityIds: text("hidden_entity_ids").array().default([]).notNull(),
+  hiddenTypeIds: text("hidden_type_ids").array().default([]).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
+});
+
+// ─── writing_projects ─────────────────────────────────────────────────────────
+
+export const writingProjects = pgTable(
+  "writing_projects",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    position: integer("position").default(0).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
+  },
+  (t) => ({
+    worldSlugUnique: unique("writing_projects_world_id_slug_unique").on(t.worldId, t.slug),
+  })
+);
+
+// ─── writing_documents ────────────────────────────────────────────────────────
+
+export const writingDocuments = pgTable(
+  "writing_documents",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    worldId: uuid("world_id")
+      .notNull()
+      .references(() => worlds.id, { onDelete: "cascade" }),
+    projectId: uuid("project_id").references(() => writingProjects.id, { onDelete: "set null" }),
+    title: text("title").notNull().default("Untitled"),
+    slug: text("slug").notNull(),
+    content: jsonb("content"),
+    wordCount: integer("word_count").default(0).notNull(),
+    wordTarget: integer("word_target"),
+    position: integer("position").default(0).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
+  },
+  (t) => ({
+    worldSlugUnique: unique("writing_documents_world_id_slug_unique").on(t.worldId, t.slug),
+    worldIdx: index("writing_documents_world_id_idx").on(t.worldId),
+  })
+);
+
 // ─── exports ──────────────────────────────────────────────────────────────────
 
 export * from "./auth-schema";
 
-export const appSchema = { worlds, entityTypes, entities, maps, mapPins };
+export const appSchema = { worlds, entityTypes, entities, maps, mapPins, entityRelations, worldGraphSettings, writingProjects, writingDocuments };
 export type AppSchema = typeof appSchema;
 
 export type World = typeof worlds.$inferSelect;
@@ -189,3 +281,10 @@ export type NewMap = typeof maps.$inferInsert;
 export type MapPin = typeof mapPins.$inferSelect;
 export type NewMapPin = typeof mapPins.$inferInsert;
 export type NewEntity = typeof entities.$inferInsert;
+export type EntityRelation = typeof entityRelations.$inferSelect;
+export type NewEntityRelation = typeof entityRelations.$inferInsert;
+export type WorldGraphSettings = typeof worldGraphSettings.$inferSelect;
+export type WritingProject = typeof writingProjects.$inferSelect;
+export type NewWritingProject = typeof writingProjects.$inferInsert;
+export type WritingDocument = typeof writingDocuments.$inferSelect;
+export type NewWritingDocument = typeof writingDocuments.$inferInsert;

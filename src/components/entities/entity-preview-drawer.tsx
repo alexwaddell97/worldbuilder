@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { ReadOnlyContent } from "@/components/entities/read-only-content";
 import { blobDisplayUrl } from "@/lib/utils";
@@ -21,9 +22,11 @@ import type { CustomFieldValues } from "@/lib/db/schema";
 
 interface EntityPreviewDrawerProps {
   entity: Entity | null;
-  entityType: EntityType;
+  entityType: EntityType | null;
   worldSlug: string;
   open: boolean;
+  loading?: boolean;
+  hideOverlay?: boolean;
   onClose: () => void;
 }
 
@@ -32,6 +35,8 @@ export function EntityPreviewDrawer({
   entityType,
   worldSlug,
   open,
+  loading = false,
+  hideOverlay = false,
   onClose,
 }: EntityPreviewDrawerProps) {
   const [linkedEntity, setLinkedEntity] = useState<Entity | null>(null);
@@ -58,7 +63,28 @@ export function EntityPreviewDrawer({
     onClose();
   }
 
-  if (!activeEntity) return null;
+  if (!open) return null;
+
+  if (loading || !activeEntity || !activeEntityType) {
+    return (
+      <Sheet open={open} onOpenChange={(v) => !v && handleClose()}>
+        <SheetContent side="right" className="w-full sm:max-w-md flex flex-col p-0 gap-0 overflow-hidden border-0" hideOverlay={hideOverlay}>
+          <div className="flex-1 overflow-y-auto px-6 py-8 space-y-5">
+            <div className="h-8" />
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/3" />
+            <Separator />
+            <div className="space-y-3">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-4/6" />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   const editHref = `/worlds/${worldSlug}/entities/${activeEntityType.slug}/${activeEntity.slug}`;
   const customFieldValues = activeEntity.customFields as CustomFieldValues;
@@ -74,6 +100,7 @@ export function EntityPreviewDrawer({
       <SheetContent
         side="right"
         className="w-full sm:max-w-md flex flex-col p-0 gap-0 overflow-hidden border-0"
+        hideOverlay={hideOverlay}
       >
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto">
@@ -85,6 +112,7 @@ export function EntityPreviewDrawer({
                 src={blobDisplayUrl(activeEntity.imageUrl)}
                 alt={activeEntity.name}
                 className="h-full w-full object-cover"
+                style={activeEntity.imagePosition ? { objectPosition: activeEntity.imagePosition } : undefined}
               />
               {/* Top fade — keeps the sheet close button legible */}
               <div className="absolute inset-x-0 top-0 h-16 bg-linear-to-b from-background/70 to-transparent pointer-events-none" />
@@ -103,7 +131,7 @@ export function EntityPreviewDrawer({
                 <Button asChild size="sm" variant="outline" className="shrink-0 h-8 gap-1.5 text-xs">
                   <Link href={editHref}>
                     <Pencil size={12} />
-                    Open editor
+                    Edit
                   </Link>
                 </Button>
               </div>

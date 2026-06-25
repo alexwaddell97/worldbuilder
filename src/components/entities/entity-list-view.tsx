@@ -49,6 +49,7 @@ export function EntityListView({ entities, entityType, worldSlug }: EntityListVi
                   src={blobDisplayUrl(entity.imageUrl)}
                   alt=""
                   className="h-full w-full object-cover"
+                  style={entity.imagePosition ? { objectPosition: entity.imagePosition } : undefined}
                 />
               ) : (
                 <DynamicIcon

@@ -26,7 +26,7 @@ export function EditEntityDialog({
   open,
   onOpenChange,
 }: EditEntityDialogProps) {
-  const boundAction = updateEntityAction.bind(null, entity.id, worldId);
+  const boundAction = updateEntityAction.bind(null, entity.id, worldId, "", "");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -41,6 +41,7 @@ export function EditEntityDialog({
             tags: entity.tags,
             customFields: entity.customFields as CustomFieldValues,
             imageUrl: entity.imageUrl,
+            imagePosition: entity.imagePosition,
           }}
           customFieldDefs={entityType.customFieldsSchema.fields}
           submitLabel="Save changes"

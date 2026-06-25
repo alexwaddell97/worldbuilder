@@ -46,6 +46,7 @@ export async function createEntityTypeAction(
 
   const validated = CreateEntityTypeSchema.safeParse({
     name: formData.get("name"),
+    namePlural: formData.get("namePlural") || undefined,
     icon: formData.get("icon") || undefined,
   });
 
@@ -53,7 +54,7 @@ export async function createEntityTypeAction(
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, icon } = validated.data;
+  const { name, namePlural, icon } = validated.data;
   const slug = slugify(name, { lower: true, strict: true });
 
   // Check slug uniqueness within this world
@@ -70,6 +71,7 @@ export async function createEntityTypeAction(
   await db.insert(entityTypes).values({
     worldId: verified,
     name,
+    namePlural: namePlural ?? null,
     slug,
     icon: icon ?? null,
     isBuiltIn: false,
@@ -97,6 +99,7 @@ export async function updateEntityTypeAction(
 
   const validated = CreateEntityTypeSchema.safeParse({
     name: formData.get("name"),
+    namePlural: formData.get("namePlural") || undefined,
     icon: formData.get("icon") || undefined,
   });
 
@@ -104,13 +107,13 @@ export async function updateEntityTypeAction(
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, icon } = validated.data;
+  const { name, namePlural, icon } = validated.data;
 
   // Slug is NOT regenerated on edit (URL stability).
   // IDOR-safe: scope update to entityTypeId + worldId.
   await db
     .update(entityTypes)
-    .set({ name, icon: icon ?? null })
+    .set({ name, namePlural: namePlural ?? null, icon: icon ?? null })
     .where(
       and(
         eq(entityTypes.id, entityTypeId),

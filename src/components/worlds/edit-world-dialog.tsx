@@ -26,7 +26,7 @@ export function EditWorldDialog({ world, open, onOpenChange }: EditWorldDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Edit world</DialogTitle>
           <DialogDescription>
@@ -39,6 +39,7 @@ export function EditWorldDialog({ world, open, onOpenChange }: EditWorldDialogPr
             name: world.name,
             description: world.description ?? "",
             imageUrl: world.imageUrl,
+            backgroundImageUrl: world.backgroundImageUrl,
           }}
           fixedSlug={world.slug}
           submitLabel="Save Changes"

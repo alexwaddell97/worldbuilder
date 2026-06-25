@@ -8,6 +8,7 @@ import { EntityListView } from "@/components/entities/entity-list-view";
 import { CreateEntityDialog } from "@/components/entities/create-entity-dialog";
 import { EntityListFilters } from "@/components/entities/entity-list-filters";
 import { pluralize } from "@/lib/utils";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -43,9 +44,14 @@ export default async function EntityListPage({
 
   return (
     <div className="p-8 max-w-3xl mx-auto">
+      <Breadcrumb items={[
+        { label: "Your Worlds", href: "/dashboard" },
+        { label: world.name, href: `/worlds/${slug}` },
+        { label: entityType.namePlural ?? pluralize(entityType.name) },
+      ]} />
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">{pluralize(entityType.name)}</h1>
+        <h1 className="text-2xl font-semibold">{entityType.namePlural ?? pluralize(entityType.name)}</h1>
         <CreateEntityDialog worldId={world.id} entityType={entityType} />
       </div>
 
@@ -53,7 +59,7 @@ export default async function EntityListPage({
       <EntityListFilters
         typeSlug={typeSlug}
         worldSlug={slug}
-        typeName={entityType.name}
+        typeName={entityType.namePlural ?? pluralize(entityType.name)}
         currentSearch={q}
         currentTag={tag}
         availableTags={availableTags}
@@ -70,8 +76,8 @@ export default async function EntityListPage({
         <div className="flex flex-col items-center justify-center py-16 gap-4">
           <p className="text-sm font-medium text-foreground">
             {q || tag
-              ? `No ${pluralize(entityType.name)} match your filters`
-              : `No ${pluralize(entityType.name)} yet`}
+              ? `No ${entityType.namePlural ?? pluralize(entityType.name)} match your filters`
+              : `No ${entityType.namePlural ?? pluralize(entityType.name)} yet`}
           </p>
           <p className="text-sm text-muted-foreground">
             {q || tag

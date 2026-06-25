@@ -33,7 +33,7 @@ export function EditEntityTypeDialog({
         </DialogHeader>
         <EntityTypeForm
           action={boundAction}
-          initialValues={{ name: entityType.name, icon: entityType.icon ?? "" }}
+          initialValues={{ name: entityType.name, namePlural: entityType.namePlural ?? "", icon: entityType.icon ?? "" }}
           submitLabel="Save changes"
           pendingLabel="Saving…"
           onSuccess={() => onOpenChange(false)}

@@ -51,7 +51,7 @@ export function CreateWorldDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className={cn("transition-all", step === "preset" ? "max-w-2xl" : "max-w-md")}>
+      <DialogContent className="max-w-2xl transition-all">
         {step === "preset" ? (
           <>
             <DialogHeader>

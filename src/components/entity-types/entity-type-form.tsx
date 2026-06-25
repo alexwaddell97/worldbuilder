@@ -13,7 +13,7 @@ interface EntityTypeFormProps {
     prevState: EntityTypeActionState,
     formData: FormData
   ) => Promise<EntityTypeActionState>;
-  initialValues?: { name: string; icon?: string };
+  initialValues?: { name: string; namePlural?: string; icon?: string };
   submitLabel: string;
   pendingLabel: string;
   onSuccess?: () => void;
@@ -66,6 +66,23 @@ export function EntityTypeForm({
         {state.errors?.name && (
           <p id="et-name-error" className="text-sm text-destructive">
             {state.errors.name[0]}
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="et-name-plural">Plural name</Label>
+        <Input
+          id="et-name-plural"
+          name="namePlural"
+          maxLength={50}
+          defaultValue={initialValues?.namePlural ?? ""}
+          placeholder={`e.g. People, Locations, Factions`}
+          aria-describedby={state.errors?.namePlural ? "et-name-plural-error" : undefined}
+        />
+        {state.errors?.namePlural && (
+          <p id="et-name-plural-error" className="text-sm text-destructive">
+            {state.errors.namePlural[0]}
           </p>
         )}
       </div>

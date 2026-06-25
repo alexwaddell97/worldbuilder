@@ -19,7 +19,7 @@ function deriveSlugPreview(name: string): string {
 
 interface WorldFormProps {
   action: (prevState: WorldActionState, formData: FormData) => Promise<WorldActionState>;
-  initialValues?: { name: string; description: string; imageUrl?: string | null };
+  initialValues?: { name: string; description: string; imageUrl?: string | null; backgroundImageUrl?: string | null };
   /** When provided (edit mode), the slug is shown as-is and never re-derived from the name. */
   fixedSlug?: string;
   /** Preset ID to include as a hidden field (create mode only). */
@@ -49,59 +49,70 @@ export function WorldForm({
   }, [state.message, onSuccess]);
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} className="space-y-5">
       {preset && <input type="hidden" name="preset" value={preset} />}
-      {initialValues && (
+
+      {/* Images — side by side */}
+      <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label>Cover image</Label>
-          <ImageUpload name="imageUrl" currentUrl={initialValues?.imageUrl} />
+          <Label>Cover image</Label>            <p className="text-xs text-muted-foreground">Shown on your world card and in the sidebar.</p>          <ImageUpload name="imageUrl" currentUrl={initialValues?.imageUrl} />
         </div>
-      )}
-      <div className="space-y-1.5">
-        <Label htmlFor="name">World name</Label>
-        <Input
-          id="name"
-          name="name"
-          placeholder="e.g. The Shattered Realm"
-          autoFocus
-          maxLength={100}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          aria-describedby={state.errors?.name ? "name-error" : undefined}
-        />
-        {state.errors?.name && (
-          <p id="name-error" className="text-sm text-destructive mt-1">
-            {state.errors.name[0]}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          name="description"
-          placeholder="What is this world about? (optional)"
-          rows={3}
-          maxLength={500}
-          defaultValue={initialValues?.description ?? ""}
-          aria-describedby={state.errors?.description ? "description-error" : undefined}
-        />
-        {state.errors?.description && (
-          <p id="description-error" className="text-sm text-destructive mt-1">
-            {state.errors.description[0]}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <p className="text-xs text-muted-foreground mb-1">URL slug</p>
-        <div className="bg-muted rounded-md px-3 py-2 text-sm font-mono text-muted-foreground">
-          /worlds/{slugPreview || "…"}
+        <div className="space-y-1.5">
+          <Label>Background image</Label>
+            <p className="text-xs text-muted-foreground">Faded backdrop inside your world.</p>
+          <ImageUpload name="backgroundImageUrl" currentUrl={initialValues?.backgroundImageUrl} />
         </div>
       </div>
 
-      <div className="flex justify-end gap-2 pt-2">
+      {/* Name + Description — side by side */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="name">World name</Label>
+            <Input
+              id="name"
+              name="name"
+              placeholder="e.g. The Shattered Realm"
+              autoFocus
+              maxLength={100}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              aria-describedby={state.errors?.name ? "name-error" : undefined}
+            />
+            {state.errors?.name && (
+              <p id="name-error" className="text-sm text-destructive">
+                {state.errors.name[0]}
+              </p>
+            )}
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">URL slug</p>
+            <div className="bg-muted rounded-md px-3 py-2 text-sm font-mono text-muted-foreground truncate">
+              /worlds/{slugPreview || "…"}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            name="description"
+            placeholder="What is this world about? (optional)"
+            rows={4}
+            maxLength={500}
+            defaultValue={initialValues?.description ?? ""}
+            aria-describedby={state.errors?.description ? "description-error" : undefined}
+          />
+          {state.errors?.description && (
+            <p id="description-error" className="text-sm text-destructive">
+              {state.errors.description[0]}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2 pt-1">
         <Button type="button" variant="outline" onClick={onSuccess}>
           Discard
         </Button>

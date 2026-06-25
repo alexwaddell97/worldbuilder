@@ -18,7 +18,7 @@ interface EntityFormProps {
     prevState: EntityActionState,
     formData: FormData
   ) => Promise<EntityActionState>;
-  initialValues?: { name: string; tags: string[]; customFields?: CustomFieldValues; imageUrl?: string | null };
+  initialValues?: { name: string; tags: string[]; customFields?: CustomFieldValues; imageUrl?: string | null; imagePosition?: string | null };
   customFieldDefs?: CustomFieldDef[];
   submitLabel: string;
   pendingLabel: string;
@@ -71,7 +71,7 @@ export function EntityForm({
 
       <div className="space-y-1.5">
         <Label>Image</Label>
-        <ImageUpload name="imageUrl" currentUrl={initialValues?.imageUrl} />
+        <ImageUpload name="imageUrl" currentUrl={initialValues?.imageUrl} currentPosition={initialValues?.imagePosition} />
       </div>
 
       <div className="space-y-1.5">
@@ -110,7 +110,7 @@ export function EntityForm({
                 <button
                   type="button"
                   onClick={() => removeTag(tag)}
-                  className="ml-1 text-muted-foreground hover:text-foreground transition-colors"
+                  className="ml-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   <X size={10} />
                 </button>

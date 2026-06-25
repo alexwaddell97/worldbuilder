@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import { Ubuntu } from "next/font/google";
 import "./global.css";
 import { APP_NAME, APP_TAGLINE } from "@/config/app";
+import { Toaster } from "@/components/ui/sonner";
 
 const ubuntu = Ubuntu({
   weight: ["300", "400", "500"],
@@ -28,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} ${ubuntu.variable}`}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">{children}<Toaster /></body>
     </html>
   );
 }

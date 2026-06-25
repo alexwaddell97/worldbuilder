@@ -7,6 +7,7 @@ import { CreateMapDialog } from "@/components/maps/create-map-dialog";
 import Link from "next/link";
 import { Map as MapIcon, ImageOff } from "lucide-react";
 import { blobDisplayUrl } from "@/lib/utils";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,11 @@ export default async function MapsPage({
 
   return (
     <div className="p-8">
+      <Breadcrumb items={[
+        { label: "Your Worlds", href: "/dashboard" },
+        { label: world.name, href: `/worlds/${slug}` },
+        { label: "Maps" },
+      ]} />
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Maps</h1>

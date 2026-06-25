@@ -71,6 +71,7 @@ export function MapPinFloatingPanel({
   const [error, setError] = useState<string | null>(null);
   const [iconsExpanded, setIconsExpanded] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const selectOpenRef = useRef(false);
 
   // Reset form when existingPin changes
   useEffect(() => {
@@ -81,11 +82,14 @@ export function MapPinFloatingPanel({
     setColor(existingPin?.color ?? "#3b82f6");
   }, [existingPin]);
 
-  // Close on outside click
+  // Close on outside click — but ignore clicks while a Select dropdown is open
   useEffect(() => {
     function handlePointerDown(e: PointerEvent) {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        onClose();
+      if (selectOpenRef.current) return;
+      const target = e.target as Node;
+      if (panelRef.current && !panelRef.current.contains(target)) {
+        const inPortal = (e.target as Element)?.closest?.("[data-radix-popper-content-wrapper]");
+        if (!inPortal) onClose();
       }
     }
     document.addEventListener("pointerdown", handlePointerDown);
@@ -165,6 +169,7 @@ export function MapPinFloatingPanel({
           </Label>
           <Select
             value={entityId}
+            onOpenChange={(open) => { selectOpenRef.current = open; }}
             onValueChange={(v) => {
               setEntityId(v);
               if (v !== NONE_VALUE) setLinkedMapId(NONE_VALUE);
@@ -194,6 +199,7 @@ export function MapPinFloatingPanel({
           </Label>
           <Select
             value={linkedMapId}
+            onOpenChange={(open) => { selectOpenRef.current = open; }}
             onValueChange={(v) => {
               setLinkedMapId(v);
               if (v !== NONE_VALUE) setEntityId(NONE_VALUE);

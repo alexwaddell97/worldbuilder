@@ -341,6 +341,7 @@ export function MapViewer({
           entityType={drawerEntityType}
           worldSlug={worldSlug}
           open={drawerOpen}
+          hideOverlay
           onClose={() => {
             setDrawerOpen(false);
             setDrawerEntity(null);

@@ -1,0 +1,1 @@
+ALTER TABLE "entity_types" ADD COLUMN "name_plural" text;

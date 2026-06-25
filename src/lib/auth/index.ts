@@ -4,12 +4,14 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { twoFactor } from "better-auth/plugins";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
+import * as authSchema from "@/lib/db/auth-schema";
 import { sendVerificationEmail } from "@/lib/email";
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, { provider: "pg", schema }),
+  database: drizzleAdapter(db, { provider: "pg", schema: { ...schema, ...authSchema } }),
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL!,
   emailAndPassword: {
@@ -28,7 +30,8 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
-  plugins: [nextCookies()],
+  appName: "Subcreation",
+  plugins: [nextCookies(), twoFactor({ issuer: "Subcreation" })],
 });
 
 export type Session = typeof auth.$Infer.Session;

@@ -39,6 +39,9 @@ import {
   FileCode2,
   HelpCircle,
   Link2,
+  Maximize2,
+  Minimize2,
+  AlignCenter,
 } from "lucide-react";
 
 interface TiptapEditorProps {
@@ -66,6 +69,10 @@ export function TiptapEditor({
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [, startTransition] = useTransition();
+  const [wordCount, setWordCount] = useState(0);
+  const [focusMode, setFocusMode] = useState(false);
+  const [typewriterMode, setTypewriterMode] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isMarkdownMode, setIsMarkdownMode] = useState(false);
   const [markdownContent, setMarkdownContent] = useState("");
   const isSwitchingRef = useRef(false);
@@ -143,19 +150,17 @@ export function TiptapEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm dark:prose-invert max-w-none focus:outline-none min-h-[200px] p-4",
+          "prose prose-sm dark:prose-invert max-w-none focus:outline-none flex-1 p-4",
       },
     },
-    onBlur: ({ editor: e }: any) => {
-      // Don't save on blur if we're switching modes — the mode switch handles saving
-      if (isSwitchingRef.current) return;
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      save(e.getJSON());
+    onBlur: () => {
+      // Content saved via top Save button
     },
     onUpdate: ({ editor: e }: any) => {
       syncEditorRef(e);
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      saveTimeoutRef.current = setTimeout(() => save(e.getJSON()), 2000);
+      const text = e.getText();
+      setWordCount(text.trim() ? text.trim().split(/\s+/).length : 0);
+      window.dispatchEvent(new CustomEvent("entity-content-dirty"));
     },
   });
 
@@ -180,10 +185,53 @@ export function TiptapEditor({
     requestAnimationFrame(() => { isSwitchingRef.current = false; });
   }
 
+  // Typewriter scroll — keep cursor near 40% from top
+  useEffect(() => {
+    if (!editor || !typewriterMode) return;
+    function scrollToCursor() {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      const { from } = editor!.state.selection;
+      const coords = editor!.view.coordsAtPos(from);
+      const rect = container.getBoundingClientRect();
+      container.scrollTop = container.scrollTop + coords.top - rect.top - rect.height * 0.4;
+    }
+    editor.on("selectionUpdate", scrollToCursor);
+    return () => { editor.off("selectionUpdate", scrollToCursor); };
+  }, [editor, typewriterMode]);
+
+  // Sync focus mode with fullscreen
+  useEffect(() => {
+    if (focusMode) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }, [focusMode]);
+
+  useEffect(() => {
+    function onFullscreenChange() {
+      if (!document.fullscreenElement) setFocusMode(false);
+    }
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  // Listen for top-level Save button triggering content save
+  useEffect(() => {
+    function handleSaveRequest() {
+      const content = isMarkdownMode
+        ? (editorRef.current as any)?.markdown?.parse?.(markdownContent) ?? editorRef.current?.getJSON()
+        : editorRef.current?.getJSON();
+      if (content) save(content);
+    }
+    window.addEventListener("entity-save", handleSaveRequest);
+    return () => window.removeEventListener("entity-save", handleSaveRequest);
+  }, [save, isMarkdownMode, markdownContent]);
+
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      // Flush any pending save when navigating away
       const currentEditor = editorRef.current;
       if (currentEditor) {
         const serializable = JSON.parse(JSON.stringify(currentEditor.getJSON()));
@@ -195,15 +243,12 @@ export function TiptapEditor({
   const saveStatusText =
     saveStatus === "saving"
       ? "Saving…"
-      : saveStatus === "saved"
-        ? "Saved"
-        : saveStatus === "error"
-          ? "Error saving"
-          : null;
+      : saveStatus === "error"
+        ? "Error saving"
+        : null;
 
-  return (
-    <TooltipProvider delayDuration={400}>
-    <div className="relative rounded-lg border border-border overflow-hidden">
+  const editorShell = (
+    <div className="relative flex flex-col flex-1 overflow-hidden bg-background/40 backdrop-blur-sm rounded-lg border border-border">
       {/* Toolbar */}
       <div className="flex items-center justify-between px-2 py-1.5 border-b border-border bg-muted/30 flex-wrap gap-y-1">
         {isMarkdownMode ? (
@@ -291,23 +336,23 @@ export function TiptapEditor({
       </div>
 
       {/* Editor or markdown textarea */}
-      {isMarkdownMode ? (
-        <textarea
-          className="w-full min-h-50 p-4 text-sm font-mono bg-background resize-none focus:outline-none"
-          value={markdownContent}
-          onChange={(e) => {
-            setMarkdownContent(e.target.value);
-            if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-            saveTimeoutRef.current = setTimeout(() => {
-              if (!editor) return;
-              const json = (editor as any).markdown?.parse?.(e.target.value);
-              if (json) save(json);
-            }, 2000);
-          }}
-        />
-      ) : (
-        <EditorContent editor={editor} />
-      )}
+      <div
+        ref={scrollContainerRef}
+        className={`flex-1 flex flex-col overflow-y-auto ${typewriterMode ? "pb-[50vh]" : ""}`}
+      >
+        {isMarkdownMode ? (
+          <textarea
+            className="w-full flex-1 p-4 text-sm font-mono bg-background resize-none focus:outline-none min-h-full"
+            value={markdownContent}
+            onChange={(e) => {
+              setMarkdownContent(e.target.value);
+              window.dispatchEvent(new CustomEvent("entity-content-dirty"));
+            }}
+          />
+        ) : (
+          <EditorContent editor={editor} className="flex-1 flex flex-col [&_.tiptap]:flex-1" />
+        )}
+      </div>
 
       {/* Wikilink autocomplete dropdown */}
       {suggestionProps !== null &&
@@ -331,9 +376,60 @@ export function TiptapEditor({
           </div>,
           document.body
         )}
+
+      {/* Status bar */}
+      <div className="shrink-0 flex items-center gap-3 px-4 py-1.5 border-t border-border text-xs text-muted-foreground">
+        <span>{wordCount.toLocaleString()} {wordCount === 1 ? "word" : "words"}</span>
+        <span className="text-border">·</span>
+        <span>{Math.max(1, Math.round(wordCount / 200))} min read</span>
+        <div className="flex-1" />
+        {saveStatusText && <span>{saveStatusText}</span>}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => setTypewriterMode((v) => !v)}
+              className={`h-5 w-5 flex items-center justify-center rounded transition-colors cursor-pointer ${
+                typewriterMode ? "text-primary bg-primary/10" : "hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              <AlignCenter className="h-3.5 w-3.5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            {typewriterMode ? "Disable typewriter scroll" : "Typewriter scroll"}
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => setFocusMode((v) => !v)}
+              className="h-5 w-5 flex items-center justify-center rounded hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            >
+              {focusMode ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">
+            {focusMode ? "Exit focus mode" : "Focus mode"}
+          </TooltipContent>
+        </Tooltip>
+      </div>
     </div>
-    </TooltipProvider>
   );
+
+  if (focusMode && typeof document !== "undefined") {
+    return createPortal(
+      <TooltipProvider delayDuration={400}>
+        <div className="fixed inset-0 z-9999 bg-background flex flex-col">
+          {editorShell}
+        </div>
+      </TooltipProvider>,
+      document.body
+    );
+  }
+
+  return <TooltipProvider delayDuration={400}>{editorShell}</TooltipProvider>;
 }
 
 import { DynamicIcon } from "@/components/entity-types/icon-picker";

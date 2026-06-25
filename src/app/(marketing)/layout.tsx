@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { AppWordmark } from "@/components/ui/app-wordmark";
+import { APP_COPYRIGHT_YEAR } from "@/config/app";
+import { LogoLink } from "@/components/marketing/logo-link";
+import { AnchorNavLink } from "@/components/marketing/anchor-nav-link";
 
 export default function MarketingLayout({
   children,
@@ -8,36 +11,30 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border">
+      <header className="fixed top-0 inset-x-0 z-10 bg-background/40 backdrop-blur-sm border-b border-border">
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center">
-              <AppWordmark />
-            </Link>
+            <LogoLink />
             <span className="hidden md:block w-px h-5 bg-border" />
             <span className="hidden md:block text-xs text-muted-foreground">
               Tolkien&apos;s word for the act of world-making.
             </span>
           </div>
           <nav className="flex items-center gap-6">
-            <a
-              href="#features"
+            <AnchorNavLink
+              href="/#features"
+              anchor="features"
               className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              How it works
-            </a>
-            <a
-              href="#data-ownership"
+            </AnchorNavLink>
+            <AnchorNavLink
+              href="/#data-ownership"
+              anchor="data-ownership"
               className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Data ownership
-            </a>
+            </AnchorNavLink>
             <Link
               href="/pricing"
               className="hidden md:block text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -60,6 +57,22 @@ export default function MarketingLayout({
         </div>
       </header>
       <main className="marketing-content">{children}</main>
+      <footer className="py-12 border-t border-border">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="text-lg text-foreground"><AppWordmark /></p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Your world. Your data. Always.
+            </p>
+          </div>
+          <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a>
+            <a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a>
+            <a href="/cookies" className="hover:text-foreground transition-colors">Cookies</a>
+            <span className="flex items-center gap-1.5">© {APP_COPYRIGHT_YEAR} <AppWordmark height={16} /></span>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }

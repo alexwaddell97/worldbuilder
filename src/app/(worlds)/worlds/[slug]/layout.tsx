@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { getWorldBySlug } from "@/lib/db/queries/worlds";
 import { getEntityTypesByWorld } from "@/lib/db/queries/entity-types";
 import { Sidebar } from "@/components/layout/sidebar";
+import { blobDisplayUrl } from "@/lib/utils";
 
 export default async function WorldLayout({
   params,
@@ -24,9 +25,28 @@ export default async function WorldLayout({
 
   return (
     <div className="flex h-screen overflow-hidden">
+      {world.backgroundImageUrl && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundImage: `url(${blobDisplayUrl(world.backgroundImageUrl)})`,
+            backgroundSize: "100% auto",
+            backgroundPosition: "bottom center",
+            backgroundRepeat: "no-repeat",
+            maskImage: "linear-gradient(to top, black 0%, black 20%, transparent 60%)",
+            WebkitMaskImage: "linear-gradient(to top, black 0%, black 20%, transparent 60%)",
+            opacity: 0.55,
+            pointerEvents: "none",
+            zIndex: -1,
+          }}
+        />
+      )}
       <Sidebar
         worldSlug={slug}
         worldName={world.name}
+        worldImageUrl={world.imageUrl}
         worldEntityTypes={entityTypes}
       />
       <main className="flex-1 overflow-y-auto">{children}</main>

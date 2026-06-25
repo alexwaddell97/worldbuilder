@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signUp, signIn } from "@/lib/auth/client";
 import { GoogleIcon } from "@/components/ui/google-icon";
+import { ChevronRight } from "lucide-react";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -46,8 +47,8 @@ export default function SignupPage() {
           <span className="font-medium text-foreground">{email}</span>.
           Click the link to activate your account, then sign in.
         </p>
-        <Link href="/login" className="mt-4 block text-sm text-muted-foreground hover:text-foreground">
-          Back to sign in →
+        <Link href="/login" className="mt-4 inline-flex items-center gap-0.5 text-sm text-muted-foreground hover:text-foreground">
+          Back to sign in <ChevronRight size={12} />
         </Link>
       </div>
     );
@@ -128,8 +129,8 @@ export default function SignupPage() {
 
       <p className="mt-4 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="text-foreground hover:underline font-medium">
-          Sign in →
+        <Link href="/login" className="text-foreground hover:underline font-medium inline-flex items-center gap-0.5">
+          Sign in <ChevronRight size={12} />
         </Link>
       </p>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import { APP_COPYRIGHT_YEAR } from "@/config/app";
 import { useState, useEffect } from "react";
 
@@ -31,10 +31,16 @@ const tiers = [
     features: [
       "1 world",
       "Up to 100 entities",
-      "Custom entity types",
-      "Rich text editor",
-      "Wikilinks between entities",
-      "Obsidian export",
+      "Unlimited custom entity types",
+      "Custom fields per entity type",
+      "1 interactive map with pins",
+      "500MB image storage",
+      "Rich text editor with wikilinks",
+      "Relationship graph explorer",
+      "Writing workspace",
+      "Session & document word goals",
+      "Distraction-free focus mode",
+      "Markdown export",
     ],
   },
   {
@@ -49,13 +55,16 @@ const tiers = [
     features: [
       "Unlimited worlds",
       "Unlimited entities",
-      "Custom entity types",
-      "Rich text editor",
-      "Wikilinks between entities",
-      "Obsidian export",
-      "Interactive maps",
-      "Collaborators",
-      "AI features (coming soon)",
+      "Unlimited custom entity types",
+      "Custom fields per entity type",
+      "Unlimited interactive maps with pins",
+      "Unlimited image storage",
+      "Rich text editor with wikilinks",
+      "Relationship graph explorer",
+      "Writing workspace with projects",
+      "Session & document word goals",
+      "Distraction-free focus mode",
+      "Markdown export",
       "Priority support",
     ],
   },
@@ -64,7 +73,7 @@ const tiers = [
     pricingKey: null as null,
     priceDetail: "forever",
     description:
-      "Run Sub-creation locally as a desktop app. Your files, your machine, no subscription.",
+      "Run Subcreation locally as a desktop app. Your files, your machine, no subscription.",
     cta: "Join the waitlist",
     ctaHref: "/signup",
     highlighted: false,
@@ -174,7 +183,7 @@ export default function PricingPage() {
                   }`}
                 >
                   {tier.cta}
-                  <ArrowRight size={14} />
+                  <ChevronRight size={14} />
                 </Link>
 
                 <ul className="space-y-2.5">
@@ -198,20 +207,73 @@ export default function PricingPage() {
 
         {/* Footer note */}
         <p className="text-center text-sm text-muted-foreground mt-12">
-          All plans include Obsidian export — your data is always yours.{" "}
+          All plans include Markdown export. Your data is always yours.{" "}
           <Link
             href="/#data-ownership"
             className="underline underline-offset-4 hover:text-foreground transition-colors"
           >
-            Learn more about data ownership →
+            Learn more about data ownership <ChevronRight size={12} className="inline" />
           </Link>
         </p>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 border-t border-border text-center text-sm text-muted-foreground">
-        © {APP_COPYRIGHT_YEAR} Sub-creation
-      </footer>
+      {/* Feature comparison table */}
+      <section className="pb-24 max-w-4xl mx-auto px-6 w-full">
+        <h2 className="text-xl font-semibold text-center text-foreground mb-8">
+          Compare plans
+        </h2>
+        <div className="rounded-lg border border-border overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/50">
+                <th className="text-left px-6 py-4 font-medium text-muted-foreground w-1/2">Feature</th>
+                <th className="text-center px-4 py-4 font-medium text-muted-foreground">Scribe</th>
+                <th className="text-center px-4 py-4 font-medium text-foreground">Loremaster</th>
+                <th className="text-center px-4 py-4 font-medium text-muted-foreground">Codex</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { label: "Worlds", scribe: "1", loremaster: "Unlimited", codex: "Unlimited" },
+                { label: "Entities", scribe: "Up to 100", loremaster: "Unlimited", codex: "Unlimited" },
+                { label: "Custom entity types", scribe: true, loremaster: true, codex: true },
+                { label: "Custom fields per entity type", scribe: true, loremaster: true, codex: true },
+                { label: "Interactive maps", scribe: "1", loremaster: "Unlimited", codex: "Unlimited" },
+                { label: "Map pins linked to entities", scribe: true, loremaster: true, codex: true },
+                { label: "Image storage", scribe: "500MB", loremaster: "Unlimited", codex: "Local" },
+                { label: "Rich text editor", scribe: true, loremaster: true, codex: true },
+                { label: "Wikilinks between entities", scribe: true, loremaster: true, codex: true },
+                { label: "Relationship graph explorer", scribe: true, loremaster: true, codex: true },
+                { label: "Writing workspace", scribe: true, loremaster: true, codex: true },
+                { label: "Writing projects & documents", scribe: true, loremaster: true, codex: true },
+                { label: "Session & document word goals", scribe: true, loremaster: true, codex: true },
+                { label: "Distraction-free focus mode", scribe: true, loremaster: true, codex: true },
+                { label: "Markdown export", scribe: true, loremaster: true, codex: true },
+                { label: "Two-factor authentication", scribe: true, loremaster: true, codex: true },
+                { label: "Priority support", scribe: false, loremaster: true, codex: true },
+                { label: "Local / offline storage", scribe: false, loremaster: false, codex: true },
+                { label: "No subscription required", scribe: true, loremaster: false, codex: true },
+              ].map((row, i) => (
+                <tr key={row.label} className={`border-b border-border last:border-0 ${i % 2 === 0 ? "" : "bg-muted/20"}`}>
+                  <td className="px-6 py-3 text-muted-foreground">{row.label}</td>
+                  {([row.scribe, row.loremaster, row.codex] as (boolean | string)[]).map((val, j) => (
+                    <td key={j} className="px-4 py-3 text-center">
+                      {typeof val === "boolean" ? (
+                        val
+                          ? <Check size={15} className="inline text-foreground" />
+                          : <span className="text-muted-foreground/40">—</span>
+                      ) : (
+                        <span className={j === 1 ? "font-medium text-foreground" : "text-muted-foreground"}>{val}</span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
     </div>
   );
 }

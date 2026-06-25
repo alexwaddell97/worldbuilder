@@ -9,6 +9,9 @@ import {
   LogOut,
   Map,
   Settings,
+  Layers,
+  Network,
+  BookOpen,
 } from "lucide-react";
 import { APP_NAME } from "@/config/app";
 import { AppWordmark } from "@/components/ui/app-wordmark";
@@ -37,6 +40,7 @@ const navItems: NavItem[] = [
 interface SidebarProps {
   worldSlug?: string;
   worldName?: string;
+  worldImageUrl?: string | null;
   worldEntityTypes?: EntityType[];
   worlds?: World[];
 }
@@ -51,7 +55,7 @@ function NavTooltip({ label, collapsed, children }: { label: string; collapsed: 
   );
 }
 
-export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: SidebarProps = {}) {
+export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes, worlds }: SidebarProps = {}) {
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const pathname = usePathname();
   const router = useRouter();
@@ -78,8 +82,15 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
       `}
     >
       {/* Logo / wordmark */}
-      <div className="h-14 flex items-center pl-4 border-b border-border shrink-0 overflow-hidden">
-        {sidebarOpen ? <AppWordmark /> : <AppIcon size={24} />}
+      <div className="h-14 flex items-end justify-between pl-4 pr-3 pb-2.5 border-b border-border shrink-0 overflow-hidden">
+        <div className="flex items-end gap-2">
+          {sidebarOpen ? <AppWordmark /> : <AppIcon size={24} />}
+          {sidebarOpen && (
+            <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-primary/10 text-primary leading-none shrink-0 mb-0.5">
+              Alpha
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Nav items */}
@@ -91,7 +102,7 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
               <Link
                 href={item.href}
                 className={`
-                  flex items-center gap-3 pl-[11px] pr-2 h-9 rounded-md text-sm transition-colors
+                  flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
                   ${
                     isActive
                       ? "bg-muted text-foreground font-medium"
@@ -117,7 +128,7 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
                   <Link
                     href={href}
                     className={`
-                      flex items-center gap-3 pl-[11px] pr-2 h-9 rounded-md text-sm transition-colors
+                      flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
                       ${isActive
                         ? "bg-muted text-foreground font-medium"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -138,6 +149,24 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
         {/* World entity type nav — shown only when worldEntityTypes are provided */}
         {worldEntityTypes && worldSlug && (
           <div className="mt-3 pt-3 border-t border-border">
+            {/* World home */}
+            <NavTooltip label={worldName ?? "World"} collapsed={!sidebarOpen}>
+              <Link
+                href={`/worlds/${worldSlug}`}
+                className={`
+                  flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors mb-1
+                  ${pathname === `/worlds/${worldSlug}`
+                    ? "bg-muted text-foreground font-medium"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }
+                `}
+              >
+                <span className="shrink-0">
+                  <WorldAvatar name={worldName ?? ""} imageUrl={worldImageUrl} size={18} />
+                </span>
+                {sidebarOpen && <span className="truncate font-medium">{worldName}</span>}
+              </Link>
+            </NavTooltip>
             {/* Maps link */}
             {(() => {
               const mapsHref = `/worlds/${worldSlug}/maps`;
@@ -147,7 +176,7 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
                   <Link
                     href={mapsHref}
                     className={`
-                      flex items-center gap-3 pl-[11px] pr-2 h-9 rounded-md text-sm transition-colors
+                      flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
                       ${mapsActive
                         ? "bg-muted text-foreground font-medium"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -161,6 +190,52 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
               );
             })()}
 
+            {/* Relationships link */}
+            {(() => {
+              const relHref = `/worlds/${worldSlug}/relationships`;
+              const relActive = pathname.startsWith(relHref);
+              return (
+                <NavTooltip label="Relationships" collapsed={!sidebarOpen}>
+                  <Link
+                    href={relHref}
+                    className={`
+                      flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
+                      ${relActive
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }
+                    `}
+                  >
+                    <span className="shrink-0"><Network size={16} /></span>
+                    {sidebarOpen && <span className="truncate">Relationships</span>}
+                  </Link>
+                </NavTooltip>
+              );
+            })()}
+
+            {/* Writing link */}
+            {(() => {
+              const writingHref = `/worlds/${worldSlug}/writing`;
+              const writingActive = pathname.startsWith(writingHref);
+              return (
+                <NavTooltip label="Writing" collapsed={!sidebarOpen}>
+                  <Link
+                    href={writingHref}
+                    className={`
+                      flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
+                      ${writingActive
+                        ? "bg-muted text-foreground font-medium"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }
+                    `}
+                  >
+                    <span className="shrink-0"><BookOpen size={16} /></span>
+                    {sidebarOpen && <span className="truncate">Writing</span>}
+                  </Link>
+                </NavTooltip>
+              );
+            })()}
+
             {worldEntityTypes.map((type) => {
               const href = `/worlds/${worldSlug}/entities/${type.slug}`;
               const isActive = pathname.startsWith(href);
@@ -169,7 +244,7 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
                   <Link
                     href={href}
                     className={`
-                      flex items-center gap-3 pl-[11px] pr-2 h-9 rounded-md text-sm transition-colors
+                      flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
                       ${isActive
                         ? "bg-muted text-foreground font-medium"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -185,31 +260,46 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
               );
             })}
             <div className="border-t border-border mt-2 mb-1" />
-            <NavTooltip label="Settings" collapsed={!sidebarOpen}>
+            <NavTooltip label="Entity Types" collapsed={!sidebarOpen}>
               <Link
                 href={`/worlds/${worldSlug}/entity-types`}
                 className={`
-                  flex items-center gap-3 pl-[11px] pr-2 h-8 rounded-md text-xs transition-colors
+                  flex items-center gap-3 pl-2.75 pr-2 h-8 rounded-md text-xs transition-colors
                   ${pathname === `/worlds/${worldSlug}/entity-types`
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                   }
                 `}
               >
-                <span className="shrink-0"><Settings size={16} /></span>
-                {sidebarOpen && <span>Settings</span>}
+                <span className="shrink-0"><Layers size={16} /></span>
+                {sidebarOpen && <span>Entity Types</span>}
               </Link>
             </NavTooltip>
           </div>
         )}
       </nav>
 
-      {/* Sign out button */}
-      <div className="px-2 pb-2">
+      {/* Bottom nav: Settings + Sign out */}
+      <div className="px-2 pb-2 space-y-0.5">
+        <NavTooltip label="Settings" collapsed={!sidebarOpen}>
+          <Link
+            href="/settings"
+            className={`
+              flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
+              ${pathname === "/settings" || pathname.startsWith("/settings/")
+                ? "bg-muted text-foreground font-medium"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }
+            `}
+          >
+            <span className="shrink-0"><Settings size={18} /></span>
+            {sidebarOpen && <span className="truncate">Settings</span>}
+          </Link>
+        </NavTooltip>
         <NavTooltip label="Sign out" collapsed={!sidebarOpen}>
           <button
             onClick={handleSignOut}
-            className={`flex items-center gap-3 pl-[11px] pr-2 h-9 w-full rounded-md text-sm
+            className={`flex items-center gap-3 pl-2.75 pr-2 h-9 w-full rounded-md text-sm cursor-pointer
               text-muted-foreground hover:text-destructive transition-colors`}
           >
             <span className="shrink-0"><LogOut size={18} /></span>
@@ -227,6 +317,7 @@ export function Sidebar({ worldSlug, worldName, worldEntityTypes, worlds }: Side
         >
           {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
         </button>
+        <p className="text-center text-[10px] text-muted-foreground/40 mt-1">v0.1.0</p>
       </div>
     </aside>
     </TooltipProvider>
