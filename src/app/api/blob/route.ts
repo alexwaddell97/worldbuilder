@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   return new NextResponse(result.stream, {
     headers: {
       "Cache-Control": "private, no-cache",
-      "Content-Type": result.blob.contentType,
+      "Content-Type": result.blob.contentType ?? "application/octet-stream",
       "X-Content-Type-Options": "nosniff",
     },
   });
