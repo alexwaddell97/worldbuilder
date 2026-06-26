@@ -1,14 +1,16 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Map, Network, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
+import { Map, Network, BookOpen, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { WorldAvatar } from "@/components/ui/world-avatar";
 import { AppWordmark } from "@/components/ui/app-wordmark";
 import { AppIcon } from "@/components/ui/app-icon";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useUIStore } from "@/stores/use-ui-store";
+import { useSession } from "@/lib/auth/client";
 import type { EntityType } from "@/lib/db/schema";
 
 interface PublicWorldSidebarProps {
@@ -35,8 +37,22 @@ export function PublicWorldSidebar({
   entityTypes,
 }: PublicWorldSidebarProps) {
   const { sidebarOpen, toggleSidebar } = useUIStore();
+  const { data: session, isPending: sessionPending } = useSession();
   const pathname = usePathname();
   const base = `/w/${worldSlug}`;
+
+  const entityListRef = useRef<HTMLDivElement>(null);
+  const [canScrollDown, setCanScrollDown] = useState(false);
+
+  function checkEntityScroll() {
+    const el = entityListRef.current;
+    if (!el) return;
+    setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 4);
+  }
+
+  useEffect(() => {
+    checkEntityScroll();
+  }, [entityTypes]);
 
   function navLink(href: string, icon: React.ReactNode, label: string) {
     const isActive = pathname === href || (href !== base && pathname.startsWith(href));
@@ -80,13 +96,14 @@ export function PublicWorldSidebar({
           </div>
         </div>
 
-        {/* World home */}
-        <div className="px-2 pt-3 pb-2">
+        {/* Nav */}
+        <nav className="flex-1 py-2 px-2 space-y-0.5">
+          {/* World home — separated from world nav links like Dashboard from world buttons */}
           <NavTooltip label={worldName} collapsed={!sidebarOpen}>
             <Link
               href={base}
               className={`
-                flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
+                flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors mb-1
                 ${pathname === base
                   ? "bg-muted text-foreground font-medium"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -99,31 +116,44 @@ export function PublicWorldSidebar({
               {sidebarOpen && <span className="truncate font-medium">{worldName}</span>}
             </Link>
           </NavTooltip>
-        </div>
 
-        {/* Main nav */}
-        <nav className="flex-1 px-2 py-1 space-y-0.5 overflow-y-auto">
-          <div className="space-y-0.5">
+          {/* World nav links */}
+          <div className="mt-3 pt-3 border-t border-border space-y-0.5">
             {navLink(`${base}/maps`, <Map size={16} />, "Maps")}
             {navLink(`${base}/relationships`, <Network size={16} />, "Relationships")}
             {navLink(`${base}/stories`, <BookOpen size={16} />, "Stories")}
           </div>
 
+          {/* Entity types — scrollable with chevron */}
           {entityTypes.length > 0 && (
-            <div className="pt-2 mt-2 border-t border-border space-y-0.5">
-              {entityTypes.map((et) =>
-                navLink(
-                  `${base}/entities/${et.slug}`,
-                  <DynamicIcon name={et.icon ?? ""} size={16} />,
-                  et.namePlural ?? et.name
-                )
+            <div className="relative pt-2 mt-2 border-t border-border">
+              <div
+                ref={entityListRef}
+                onScroll={checkEntityScroll}
+                className="space-y-0.5 overflow-y-auto max-h-72 scrollbar-sidebar"
+              >
+                {entityTypes.map((et) =>
+                  navLink(
+                    `${base}/entities/${et.slug}`,
+                    <DynamicIcon name={et.icon ?? ""} size={16} />,
+                    et.namePlural ?? et.name
+                  )
+                )}
+              </div>
+              {canScrollDown && (
+                <button
+                  onClick={() => entityListRef.current?.scrollBy({ top: 144, behavior: "smooth" })}
+                  className="absolute bottom-0 left-0 right-0 h-7 bg-linear-to-t from-background to-transparent flex items-end justify-center pb-0.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer w-full"
+                >
+                  <ChevronDown size={16} />
+                </button>
               )}
             </div>
           )}
         </nav>
 
-        {/* Bottom: sign in CTA */}
-        {sidebarOpen && (
+        {/* Bottom: sign in CTA — only shown to logged-out visitors once session is known */}
+        {sidebarOpen && !sessionPending && !session && (
           <div className="px-3 pb-3 pt-2 border-t border-border space-y-1.5">
             <Link
               href="/signup"

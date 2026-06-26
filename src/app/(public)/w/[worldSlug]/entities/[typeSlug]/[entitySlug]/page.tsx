@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getPublicWorldBySlug, getPublicEntityTypeBySlug, getPublicEntityBySlug } from "@/lib/db/queries/public";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -39,13 +39,11 @@ export default async function PublicEntityDetailPage({
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <div className="mb-4 text-sm text-muted-foreground">
-        <Link href={basePath} className="hover:text-foreground transition-colors">{world.name}</Link>
-        {" / "}
-        <Link href={`${basePath}/entities/${typeSlug}`} className="hover:text-foreground transition-colors">{typeName}</Link>
-        {" / "}
-        <span className="text-foreground">{entity.name}</span>
-      </div>
+      <Breadcrumb items={[
+        { label: world.name, href: basePath },
+        { label: typeName, href: `${basePath}/entities/${typeSlug}` },
+        { label: entity.name },
+      ]} />
 
       {entity.imageUrl && (
         <div className="relative w-full h-56 rounded-xl overflow-hidden mb-6 bg-muted">

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getPublicWorldBySlug, getPublishedStoryBySlug } from "@/lib/db/queries/public";
 import { PublicStoryView } from "@/components/public/public-story-view";
 import { Separator } from "@/components/ui/separator";
@@ -27,13 +27,11 @@ export default async function PublicStoryPage({
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <div className="mb-6 text-sm text-muted-foreground">
-        <Link href={basePath} className="hover:text-foreground transition-colors">{world.name}</Link>
-        {" / "}
-        <Link href={`${basePath}/stories`} className="hover:text-foreground transition-colors">Stories</Link>
-        {" / "}
-        <span className="text-foreground">{story.title}</span>
-      </div>
+      <Breadcrumb items={[
+        { label: world.name, href: basePath },
+        { label: "Stories", href: `${basePath}/stories` },
+        { label: story.title },
+      ]} />
 
       <h1 className="text-3xl font-bold leading-tight">{story.title}</h1>
       <p className="text-sm text-muted-foreground mt-3">

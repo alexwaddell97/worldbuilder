@@ -16,7 +16,7 @@ export const CreateMapSchema = z.object({
     .url({ error: "Must be a valid URL." })
     .optional()
     .or(z.literal("")),
-  isRootMap: z.boolean().default(true),
+  parentMapId: z.string().uuid().optional().nullable(),
 });
 
 export const UpdateMapSchema = z.object({
@@ -33,7 +33,7 @@ export const UpdateMapSchema = z.object({
     .url({ error: "Must be a valid URL." })
     .optional()
     .or(z.literal("")),
-  isRootMap: z.boolean().default(true),
+  parentMapId: z.string().uuid().optional().nullable(),
 });
 
 export const CreateMapPinSchema = z.object({

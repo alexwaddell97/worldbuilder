@@ -19,12 +19,14 @@ interface EntityTypeRowActionsProps {
   entityType: EntityType;
   worldId: string;
   isPublicWorld?: boolean;
+  entityCount?: number;
 }
 
 export function EntityTypeRowActions({
   entityType,
   worldId,
   isPublicWorld,
+  entityCount,
 }: EntityTypeRowActionsProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -80,6 +82,7 @@ export function EntityTypeRowActions({
       <DeleteEntityTypeDialog
         entityType={entityType}
         worldId={worldId}
+        entityCount={entityCount}
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
       />

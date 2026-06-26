@@ -14,6 +14,22 @@ export type MapPinWithRefs = MapPin & {
 
 export type MapWithPins = Map & { pins: MapPinWithRefs[] };
 
+export type MapTreeNode = Map & { children: MapTreeNode[] };
+
+/** Builds a nested tree from a flat list of maps. */
+export function buildMapTree(maps: Map[]): MapTreeNode[] {
+  const byId = new Map(maps.map((m) => [m.id, { ...m, children: [] as MapTreeNode[] }]));
+  const roots: MapTreeNode[] = [];
+  for (const node of byId.values()) {
+    if (node.parentMapId && byId.has(node.parentMapId)) {
+      byId.get(node.parentMapId)!.children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+  return roots;
+}
+
 // ─── Slug ─────────────────────────────────────────────────────────────────────
 
 export async function generateUniqueMapSlug(
@@ -41,15 +57,6 @@ export async function getMapsByWorld(worldId: string): Promise<Map[]> {
     .select()
     .from(maps)
     .where(eq(maps.worldId, worldId))
-    .orderBy(asc(maps.createdAt));
-}
-
-/** Returns only root-level maps (shown in the maps index). */
-export async function getRootMapsByWorld(worldId: string): Promise<Map[]> {
-  return db
-    .select()
-    .from(maps)
-    .where(and(eq(maps.worldId, worldId), eq(maps.isRootMap, true)))
     .orderBy(asc(maps.createdAt));
 }
 

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getPublicWorldBySlug, getPublishedStories } from "@/lib/db/queries/public";
 import { PublicStoriesView } from "@/components/public/public-stories-view";
 
@@ -33,13 +33,12 @@ export default async function PublicStoriesPage({
   const hasProjects = groups.some((g) => g.projectId !== null);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      <div className="mb-2 text-sm text-muted-foreground">
-        <Link href={basePath} className="hover:text-foreground transition-colors">{world.name}</Link>
-        {" / "}
-        <span>Stories</span>
-      </div>
-      <h1 className="text-2xl font-bold mb-8">Stories</h1>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <Breadcrumb items={[
+        { label: world.name, href: basePath },
+        { label: "Stories" },
+      ]} />
+      <h1 className="text-2xl font-bold mb-6">Stories</h1>
 
       <PublicStoriesView groups={groups} basePath={basePath} hasProjects={hasProjects} />
     </div>

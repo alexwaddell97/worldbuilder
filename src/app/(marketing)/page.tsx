@@ -12,8 +12,8 @@ import {
   ChevronRight,
   PenLine,
   Swords,
-  Map,
-  Target,
+  Layers,
+  Eye,
   Globe,
 } from "lucide-react";
 
@@ -40,10 +40,10 @@ export default async function HomePage() {
           aria-hidden="true"
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-background/20 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-background/ backdrop-blur-xs" />
         {/* Bottom fade into page */}
         <div
-          className="absolute inset-x-0 bottom-0 h-72 pointer-events-none bg-linear-to-t from-background via-background/70 to-transparent"
+          className="absolute inset-x-0 bottom-0 h-96 pointer-events-none bg-linear-to-t from-muted via-muted/80 to-transparent"
         />
 
         <div className="relative max-w-3xl mx-auto pt-14">
@@ -76,7 +76,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Section 2: Features ────────────────────────────────────────── */}
-      <section id="features" className="py-20 bg-muted/50">
+      <section id="features" className="py-20 bg-muted">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-foreground">
             Simple tools for complex worlds.
@@ -87,31 +87,31 @@ export default async function HomePage() {
                 icon: <BookOpen size={24} />,
                 title: "Custom entity types",
                 description:
-                  "Characters, locations, factions, artefacts: any type you define. Build your world's vocabulary from scratch, with custom fields for each type.",
+                  "Characters, locations, factions, artefacts, or anything your world needs. Define as many types as you like, each with its own icon and tags. Build your world's vocabulary from scratch.",
               },
               {
                 icon: <Link2 size={24} />,
                 title: "Linked lore",
                 description:
-                  "Connect entities with typed relationships and explore them as an interactive graph. Rename anything safely; every link stays intact.",
+                  "Connect entities with typed relationships and explore the web of connections as an interactive graph. Wikilink any entity from anywhere; every link survives a rename.",
+              },
+              {
+                icon: <Layers size={24} />,
+                title: "Nested maps",
+                description:
+                  "Upload a map and pin entities directly to it. Drill into sub-maps for regions, dungeons, or floor plans, all navigable from a single tree.",
               },
               {
                 icon: <FileText size={24} />,
                 title: "Writing workspace",
                 description:
-                  "A focused writing tool built into your world. Organise documents into projects, insert wikilinks inline, set word goals, and switch to distraction-free focus mode.",
+                  "A focused editor built into your world. Organise documents into projects, insert wikilinks inline, set word goals, and switch to focus mode when it's time to write.",
               },
               {
-                icon: <Map size={24} />,
-                title: "Interactive maps",
+                icon: <Eye size={24} />,
+                title: "Granular sharing",
                 description:
-                  "Upload a map of your world and pin entities directly to it. Click any pin to open the full entity entry.",
-              },
-              {
-                icon: <Target size={24} />,
-                title: "Writing goals",
-                description:
-                  "Set session word goals and per-document targets. Track progress with a live ring and get a quiet notification when you hit your mark.",
+                  "Toggle visibility per entity, map, or document. Share a public link with your players or readers and reveal lore as your story unfolds, one entry at a time.",
               },
               {
                 icon: <Download size={24} />,
@@ -138,7 +138,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Section 3: Data Ownership ──────────────────────────────────── */}
-      <section id="data-ownership" className="py-20 bg-muted/50">
+      <section id="data-ownership" className="py-20 bg-muted">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-foreground mb-8">
             Your world, your data

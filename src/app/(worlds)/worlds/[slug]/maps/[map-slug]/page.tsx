@@ -51,6 +51,7 @@ export default async function MapDetailPage({
         allEntities={allEntities}
         allMaps={allMaps}
         trail={trail}
+        isPublicWorld={world.isPublic}
       />
     </div>
   );

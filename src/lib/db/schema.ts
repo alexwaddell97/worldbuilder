@@ -15,6 +15,7 @@ import {
   real,
   integer,
 } from "drizzle-orm/pg-core";
+import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
 // ─── custom field types ────────────────────────────────────────────────────────
 
@@ -139,8 +140,8 @@ export const maps = pgTable(
     slug: text("slug").notNull(),
     imageUrl: text("image_url"),
     description: text("description"),
-    // true = shown in the maps index; false = sub-map only accessible via pins
-    isRootMap: boolean("is_root_map").default(true).notNull(),
+    parentMapId: uuid("parent_map_id").references((): AnyPgColumn => maps.id, { onDelete: "set null" }),
+    isHiddenFromPublic: boolean("is_hidden_from_public").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()

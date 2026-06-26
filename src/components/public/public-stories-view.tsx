@@ -47,14 +47,16 @@ export function PublicStoriesView({ groups, basePath, hasProjects }: PublicStori
   return (
     <>
       {totalStories > 0 && (
-        <div className="relative mb-8">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search stories…"
-            className="pl-8 h-9 text-sm"
-          />
+        <div className="flex items-center gap-3 mb-6">
+          <div className="relative max-w-sm flex-1">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search stories…"
+              className="pl-9"
+            />
+          </div>
         </div>
       )}
 

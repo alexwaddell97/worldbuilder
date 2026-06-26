@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapImageUpload } from "@/components/ui/map-image-upload";
 import { updateMapAction } from "@/lib/actions/maps";
 import { useRouter } from "next/navigation";
@@ -19,14 +19,15 @@ import type { Map } from "@/lib/db/schema";
 
 interface EditMapDialogProps {
   map: Map;
+  allMaps?: Map[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function EditMapDialog({ map, open, onOpenChange }: EditMapDialogProps) {
+export function EditMapDialog({ map, allMaps = [], open, onOpenChange }: EditMapDialogProps) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isRootMap, setIsRootMap] = useState(map.isRootMap);
+  const [parentMapId, setParentMapId] = useState<string | null>(map.parentMapId ?? null);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -39,7 +40,7 @@ export function EditMapDialog({ map, open, onOpenChange }: EditMapDialogProps) {
       name: fd.get("name") as string,
       description: (fd.get("description") as string) || undefined,
       imageUrl: (fd.get("imageUrl") as string) || undefined,
-      isRootMap,
+      parentMapId: parentMapId || null,
     });
 
     setPending(false);
@@ -85,13 +86,27 @@ export function EditMapDialog({ map, open, onOpenChange }: EditMapDialogProps) {
             />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
-            <div>
-              <p className="text-sm font-medium">Show in maps index</p>
-              <p className="text-xs text-muted-foreground">Uncheck for sub-maps only accessible via pins</p>
+          {allMaps.length > 0 && (
+            <div className="space-y-1.5">
+              <Label>Parent map <span className="text-muted-foreground font-normal">(optional)</span></Label>
+              <Select value={parentMapId ?? "none"} onValueChange={(v) => setParentMapId(v === "none" ? null : v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="None (root map)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None (root map)</SelectItem>
+                  {allMaps.filter((m) => {
+                    if (m.id === map.id) return false; // exclude self
+                    if (!m.parentMapId) return true; // root — ok
+                    const parent = allMaps.find((p) => p.id === m.parentMapId);
+                    return !parent?.parentMapId; // depth-1 — ok; depth-2 — excluded
+                  }).map((m) => (
+                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <Switch checked={isRootMap} onCheckedChange={setIsRootMap} />
-          </div>
+          )}
           <div className="flex justify-end gap-2 pt-1">
             <Button
               type="button"

@@ -34,6 +34,7 @@ export default async function WritingDocumentPage({
       initialWordCount={doc.wordCount}
       initialWordTarget={doc.wordTarget}
       initialIsPublished={doc.isPublished}
+      isPublicWorld={world.isPublic}
     />
   );
 }

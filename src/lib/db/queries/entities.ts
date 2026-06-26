@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { entities, entityTypes } from "@/lib/db/schema";
-import { eq, and, like, ne, asc, ilike, arrayContains, isNotNull } from "drizzle-orm";
+import { eq, and, like, ne, asc, ilike, arrayContains, isNotNull, count, sql } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import slugify from "slugify";
 import type { Entity, EntityType } from "@/lib/db/schema";
@@ -244,4 +244,18 @@ export async function getAllEntitiesWithTypesByWorld(
     .where(eq(entities.worldId, worldId))
     .orderBy(asc(entityTypes.name), asc(entities.name));
   return rows.map((r) => ({ ...r.entity, entityType: r.entityType }));
+}
+
+/**
+ * Returns a map of entityTypeId → entity count for a world.
+ */
+export async function getEntityCountsByWorld(
+  worldId: string
+): Promise<Record<string, number>> {
+  const rows = await db
+    .select({ entityTypeId: entities.entityTypeId, count: count() })
+    .from(entities)
+    .where(eq(entities.worldId, worldId))
+    .groupBy(entities.entityTypeId);
+  return Object.fromEntries(rows.map((r) => [r.entityTypeId, r.count]));
 }

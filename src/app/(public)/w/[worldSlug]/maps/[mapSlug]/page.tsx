@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPublicWorldBySlug, getPublicMapWithPins, getPublicRootMaps, getPublicAllEntitiesWithTypes, getPublicMapBySlug } from "@/lib/db/queries/public";
+import { getPublicWorldBySlug, getPublicMapWithPins, getPublicMaps, getPublicAllEntitiesWithTypes, getPublicMapBySlug } from "@/lib/db/queries/public";
 import { MapViewer } from "@/components/maps/map-viewer";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export default async function PublicMapDetailPage({
 
   const [map, allMaps, allEntities] = await Promise.all([
     getPublicMapWithPins(world.id, mapSlug),
-    getPublicRootMaps(world.id),
+    getPublicMaps(world.id),
     getPublicAllEntitiesWithTypes(world.id),
   ]);
 

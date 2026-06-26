@@ -93,11 +93,11 @@ export async function getPublicAllEntitiesWithTypes(
 
 // ─── Maps ─────────────────────────────────────────────────────────────────────
 
-export async function getPublicRootMaps(worldId: string): Promise<Map[]> {
+export async function getPublicMaps(worldId: string): Promise<Map[]> {
   return db
     .select()
     .from(maps)
-    .where(and(eq(maps.worldId, worldId), eq(maps.isRootMap, true)))
+    .where(and(eq(maps.worldId, worldId), eq(maps.isHiddenFromPublic, false)))
     .orderBy(asc(maps.createdAt));
 }
 

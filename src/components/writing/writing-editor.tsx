@@ -33,6 +33,7 @@ interface WritingEditorProps {
   initialWordCount?: number;
   initialWordTarget?: number | null;
   initialIsPublished?: boolean;
+  isPublicWorld?: boolean;
 }
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -71,7 +72,7 @@ function countWords(text: string): number {
   return trimmed.split(/\s+/).length;
 }
 
-export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initialContent, initialUpdatedAt, initialWordCount = 0, initialWordTarget = null, initialIsPublished = false }: WritingEditorProps) {
+export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initialContent, initialUpdatedAt, initialWordCount = 0, initialWordTarget = null, initialIsPublished = false, isPublicWorld = false }: WritingEditorProps) {
   const router = useRouter();
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -408,7 +409,8 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
             onSetTarget={handleSetWordTarget}
           />
 
-          {/* Publish toggle */}
+          {/* Publish toggle — only shown when world is public */}
+          {isPublicWorld && (
           <Tooltip>
             <TooltipTrigger asChild>
               <button
@@ -432,6 +434,7 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
               {isPublished ? "Click to unpublish (hide from public view)" : "Click to publish (visible in public world)"}
             </TooltipContent>
           </Tooltip>
+          )}
 
           {/* Typewriter mode — desktop only */}
           <Tooltip>

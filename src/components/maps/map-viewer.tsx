@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   TransformWrapper,
@@ -18,6 +18,8 @@ import {
   MoreHorizontal,
   Trash2,
   Plus,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +40,7 @@ import { MapPinFloatingPanel } from "@/components/maps/map-pin-floating-panel";
 import { EditMapDialog } from "@/components/maps/edit-map-dialog";
 import { DeleteMapDialog } from "@/components/maps/delete-map-dialog";
 import { CreateMapDialog } from "@/components/maps/create-map-dialog";
-import { deleteMapPinAction } from "@/lib/actions/maps";
+import { deleteMapPinAction, toggleMapPublicVisibilityAction } from "@/lib/actions/maps";
 import { blobDisplayUrl, cn } from "@/lib/utils";
 import type { MapWithPins, MapPinWithRefs } from "@/lib/db/queries/maps";
 import type { Entity, EntityType, Map } from "@/lib/db/schema";
@@ -56,6 +58,7 @@ interface MapViewerProps {
   readOnly?: boolean;
   /** Base path for map navigation links, defaults to /worlds/${worldSlug}/maps */
   mapsBasePath?: string;
+  isPublicWorld?: boolean;
 }
 
 export function MapViewer({
@@ -67,6 +70,7 @@ export function MapViewer({
   trail = [],
   readOnly = false,
   mapsBasePath,
+  isPublicWorld = false,
 }: MapViewerProps) {
   const effectiveMapsBase = mapsBasePath ?? `/worlds/${worldSlug}/maps`;
   const router = useRouter();
@@ -85,7 +89,16 @@ export function MapViewer({
   const [editMapOpen, setEditMapOpen] = useState(false);
   const [deleteMapOpen, setDeleteMapOpen] = useState(false);
   const [createMapOpen, setCreateMapOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(map.isHiddenFromPublic);
+  const [visibilityPending, startVisibilityTransition] = useTransition();
   const [scale, setScale] = useState(1);
+
+  function handleToggleVisibility() {
+    startVisibilityTransition(async () => {
+      const result = await toggleMapPublicVisibilityAction(map.id);
+      setIsHidden(result.isHiddenFromPublic);
+    });
+  }
 
   // Distinguish click from drag so we don't fire pin-place after panning
   const pointerDownRef = useRef<{ x: number; y: number } | null>(null);
@@ -268,6 +281,15 @@ export function MapViewer({
                   <Pencil size={13} className="mr-2" />
                   Edit map
                 </DropdownMenuItem>
+                {isPublicWorld && (
+                  <DropdownMenuItem onClick={handleToggleVisibility} disabled={visibilityPending}>
+                    {isHidden ? (
+                      <><Eye size={13} className="mr-2" />Show in public</>
+                    ) : (
+                      <><EyeOff size={13} className="mr-2" />Hide from public</>
+                    )}
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={() => setDeleteMapOpen(true)}
                   className="text-destructive focus:text-destructive"
@@ -391,9 +413,9 @@ export function MapViewer({
       )}
 
       {/* ── Map CRUD dialogs ──────────────────────────────────────────── */}
-      <EditMapDialog map={map} open={editMapOpen} onOpenChange={setEditMapOpen} />
+      <EditMapDialog map={map} allMaps={allMaps} open={editMapOpen} onOpenChange={setEditMapOpen} />
       <DeleteMapDialog map={map} worldSlug={worldSlug} open={deleteMapOpen} onOpenChange={setDeleteMapOpen} />
-      <CreateMapDialog worldId={worldId} worldSlug={worldSlug} open={createMapOpen} onOpenChange={setCreateMapOpen} />
+      <CreateMapDialog worldId={worldId} worldSlug={worldSlug} allMaps={allMaps} open={createMapOpen} onOpenChange={setCreateMapOpen} />
     </div>
   );
 }

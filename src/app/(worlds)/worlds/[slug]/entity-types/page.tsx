@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getWorldBySlug } from "@/lib/db/queries/worlds";
 import { getEntityTypesByWorld } from "@/lib/db/queries/entity-types";
+import { getEntityCountsByWorld } from "@/lib/db/queries/entities";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { CreateEntityTypeDialog } from "@/components/entity-types/create-entity-type-dialog";
 import { EntityTypeRowActions } from "@/components/entity-types/entity-type-row-actions";
@@ -23,7 +24,10 @@ export default async function EntityTypesPage({
   const world = await getWorldBySlug(slug, session.user.id);
   if (!world) notFound();
 
-  const entityTypes = await getEntityTypesByWorld(world.id);
+  const [entityTypes, entityCounts] = await Promise.all([
+    getEntityTypesByWorld(world.id),
+    getEntityCountsByWorld(world.id),
+  ]);
 
   return (
     <div className="p-8">
@@ -57,7 +61,7 @@ export default async function EntityTypesPage({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <EntityTypeRowActions entityType={type} worldId={world.id} isPublicWorld={world.isPublic} />
+              <EntityTypeRowActions entityType={type} worldId={world.id} isPublicWorld={world.isPublic} entityCount={entityCounts[type.id] ?? 0} />
             </div>
           </div>
         ))}

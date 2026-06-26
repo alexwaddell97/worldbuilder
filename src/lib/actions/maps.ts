@@ -60,7 +60,7 @@ export async function createMapAction(
       return { success: false, error: "Invalid input." };
     }
 
-    const { name, description, imageUrl, isRootMap } = parsed.data;
+    const { name, description, imageUrl, parentMapId } = parsed.data;
     const slug = await generateUniqueMapSlug(name, worldId);
 
     await db.insert(maps).values({
@@ -69,7 +69,7 @@ export async function createMapAction(
       slug,
       description: description || null,
       imageUrl: imageUrl || null,
-      isRootMap,
+      parentMapId: parentMapId ?? null,
     });
 
     revalidatePath(`/worlds/[slug]/maps`, "page");
@@ -92,7 +92,7 @@ export async function updateMapAction(
       return { success: false, error: "Invalid input." };
     }
 
-    const { name, description, imageUrl, isRootMap } = parsed.data;
+    const { name, description, imageUrl, parentMapId } = parsed.data;
 
     await db
       .update(maps)
@@ -100,7 +100,7 @@ export async function updateMapAction(
         name,
         description: description || null,
         imageUrl: imageUrl || null,
-        isRootMap,
+        parentMapId: parentMapId ?? null,
         updatedAt: new Date(),
       })
       .where(eq(maps.id, mapId));
@@ -127,6 +127,16 @@ export async function deleteMapAction(
     console.error("[deleteMapAction]", err);
     return { success: false, error: "Failed to delete map." };
   }
+}
+
+export async function toggleMapPublicVisibilityAction(
+  mapId: string
+): Promise<{ isHiddenFromPublic: boolean }> {
+  const { map } = await requireMapOwner(mapId);
+  const next = !map.isHiddenFromPublic;
+  await db.update(maps).set({ isHiddenFromPublic: next }).where(eq(maps.id, mapId));
+  revalidatePath(`/worlds/[slug]/maps`, "page");
+  return { isHiddenFromPublic: next };
 }
 
 // ─── Pin CRUD ─────────────────────────────────────────────────────────────────
