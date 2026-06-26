@@ -10,7 +10,7 @@ export const contentType = 'image/png'
 export default function Image() {
   const landscape = `data:image/png;base64,${readFileSync(join(process.cwd(), 'public/landscape.png')).toString('base64')}`
   const logo = `data:image/png;base64,${readFileSync(join(process.cwd(), 'public/Subcreation.png')).toString('base64')}`
-  const fontData = readFileSync(join(process.cwd(), 'node_modules/geist/dist/fonts/geist-sans/Geist-Medium.woff2'))
+  const fontData = readFileSync(join(process.cwd(), 'node_modules/geist/dist/fonts/geist-sans/Geist-Medium.ttf'))
 
   return new ImageResponse(
     (

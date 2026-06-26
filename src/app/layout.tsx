@@ -4,7 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import { Ubuntu } from "next/font/google";
 import "./global.css";
 import { Suspense } from "react";
-import { APP_NAME, APP_TAGLINE } from "@/config/app";
+import { APP_NAME, APP_TAGLINE, APP_DOMAIN } from "@/config/app";
 import { Toaster } from "@/components/ui/sonner";
 import { EmailVerifiedToast } from "@/components/auth/email-verified-toast";
 
@@ -16,6 +16,7 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(`https://${APP_DOMAIN}`),
   title: APP_NAME,
   description: APP_TAGLINE,
   icons: {
