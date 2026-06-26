@@ -61,6 +61,7 @@ export default async function EntityDetailPage({
         entityType={entityType}
         worldId={world.id}
         worldSlug={slug}
+        isPublicWorld={world.isPublic}
       />
 
       <div className="flex-1 flex flex-col">

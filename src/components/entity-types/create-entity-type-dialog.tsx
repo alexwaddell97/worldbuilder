@@ -15,9 +15,10 @@ import { createEntityTypeAction } from "@/lib/actions/entity-types";
 
 interface CreateEntityTypeDialogProps {
   worldId: string;
+  isPublicWorld?: boolean;
 }
 
-export function CreateEntityTypeDialog({ worldId }: CreateEntityTypeDialogProps) {
+export function CreateEntityTypeDialog({ worldId, isPublicWorld }: CreateEntityTypeDialogProps) {
   const [open, setOpen] = useState(false);
   const boundAction = createEntityTypeAction.bind(null, worldId);
 
@@ -37,6 +38,7 @@ export function CreateEntityTypeDialog({ worldId }: CreateEntityTypeDialogProps)
           action={boundAction}
           submitLabel="Create entity type"
           pendingLabel="Creating…"
+          isPublicWorld={isPublicWorld}
           onSuccess={() => setOpen(false)}
           onCancel={() => setOpen(false)}
         />

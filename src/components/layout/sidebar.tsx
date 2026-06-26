@@ -1,11 +1,13 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Home,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   LogOut,
   Map,
   UserCircle,
@@ -59,6 +61,19 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
   const { sidebarOpen, toggleSidebar } = useUIStore();
   const pathname = usePathname();
   const router = useRouter();
+
+  const entityListRef = useRef<HTMLDivElement>(null);
+  const [canScrollDown, setCanScrollDown] = useState(false);
+
+  function checkEntityScroll() {
+    const el = entityListRef.current;
+    if (!el) return;
+    setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 4);
+  }
+
+  useEffect(() => {
+    checkEntityScroll();
+  }, [worldEntityTypes]);
 
   async function handleSignOut() {
     try {
@@ -237,30 +252,44 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
             })()}
 
             {worldEntityTypes.length > 0 && (
-              <div className="pt-2 mt-2 border-t border-border space-y-0.5">
-                {worldEntityTypes.map((type) => {
-                  const href = `/worlds/${worldSlug}/entities/${type.slug}`;
-                  const isActive = pathname.startsWith(href);
-                  return (
-                    <NavTooltip key={type.id} label={type.name} collapsed={!sidebarOpen}>
-                      <Link
-                        href={href}
-                        className={`
-                          flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
-                          ${isActive
-                            ? "bg-muted text-foreground font-medium"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                          }
-                        `}
-                      >
-                        <span className="shrink-0">
-                          <DynamicIcon name={type.icon ?? ""} size={16} />
-                        </span>
-                        {sidebarOpen && <span className="truncate">{type.name}</span>}
-                      </Link>
-                    </NavTooltip>
-                  );
-                })}
+              <div className="relative pt-2 mt-2 border-t border-border">
+                <div
+                  ref={entityListRef}
+                  onScroll={checkEntityScroll}
+                  className="space-y-0.5 overflow-y-auto max-h-72 scrollbar-sidebar"
+                >
+                  {worldEntityTypes.map((type) => {
+                    const href = `/worlds/${worldSlug}/entities/${type.slug}`;
+                    const isActive = pathname.startsWith(href);
+                    return (
+                      <NavTooltip key={type.id} label={type.name} collapsed={!sidebarOpen}>
+                        <Link
+                          href={href}
+                          className={`
+                            flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
+                            ${isActive
+                              ? "bg-muted text-foreground font-medium"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                            }
+                          `}
+                        >
+                          <span className="shrink-0">
+                            <DynamicIcon name={type.icon ?? ""} size={16} />
+                          </span>
+                          {sidebarOpen && <span className="truncate">{type.name}</span>}
+                        </Link>
+                      </NavTooltip>
+                    );
+                  })}
+                </div>
+                {canScrollDown && (
+                  <button
+                    onClick={() => entityListRef.current?.scrollBy({ top: 144, behavior: "smooth" })}
+                    className="absolute bottom-0 left-0 right-0 h-7 bg-linear-to-t from-background to-transparent flex items-end justify-center pb-0.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer w-full"
+                  >
+                    <ChevronDown size={16} />
+                  </button>
+                )}
               </div>
             )}
             <div className="border-t border-border mt-2 mb-1" />

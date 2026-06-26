@@ -18,11 +18,13 @@ import type { EntityType } from "@/lib/db/schema";
 interface EntityTypeRowActionsProps {
   entityType: EntityType;
   worldId: string;
+  isPublicWorld?: boolean;
 }
 
 export function EntityTypeRowActions({
   entityType,
   worldId,
+  isPublicWorld,
 }: EntityTypeRowActionsProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -49,13 +51,15 @@ export function EntityTypeRowActions({
             <Pencil size={14} className="mr-2" />
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleToggleVisibility} disabled={pending}>
-            {isHidden ? (
-              <><Eye size={14} className="mr-2" />Show in public</>
-            ) : (
-              <><EyeOff size={14} className="mr-2" />Hide from public</>
-            )}
-          </DropdownMenuItem>
+          {isPublicWorld && (
+            <DropdownMenuItem onClick={handleToggleVisibility} disabled={pending}>
+              {isHidden ? (
+                <><Eye size={14} className="mr-2" />Show in public</>
+              ) : (
+                <><EyeOff size={14} className="mr-2" />Hide from public</>
+              )}
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => setDeleteOpen(true)}

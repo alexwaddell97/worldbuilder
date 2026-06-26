@@ -34,7 +34,7 @@ export default async function EntityTypesPage({
       ]} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">Entity Types</h1>
-        <CreateEntityTypeDialog worldId={world.id} />
+        <CreateEntityTypeDialog worldId={world.id} isPublicWorld={world.isPublic} />
       </div>
 
       <div className="space-y-2">
@@ -57,7 +57,7 @@ export default async function EntityTypesPage({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <EntityTypeRowActions entityType={type} worldId={world.id} />
+              <EntityTypeRowActions entityType={type} worldId={world.id} isPublicWorld={world.isPublic} />
             </div>
           </div>
         ))}

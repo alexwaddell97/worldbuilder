@@ -13,6 +13,7 @@ export const CreateEntityTypeSchema = z.object({
     .string()
     .max(50, { error: "Icon name too long." })
     .optional(),
+  isHiddenFromPublic: z.boolean().optional(),
 });
 
 export type CreateEntityTypeInput = z.infer<typeof CreateEntityTypeSchema>;

@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { IconPicker } from "@/components/entity-types/icon-picker";
 import type { EntityTypeActionState } from "@/lib/validations/entity-types";
 
@@ -13,7 +14,8 @@ interface EntityTypeFormProps {
     prevState: EntityTypeActionState,
     formData: FormData
   ) => Promise<EntityTypeActionState>;
-  initialValues?: { name: string; namePlural?: string; icon?: string };
+  initialValues?: { name: string; namePlural?: string; icon?: string; isHiddenFromPublic?: boolean };
+  isPublicWorld?: boolean;
   submitLabel: string;
   pendingLabel: string;
   onSuccess?: () => void;
@@ -23,6 +25,7 @@ interface EntityTypeFormProps {
 export function EntityTypeForm({
   action,
   initialValues,
+  isPublicWorld,
   submitLabel,
   pendingLabel,
   onSuccess,
@@ -30,6 +33,7 @@ export function EntityTypeForm({
 }: EntityTypeFormProps) {
   const [state, formAction, pending] = useActionState(action, { errors: {} });
   const [icon, setIcon] = useState(initialValues?.icon ?? "");
+  const [hiddenFromPublic, setHiddenFromPublic] = useState(initialValues?.isHiddenFromPublic ?? false);
 
   useEffect(() => {
     if (state.message === "saved") onSuccess?.();
@@ -86,6 +90,26 @@ export function EntityTypeForm({
           </p>
         )}
       </div>
+
+      {isPublicWorld && (
+        <div className="flex items-start gap-3">
+          <Checkbox
+            id="et-hidden-from-public"
+            checked={hiddenFromPublic}
+            onCheckedChange={(v: boolean | "indeterminate") => setHiddenFromPublic(v === true)}
+            className="mt-0.5"
+          />
+          <input type="hidden" name="isHiddenFromPublic" value={String(hiddenFromPublic)} />
+          <div>
+            <Label htmlFor="et-hidden-from-public" className="cursor-pointer">
+              Hide from public
+            </Label>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              This entity type won&apos;t appear on your world&apos;s public page.
+            </p>
+          </div>
+        </div>
+      )}
 
       {state.message && state.message !== "saved" && (
         <p className="text-sm text-destructive">{state.message}</p>

@@ -18,9 +18,10 @@ interface EntityInlineMetadataProps {
   entityType: EntityType;
   worldId: string;
   worldSlug: string;
+  isPublicWorld?: boolean;
 }
 
-export function EntityInlineMetadata({ entity, entityType, worldId, worldSlug }: EntityInlineMetadataProps) {
+export function EntityInlineMetadata({ entity, entityType, worldId, worldSlug, isPublicWorld }: EntityInlineMetadataProps) {
   const router = useRouter();
   const boundAction = updateEntityAction.bind(null, entity.id, worldId, worldSlug, entityType.slug);
   const [state, formAction, pending] = useActionState(boundAction, {});
@@ -141,17 +142,19 @@ export function EntityInlineMetadata({ entity, entityType, worldId, worldSlug }:
                 />
                 <span className="text-sm text-muted-foreground">{entityType.name}</span>
               </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                disabled={visibilityPending}
-                onClick={handleToggleVisibility}
-                className={`h-7 gap-1.5 text-xs ${isHidden ? "text-muted-foreground" : "text-muted-foreground"}`}
-              >
-                {isHidden ? <EyeOff size={12} /> : <Eye size={12} />}
-                {isHidden ? "Hidden" : "Visible"}
-              </Button>
+              {isPublicWorld && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={visibilityPending}
+                  onClick={handleToggleVisibility}
+                  className={`h-7 gap-1.5 text-xs ${isHidden ? "text-muted-foreground" : "text-muted-foreground"}`}
+                >
+                  {isHidden ? <EyeOff size={12} /> : <Eye size={12} />}
+                  {isHidden ? "Hidden" : "Visible"}
+                </Button>
+              )}
             </div>
 
             {/* Tags */}

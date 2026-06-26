@@ -48,13 +48,14 @@ export async function createEntityTypeAction(
     name: formData.get("name"),
     namePlural: formData.get("namePlural") || undefined,
     icon: formData.get("icon") || undefined,
+    isHiddenFromPublic: formData.get("isHiddenFromPublic") === "true",
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, namePlural, icon } = validated.data;
+  const { name, namePlural, icon, isHiddenFromPublic } = validated.data;
   const slug = slugify(name, { lower: true, strict: true });
 
   // Check slug uniqueness within this world
@@ -75,6 +76,7 @@ export async function createEntityTypeAction(
     slug,
     icon: icon ?? null,
     isBuiltIn: false,
+    isHiddenFromPublic: isHiddenFromPublic ?? false,
     customFieldsSchema: { fields: [] },
   });
 
