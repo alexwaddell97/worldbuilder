@@ -84,7 +84,7 @@ export default async function RelationshipsPage({
   ]).size;
 
   return (
-    <div className="h-screen w-full overflow-hidden">
+    <div className="h-full w-full overflow-hidden">
       <RelationshipGraphLoader
         worldId={world.id}
         worldSlug={slug}

@@ -29,7 +29,7 @@ export default async function HomePage() {
       {/* ── Section 1: Hero ────────────────────────────────────────────── */}
       <section
         id="hero"
-        className="relative min-h-screen flex items-center justify-center text-center px-6 w-full overflow-hidden"
+        className="relative min-h-screen flex items-center justify-center text-center px-4 sm:px-6 w-full overflow-hidden"
       >
         {/* Background image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -43,8 +43,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-background/20 backdrop-blur-sm" />
         {/* Bottom fade into page */}
         <div
-          className="absolute inset-x-0 bottom-0 h-72 pointer-events-none"
-          style={{ background: 'linear-gradient(to top, rgb(245,242,239) 0%, rgb(245,242,239) 30%, transparent 70%)' }}
+          className="absolute inset-x-0 bottom-0 h-72 pointer-events-none bg-linear-to-t from-background via-background/70 to-transparent"
         />
 
         <div className="relative max-w-3xl mx-auto pt-14">
@@ -78,11 +77,11 @@ export default async function HomePage() {
 
       {/* ── Section 2: Features ────────────────────────────────────────── */}
       <section id="features" className="py-20 bg-muted/50">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-foreground">
             Simple tools for complex worlds.
           </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
             {[
               {
                 icon: <BookOpen size={24} />,
@@ -140,7 +139,7 @@ export default async function HomePage() {
 
       {/* ── Section 3: Data Ownership ──────────────────────────────────── */}
       <section id="data-ownership" className="py-20 bg-muted/50">
-        <div className="max-w-2xl mx-auto px-6">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-foreground mb-8">
             Your world, your data
           </h2>
@@ -171,7 +170,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Section 5: Personas ────────────────────────────────────────── */}
-      <section id="personas" className="py-20 max-w-5xl mx-auto px-6 w-full">
+      <section id="personas" className="py-20 max-w-5xl mx-auto px-4 sm:px-6 w-full">
         <h2 className="text-2xl md:text-3xl font-semibold text-center text-foreground">
           For everyone who takes their worlds seriously.
         </h2>

@@ -94,7 +94,7 @@ export function SettingsClient({ user }: SettingsClientProps) {
   }
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col sm:flex-row gap-4">
       {/* Left column: Profile + Plan */}
       <div className="flex flex-col gap-4 flex-1">
         {/* Profile */}
@@ -148,7 +148,7 @@ export function SettingsClient({ user }: SettingsClientProps) {
                   <Label className="text-xs" htmlFor="current-password">Current password</Label>
                   <Input id="current-password" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div className="space-y-1">
                     <Label className="text-xs" htmlFor="new-password">New password</Label>
                     <Input id="new-password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required minLength={8} placeholder="8+ characters" />

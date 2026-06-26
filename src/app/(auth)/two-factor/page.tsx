@@ -45,7 +45,7 @@ export default function TwoFactorPage() {
   }
 
   return (
-    <div className="bg-card rounded-lg border border-border p-8 shadow-sm">
+    <div className="bg-card rounded-lg border border-border p-4 sm:p-8 shadow-sm">
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight">Two-factor verification</h1>
         <p className="text-sm text-muted-foreground mt-1">

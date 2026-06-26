@@ -130,7 +130,7 @@ export function WritingSidebar({ worldId, worldSlug, projects, documents }: Writ
   const isDragging = draggingDocId !== null;
 
   return (
-    <aside className="w-56 shrink-0 flex flex-col border-r border-border bg-background/40 backdrop-blur-sm overflow-hidden h-full">
+    <aside className="hidden md:flex w-56 shrink-0 flex-col border-r border-border bg-background/40 backdrop-blur-sm overflow-hidden h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-3 border-b border-border">
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Writing</span>

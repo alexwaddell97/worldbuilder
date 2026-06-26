@@ -30,14 +30,14 @@ export default async function WorldDetailPage({
   const entityTypes = await getEntityTypesByWorld(world.id);
 
   return (
-    <div className="p-8">
+    <div className="px-4 py-6 sm:p-8">
       <Breadcrumb items={[
         { label: "Your Worlds", href: "/dashboard" },
         { label: world.name },
       ]} />
 
       {/* Header row */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">{world.name}</h1>
         <WorldDetailActions world={world} />
       </div>

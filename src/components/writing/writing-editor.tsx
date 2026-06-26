@@ -362,7 +362,7 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
 
         {/* Content area */}
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
-          <div className={`max-w-3xl mx-auto px-8 py-10 ${typewriterMode ? "pb-[50vh]" : ""}`}>
+          <div className={`max-w-3xl mx-auto px-4 py-6 sm:px-8 sm:py-10 ${typewriterMode ? "pb-[50vh]" : ""}`}>
             {/* Editable title */}
             <textarea
               ref={titleRef}
@@ -383,10 +383,10 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
         <div className="shrink-0 flex items-center gap-3 px-6 py-2 border-t border-border text-xs text-muted-foreground bg-background/60">
           {/* Stats */}
           <span>{wordCount.toLocaleString()} {wordCount === 1 ? "word" : "words"}</span>
-          <span className="text-border">·</span>
-          <span>{charCount.toLocaleString()} chars</span>
-          <span className="text-border">·</span>
-          <span>{readingMinutes} min read</span>
+          <span className="hidden sm:inline text-border">·</span>
+          <span className="hidden sm:inline">{charCount.toLocaleString()} chars</span>
+          <span className="hidden sm:inline text-border">·</span>
+          <span className="hidden sm:inline">{readingMinutes} min read</span>
 
           <div className="flex-1" />
 
@@ -433,12 +433,12 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
             </TooltipContent>
           </Tooltip>
 
-          {/* Typewriter mode */}
+          {/* Typewriter mode — desktop only */}
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={() => setTypewriterMode((v) => !v)}
-                className={`h-6 w-6 flex items-center justify-center rounded transition-colors ${typewriterMode ? "text-primary bg-primary/10" : "hover:text-foreground hover:bg-muted"}`}
+                className={`hidden sm:flex h-6 w-6 items-center justify-center rounded transition-colors ${typewriterMode ? "text-primary bg-primary/10" : "hover:text-foreground hover:bg-muted"}`}
               >
                 <AlignCenter className="h-3.5 w-3.5" />
               </button>
@@ -448,12 +448,12 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
             </TooltipContent>
           </Tooltip>
 
-          {/* Focus mode */}
+          {/* Focus mode — desktop only */}
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 onClick={() => setFocusMode((v) => !v)}
-                className={`h-6 w-6 flex items-center justify-center rounded transition-colors ${focusMode ? "text-primary bg-primary/10" : "hover:text-foreground hover:bg-muted"}`}
+                className={`hidden sm:flex h-6 w-6 items-center justify-center rounded transition-colors ${focusMode ? "text-primary bg-primary/10" : "hover:text-foreground hover:bg-muted"}`}
               >
                 {focusMode ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
               </button>
@@ -463,11 +463,11 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
             </TooltipContent>
           </Tooltip>
 
-          {/* Last saved */}
+          {/* Last saved — desktop only */}
           {lastSavedAt && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="cursor-default">Saved {formatRelativeTime(lastSavedAt)}</span>
+                <span className="hidden sm:inline cursor-default">Saved {formatRelativeTime(lastSavedAt)}</span>
               </TooltipTrigger>
               <TooltipContent side="top" className="text-xs">
                 {formatAbsoluteTime(lastSavedAt)}

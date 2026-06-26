@@ -60,8 +60,11 @@ export function PublicMobileHeader({
 
         <SheetContent side="left" className="p-0 w-72 flex flex-col">
           {/* Wordmark */}
-          <div className="h-14 flex items-center px-4 border-b border-border shrink-0">
+          <div className="h-14 flex items-end gap-2 px-4 pb-2.5 border-b border-border shrink-0">
             <AppWordmark />
+            <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-primary/10 text-primary leading-none mb-0.5">
+              Alpha
+            </span>
           </div>
 
           {/* World home */}

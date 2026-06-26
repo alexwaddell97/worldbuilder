@@ -43,7 +43,7 @@ export default async function MapDetailPage({
   const trail = trailMaps.filter((m): m is { slug: string; name: string } => m !== null);
 
   return (
-    <div className="h-screen w-full overflow-hidden">
+    <div className="h-full w-full overflow-hidden">
       <MapViewer
         map={map}
         worldId={world.id}

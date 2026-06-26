@@ -236,7 +236,7 @@ export function MapViewer({
             const ancestorTrail = trail.slice(0, i).map((t) => t.slug).join(",");
             const href = `${effectiveMapsBase}/${ancestor.slug}${ancestorTrail ? `?trail=${ancestorTrail}` : ""}`;
             return (
-              <span key={ancestor.slug} className="contents">
+              <span key={ancestor.slug} className="hidden sm:contents">
                 <ChevronRight size={13} className="text-muted-foreground/50 shrink-0" />
                 <Link
                   href={href}
@@ -248,7 +248,7 @@ export function MapViewer({
             );
           })}
           <ChevronRight size={13} className="text-muted-foreground/50 shrink-0" />
-          <span className="font-medium">{map.name}</span>
+          <span className="font-medium truncate max-w-32 sm:max-w-none">{map.name}</span>
         </div>
 
         {!readOnly && (
@@ -330,9 +330,11 @@ export function MapViewer({
                     size="sm"
                     variant={editMode ? "default" : "ghost"}
                     onClick={() => setEditMode((v) => !v)}
-                    className="gap-1.5 h-8 px-3"
+                    className="gap-1.5 h-8 px-2 sm:px-3"
                   >
-                    {editMode ? <><X size={13} />Done</> : <><Pencil size={13} />Edit pins</>}
+                    {editMode
+                      ? <><X size={13} /><span className="hidden sm:inline">Done</span></>
+                      : <><Pencil size={13} /><span className="hidden sm:inline">Edit pins</span></>}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">

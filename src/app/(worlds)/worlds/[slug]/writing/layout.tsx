@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { getWorldBySlug } from "@/lib/db/queries/worlds";
 import { getWritingProjects, getWritingDocuments } from "@/lib/db/queries/writing";
 import { WritingSidebar } from "@/components/writing/writing-sidebar";
+import { WritingMobileHeader } from "@/components/writing/writing-mobile-header";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,12 @@ export default async function WritingLayout({
         documents={documents}
       />
       <div className="flex-1 overflow-hidden flex flex-col bg-background/40 backdrop-blur-sm">
+        <WritingMobileHeader
+          worldId={world.id}
+          worldSlug={slug}
+          projects={projects}
+          documents={documents}
+        />
         {children}
       </div>
     </div>

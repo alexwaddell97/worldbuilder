@@ -772,14 +772,14 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
       <div ref={containerRef} className="relative w-full h-full bg-background">
         {/* Frosted glass breadcrumb — top left, matching map view */}
         <div className="absolute top-3 left-3 z-30 flex items-center gap-1 bg-background/80 backdrop-blur-md rounded-lg border border-border/50 shadow-sm px-3 py-1.5 text-sm leading-none">
-          <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/dashboard" className="hidden sm:inline text-muted-foreground hover:text-foreground transition-colors">
             Your Worlds
           </Link>
-          <ChevronRight size={13} className="text-muted-foreground/50 shrink-0" />
-          <Link href={`/worlds/${worldSlug}`} className="text-muted-foreground hover:text-foreground transition-colors">
+          <ChevronRight size={13} className="hidden sm:inline-block text-muted-foreground/50 shrink-0" />
+          <Link href={`/worlds/${worldSlug}`} className="hidden sm:inline text-muted-foreground hover:text-foreground transition-colors">
             {worldName}
           </Link>
-          <ChevronRight size={13} className="text-muted-foreground/50 shrink-0" />
+          <ChevronRight size={13} className="hidden sm:inline-block text-muted-foreground/50 shrink-0" />
           <span className="font-medium">Relationships</span>
         </div>
 
@@ -872,10 +872,12 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                     <Button
                       size="sm"
                       variant={editMode ? "default" : "ghost"}
-                      className="gap-1.5 h-8 px-3"
+                      className="gap-1.5 h-8 px-2 sm:px-3"
                       onClick={() => setEditMode((v) => !v)}
                     >
-                      {editMode ? <><X size={13} />Done</> : <><Pencil size={13} />Edit</>}
+                      {editMode
+                        ? <><X size={13} /><span className="hidden sm:inline">Done</span></>
+                        : <><Pencil size={13} /><span className="hidden sm:inline">Edit</span></>}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="top">
@@ -894,13 +896,15 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                   <Button
                     size="sm"
                     variant={(hiddenEntityIds.size > 0 || hiddenTypeIds.size > 0) ? "default" : "ghost"}
-                    className="gap-1.5 h-8 px-3"
+                    className="gap-1.5 h-8 px-2 sm:px-3"
                     onClick={() => setVisibilityOpen((v) => !v)}
                   >
                     <Eye size={13} />
-                    {(hiddenEntityIds.size + hiddenTypeIds.size) > 0
-                      ? `Visibility (${hiddenEntityIds.size + hiddenTypeIds.size})`
-                      : "Visibility"}
+                    <span className="hidden sm:inline">
+                      {(hiddenEntityIds.size + hiddenTypeIds.size) > 0
+                        ? `Visibility (${hiddenEntityIds.size + hiddenTypeIds.size})`
+                        : "Visibility"}
+                    </span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">Show / hide entity types and entities</TooltipContent>
@@ -978,11 +982,13 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                       <Button
                         size="sm"
                         variant={selectedTags.size > 0 ? "default" : "ghost"}
-                        className="gap-1.5 h-8 px-3"
+                        className="gap-1.5 h-8 px-2 sm:px-3"
                         onClick={() => setTagFilterOpen((v) => !v)}
                       >
                         <Tag size={13} />
-                        {selectedTags.size > 0 ? `Tags (${selectedTags.size})` : "Filter"}
+                        <span className="hidden sm:inline">
+                          {selectedTags.size > 0 ? `Tags (${selectedTags.size})` : "Filter"}
+                        </span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="top">Filter entities by tag</TooltipContent>

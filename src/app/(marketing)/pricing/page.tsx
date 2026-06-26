@@ -100,7 +100,7 @@ export default function PricingPage() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <section className="py-24 text-center max-w-2xl mx-auto px-6 w-full">
+      <section className="py-24 text-center max-w-2xl mx-auto px-4 sm:px-6 w-full">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
           Simple, honest pricing
         </h1>
@@ -111,7 +111,7 @@ export default function PricingPage() {
       </section>
 
       {/* Tier cards */}
-      <section className="pb-24 max-w-5xl mx-auto px-6 w-full">
+      <section className="pb-24 max-w-5xl mx-auto px-4 sm:px-6 w-full">
         {/* Currency toggle */}
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-1 bg-muted rounded-md p-1 text-sm">
@@ -218,12 +218,12 @@ export default function PricingPage() {
       </section>
 
       {/* Feature comparison table */}
-      <section className="pb-24 max-w-4xl mx-auto px-6 w-full">
+      <section className="pb-24 max-w-4xl mx-auto px-4 sm:px-6 w-full">
         <h2 className="text-xl font-semibold text-center text-foreground mb-8">
           Compare plans
         </h2>
-        <div className="rounded-lg border border-border overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full text-sm min-w-140">
             <thead>
               <tr className="border-b border-border bg-muted/50">
                 <th className="text-left px-6 py-4 font-medium text-muted-foreground w-1/2">Feature</th>

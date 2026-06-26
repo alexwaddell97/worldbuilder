@@ -8,8 +8,8 @@ export default async function SettingsPage() {
   if (!session) redirect("/login");
 
   return (
-    <div className="p-8 flex flex-col">
-      <h1 className="text-xl font-semibold tracking-tight text-foreground mb-6">Settings</h1>
+    <div className="px-4 py-6 sm:p-8 flex flex-col">
+      <h1 className="text-xl font-semibold tracking-tight text-foreground mb-6">Account</h1>
       <SettingsClient user={session.user} />
     </div>
   );

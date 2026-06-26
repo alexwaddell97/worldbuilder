@@ -66,7 +66,7 @@ export default function TwoFactorSetupPage() {
   }
 
   return (
-    <div className="p-8 flex flex-col h-full">
+    <div className="px-4 py-6 sm:p-8 flex flex-col h-full">
       <Breadcrumb items={[
         { label: "Settings", href: "/settings" },
         { label: "Two-factor authentication" },
