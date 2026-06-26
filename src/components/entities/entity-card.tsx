@@ -15,6 +15,7 @@ import {
 import { EditEntityDialog } from "@/components/entities/edit-entity-dialog";
 import { DeleteEntityDialog } from "@/components/entities/delete-entity-dialog";
 import { blobDisplayUrl } from "@/lib/utils";
+import { FadeImage } from "@/components/ui/fade-image";
 import type { Entity, EntityType } from "@/lib/db/schema";
 
 interface EntityCardProps {
@@ -38,12 +39,11 @@ export function EntityCard({
     <>
       <Card className="overflow-hidden hover:shadow-sm transition-shadow">
         {entity.imageUrl && (
-          <div className="relative w-full h-24">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+          <div className="w-full h-24">
+            <FadeImage
               src={blobDisplayUrl(entity.imageUrl)}
               alt={`${entity.name} image`}
-              className="h-full w-full object-cover"
+              className="object-cover"
               style={entity.imagePosition ? { objectPosition: entity.imagePosition } : undefined}
             />
           </div>

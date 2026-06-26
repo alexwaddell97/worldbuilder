@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { ReadOnlyContent } from "@/components/entities/read-only-content";
 import { blobDisplayUrl } from "@/lib/utils";
+import { FadeImage } from "@/components/ui/fade-image";
 import { getEntityWithTypeByIdAction } from "@/lib/actions/entities";
 import type { Entity, EntityType } from "@/lib/db/schema";
 import type { CustomFieldValues } from "@/lib/db/schema";
@@ -107,11 +108,10 @@ export function EntityPreviewDrawer({
           {/* Cover image */}
           {activeEntity.imageUrl ? (
             <div className="relative w-full h-52 shrink-0 bg-muted">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <FadeImage
                 src={blobDisplayUrl(activeEntity.imageUrl)}
                 alt={activeEntity.name}
-                className="h-full w-full object-cover"
+                className="object-cover"
                 style={activeEntity.imagePosition ? { objectPosition: activeEntity.imagePosition } : undefined}
               />
               {/* Top fade — keeps the sheet close button legible */}

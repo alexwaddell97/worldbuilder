@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { EntityPreviewDrawer } from "@/components/entities/entity-preview-drawer";
 import { blobDisplayUrl } from "@/lib/utils";
+import { FadeImage } from "@/components/ui/fade-image";
 import type { Entity, EntityType } from "@/lib/db/schema";
 
 interface EntityListViewProps {
@@ -44,11 +45,10 @@ export function EntityListView({ entities, entityType, worldSlug }: EntityListVi
             {/* Thumbnail */}
             <div className="h-11 w-11 shrink-0 rounded-md overflow-hidden bg-muted flex items-center justify-center">
               {entity.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <FadeImage
                   src={blobDisplayUrl(entity.imageUrl)}
                   alt=""
-                  className="h-full w-full object-cover"
+                  className="object-cover"
                   style={entity.imagePosition ? { objectPosition: entity.imagePosition } : undefined}
                 />
               ) : (

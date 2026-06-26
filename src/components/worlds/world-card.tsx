@@ -14,6 +14,7 @@ import { EditWorldDialog } from "@/components/worlds/edit-world-dialog";
 import { DeleteWorldDialog } from "@/components/worlds/delete-world-dialog";
 import { PrivacyToggle } from "@/components/worlds/privacy-toggle";
 import { blobDisplayUrl } from "@/lib/utils";
+import { FadeImage } from "@/components/ui/fade-image";
 import type { World } from "@/lib/db/schema";
 
 const AVATAR_COLORS = [
@@ -47,12 +48,13 @@ export function WorldCard({ world }: { world: World }) {
         {/* Image area — full bleed with gradient overlays */}
         <Link href={`/worlds/${world.slug}`} className="block relative h-52 bg-muted overflow-hidden">
           {world.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={blobDisplayUrl(world.imageUrl)}
-              alt={`${world.name} cover`}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-            />
+            <div className="h-full w-full transition-transform duration-500 group-hover:scale-[1.04]">
+              <FadeImage
+                src={blobDisplayUrl(world.imageUrl)}
+                alt={`${world.name} cover`}
+                className="object-cover"
+              />
+            </div>
           ) : (
             <div className={`h-full w-full flex items-center justify-center ${avatarColor.bg}`}>
               <span className={`text-7xl font-bold select-none opacity-30 ${avatarColor.text}`}>
