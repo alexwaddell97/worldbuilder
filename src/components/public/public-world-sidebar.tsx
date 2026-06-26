@@ -63,7 +63,7 @@ export function PublicWorldSidebar({
     <TooltipProvider delayDuration={300}>
       <aside
         className={`
-          h-full flex flex-col bg-background border-r border-border overflow-hidden shrink-0
+          h-full hidden md:flex flex-col bg-background border-r border-border overflow-hidden shrink-0
           transition-[width] duration-200 ease-in-out
           ${sidebarOpen ? "w-60" : "w-14"}
         `}

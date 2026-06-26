@@ -38,7 +38,7 @@ export default async function PublicEntityDetailPage({
   );
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <div className="mb-4 text-sm text-muted-foreground">
         <Link href={basePath} className="hover:text-foreground transition-colors">{world.name}</Link>
         {" / "}

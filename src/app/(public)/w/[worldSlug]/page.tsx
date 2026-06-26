@@ -22,7 +22,7 @@ export default async function PublicWorldPage({
   const basePath = `/w/${worldSlug}`;
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       {/* Hero */}
       <div className="mb-10">
         {world.imageUrl && (
