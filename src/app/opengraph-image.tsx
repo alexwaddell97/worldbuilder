@@ -68,7 +68,7 @@ export default function Image() {
               boxShadow: '0 8px 48px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(0, 0, 0, 0.12)',
             }}
           >
-            <img src={logo} style={{ height: '72px', width: 'auto' }} />
+            <img src={logo} style={{ height: '72px', width: '368px', objectFit: 'contain' }} />
             <p
               style={{
                 margin: 0,
