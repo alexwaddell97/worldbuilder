@@ -100,7 +100,11 @@ export default function PricingPage() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <section className="py-24 text-center max-w-2xl mx-auto px-4 sm:px-6 w-full">
+      <section
+        className="py-24 text-center px-4 sm:px-6 w-full"
+        style={{ backgroundColor: "#eeece7", backgroundImage: "linear-gradient(rgba(238,236,231,0.6), rgba(238,236,231,0.6)), url('/topography.svg')" }}
+      >
+        <div className="max-w-2xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
           Simple, honest pricing
         </h1>
@@ -108,12 +112,13 @@ export default function PricingPage() {
           Start free. Upgrade when your world demands it. Or self-host and pay
           nothing, ever.
         </p>
+        </div>
       </section>
 
       {/* Tier cards */}
       <section className="pb-24 max-w-5xl mx-auto px-4 sm:px-6 w-full">
         {/* Currency toggle */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-8 mt-8">
           <div className="flex items-center gap-1 bg-muted rounded-md p-1 text-sm">
             {(["USD", "GBP"] as Currency[]).map((c) => (
               <button

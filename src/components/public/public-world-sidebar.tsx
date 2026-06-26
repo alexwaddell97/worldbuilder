@@ -86,14 +86,14 @@ export function PublicWorldSidebar({
       >
         {/* Wordmark */}
         <div className="h-14 flex items-end justify-between pl-4 pr-3 pb-2.5 border-b border-border shrink-0 overflow-hidden">
-          <div className="flex items-end gap-2">
+          <Link href="/" className="flex items-end gap-2">
             {sidebarOpen ? <AppWordmark /> : <AppIcon size={24} />}
             {sidebarOpen && (
               <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-primary/10 text-primary leading-none shrink-0 mb-0.5">
                 Alpha
               </span>
             )}
-          </div>
+          </Link>
         </div>
 
         {/* Nav */}

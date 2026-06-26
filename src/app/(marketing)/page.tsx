@@ -2,8 +2,6 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { APP_NAME, APP_TAGLINE, APP_COPYRIGHT_YEAR } from "@/config/app";
-import { AppWordmark } from "@/components/ui/app-wordmark";
 import {
   BookOpen,
   Link2,
@@ -75,7 +73,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Section 2: Features ────────────────────────────────────────── */}
+{/* ── Section 2: Features ────────────────────────────────────────── */}
       <section id="features" className="py-20 bg-muted">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-foreground">
@@ -138,7 +136,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Section 3: Data Ownership ──────────────────────────────────── */}
-      <section id="data-ownership" className="py-20 bg-muted">
+      <section id="data-ownership" className="py-20 bg-background">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-foreground mb-8">
             Your world, your data
@@ -170,7 +168,8 @@ export default async function HomePage() {
       </section>
 
       {/* ── Section 5: Personas ────────────────────────────────────────── */}
-      <section id="personas" className="py-20 max-w-5xl mx-auto px-4 sm:px-6 w-full">
+      <section id="personas" className="py-20 bg-muted w-full">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <h2 className="text-2xl md:text-3xl font-semibold text-center text-foreground">
           For everyone who takes their worlds seriously.
         </h2>
@@ -246,6 +245,29 @@ export default async function HomePage() {
               <ChevronRight size={14} /> No end goal required.
             </p>
           </div>
+        </div>
+        </div>
+      </section>
+
+      {/* ── Section: CTA ──────────────────────────────────────────────── */}
+      <section
+        className="py-24 text-center px-4 sm:px-6 w-full"
+        style={{ backgroundColor: "#faf8f5", backgroundImage: "linear-gradient(rgba(250,248,245,0.6), rgba(250,248,245,0.6)), url('/topography.svg')" }}
+      >
+        <div className="max-w-xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+            Ready to build your world?
+          </h2>
+          <p className="text-muted-foreground mt-4">
+            Start free. No payment required.
+          </p>
+          <Link
+            href="/signup"
+            className="mt-8 inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity"
+          >
+            Start building, it&apos;s free
+            <ChevronRight size={16} />
+          </Link>
         </div>
       </section>
 

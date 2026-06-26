@@ -3,7 +3,10 @@ import { AppWordmark } from "@/components/ui/app-wordmark";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+    <div
+      className="min-h-screen flex flex-col items-center justify-center px-6 text-center"
+      style={{ backgroundColor: "#eeece7", backgroundImage: "linear-gradient(rgba(238,236,231,0.6), rgba(238,236,231,0.6)), url('/topography.svg')" }}
+    >
       <Link href="/" className="mb-10 opacity-80 hover:opacity-100 transition-opacity">
         <AppWordmark height={24} />
       </Link>
