@@ -60,13 +60,15 @@ export async function createWorldAction(
     name: formData.get("name"),
     description: formData.get("description"),
     preset: formData.get("preset") ?? "blank",
+    imageUrl: formData.get("imageUrl") || undefined,
+    backgroundImageUrl: formData.get("backgroundImageUrl") || undefined,
   });
 
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors };
   }
 
-  const { name, description, preset } = validated.data;
+  const { name, description, preset, imageUrl, backgroundImageUrl } = validated.data;
   const slug = await generateUniqueSlug(name, session.user.id);
   const presetTypes = WORLD_PRESETS[preset as PresetId]?.entityTypes ?? [];
 
@@ -79,6 +81,8 @@ export async function createWorldAction(
         slug,
         ownerId: session.user.id,
         isPublic: false,
+        imageUrl: imageUrl || null,
+        backgroundImageUrl: backgroundImageUrl || null,
       })
       .returning();
 
@@ -158,25 +162,44 @@ export async function deleteWorldAction(worldId: string): Promise<void> {
   redirect("/dashboard");
 }
 
+// ─── generatePublicSlug ───────────────────────────────────────────────────────
+
+async function generatePublicSlug(worldId: string, worldSlug: string): Promise<string> {
+  // Try the world's own slug first
+  const [taken] = await db
+    .select({ id: worlds.id })
+    .from(worlds)
+    .where(and(eq(worlds.publicSlug, worldSlug)))
+    .limit(1);
+
+  if (!taken) return worldSlug;
+
+  // Fall back to slug + first 4 hex chars of world UUID
+  return `${worldSlug}-${worldId.replace(/-/g, "").slice(0, 4)}`;
+}
+
 // ─── togglePrivacyAction ──────────────────────────────────────────────────────
 
 export async function togglePrivacyAction(worldId: string): Promise<void> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) throw new Error("Unauthorized");
 
-  // Fetch current isPublic — scoped to owner (IDOR-safe)
+  // Fetch current state — scoped to owner (IDOR-safe)
   const [current] = await db
-    .select({ isPublic: worlds.isPublic })
+    .select({ isPublic: worlds.isPublic, slug: worlds.slug, publicSlug: worlds.publicSlug })
     .from(worlds)
     .where(and(eq(worlds.id, worldId), eq(worlds.ownerId, session.user.id)))
     .limit(1);
 
-  if (!current) return; // world not found or not owned — silently no-op
+  if (!current) return;
 
-  // IDOR-safe: scope update to both worldId AND ownerId
+  const makingPublic = !current.isPublic;
+  // Always ensure publicSlug is set — backfills any world that didn't get one yet
+  const publicSlug = current.publicSlug ?? await generatePublicSlug(worldId, current.slug);
+
   await db
     .update(worlds)
-    .set({ isPublic: !current.isPublic })
+    .set({ isPublic: makingPublic, publicSlug })
     .where(and(eq(worlds.id, worldId), eq(worlds.ownerId, session.user.id)));
 
   updateTag(`world-${worldId}`);

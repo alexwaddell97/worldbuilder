@@ -33,6 +33,7 @@ export default async function WritingDocumentPage({
       initialUpdatedAt={doc.updatedAt}
       initialWordCount={doc.wordCount}
       initialWordTarget={doc.wordTarget}
+      initialIsPublished={doc.isPublished}
     />
   );
 }

@@ -34,13 +34,13 @@ export default async function HomePage() {
         {/* Background image */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/bg2.jpg"
+          src="/landscape.png"
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
           aria-hidden="true"
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-background/40 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-background/20 backdrop-blur-sm" />
         {/* Bottom fade into page */}
         <div
           className="absolute inset-x-0 bottom-0 h-72 pointer-events-none"

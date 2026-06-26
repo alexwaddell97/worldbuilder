@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MoreHorizontal, Pencil, Trash2, Lock, Globe } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Lock, Globe, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -39,7 +39,16 @@ function getAvatarColor(name: string) {
 export function WorldCard({ world }: { world: World }) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const avatarColor = getAvatarColor(world.name);
+
+  function handleCopyLink() {
+    const url = `${window.location.origin}/w/${world.publicSlug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   return (
     <>
@@ -69,14 +78,11 @@ export function WorldCard({ world }: { world: World }) {
           {/* Bottom scrim — title legibility */}
           <div className="absolute inset-x-0 bottom-0 h-3/4 bg-linear-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
 
-          {/* World name + slug */}
+          {/* World name */}
           <div className="absolute inset-x-0 bottom-0 px-4 pb-4">
             <h2 className="text-base font-semibold text-white leading-snug">
               {world.name}
             </h2>
-            <p className="text-[11px] text-white/55 font-mono mt-0.5">
-              /worlds/{world.slug}
-            </p>
           </div>
 
           {/* Privacy pill — top left */}
@@ -99,13 +105,29 @@ export function WorldCard({ world }: { world: World }) {
           )}
 
           <div className="flex items-center gap-1 shrink-0">
+            {world.isPublic && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 cursor-pointer"
+                aria-label="Copy public link"
+                onClick={handleCopyLink}
+                title={copied ? "Copied!" : "Copy public link"}
+              >
+                {copied ? (
+                  <span className="text-[10px] font-medium text-green-600">✓</span>
+                ) : (
+                  <Link2 size={14} />
+                )}
+              </Button>
+            )}
             <PrivacyToggle worldId={world.id} isPublic={world.isPublic} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7"
+                  className="h-7 w-7 cursor-pointer"
                   aria-label={`World options for ${world.name}`}
                 >
                   <MoreHorizontal size={14} />

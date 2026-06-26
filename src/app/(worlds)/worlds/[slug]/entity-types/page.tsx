@@ -3,7 +3,6 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getWorldBySlug } from "@/lib/db/queries/worlds";
 import { getEntityTypesByWorld } from "@/lib/db/queries/entity-types";
-import { Badge } from "@/components/ui/badge";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { CreateEntityTypeDialog } from "@/components/entity-types/create-entity-type-dialog";
 import { EntityTypeRowActions } from "@/components/entity-types/entity-type-row-actions";
@@ -58,11 +57,7 @@ export default async function EntityTypesPage({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {type.isBuiltIn ? (
-                <Badge variant="secondary">Built-in</Badge>
-              ) : (
-                <EntityTypeRowActions entityType={type} worldId={world.id} />
-              )}
+              <EntityTypeRowActions entityType={type} worldId={world.id} />
             </div>
           </div>
         ))}

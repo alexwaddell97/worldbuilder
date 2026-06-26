@@ -106,6 +106,27 @@
       "when": 1782427941775,
       "tag": "0014_add_entity_type_name_plural",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1782600000000,
+      "tag": "0015_add_writing_published",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1782700000000,
+      "tag": "0016_add_public_visibility",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1782800000000,
+      "tag": "0017_add_world_public_slug",
+      "breakpoints": true
     }
   ]
 }

@@ -38,6 +38,8 @@ export const worlds = pgTable(
     name: text("name").notNull(),
     description: text("description"),
     isPublic: boolean("is_public").default(false).notNull(),
+    // globally unique slug for the public share URL — set on first publish
+    publicSlug: text("public_slug").unique(),
     imageUrl: text("image_url"),
     backgroundImageUrl: text("background_image_url"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -70,6 +72,7 @@ export const entityTypes = pgTable(
     icon: text("icon"),
     // distinguishes seeded built-in types from user-created types
     isBuiltIn: boolean("is_built_in").default(false).notNull(),
+    isHiddenFromPublic: boolean("is_hidden_from_public").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     customFieldsSchema: jsonb("custom_fields_schema")
       .$type<CustomFieldsSchema>()
@@ -103,6 +106,7 @@ export const entities = pgTable(
     tags: text("tags").array().default([]).notNull(),
     imageUrl: text("image_url"),
     imagePosition: text("image_position"),
+    isHiddenFromPublic: boolean("is_hidden_from_public").default(false).notNull(),
     customFields: jsonb("custom_fields")
       .$type<CustomFieldValues>()
       .default({})
@@ -254,6 +258,7 @@ export const writingDocuments = pgTable(
     content: jsonb("content"),
     wordCount: integer("word_count").default(0).notNull(),
     wordTarget: integer("word_target"),
+    isPublished: boolean("is_published").default(false).notNull(),
     position: integer("position").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),

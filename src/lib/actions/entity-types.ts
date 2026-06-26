@@ -153,18 +153,42 @@ export async function deleteEntityTypeAction(
     };
   }
 
-  // IDOR-safe: scope delete to entityTypeId + worldId.
   await db
     .delete(entityTypes)
-    .where(
-      and(
-        eq(entityTypes.id, entityTypeId),
-        eq(entityTypes.worldId, verified),
-        eq(entityTypes.isBuiltIn, false)
-      )
-    );
+    .where(and(eq(entityTypes.id, entityTypeId), eq(entityTypes.worldId, verified)));
 
   revalidatePath("/worlds");
 
   return {};
+}
+
+// ─── toggleEntityTypePublicVisibilityAction ───────────────────────────────────
+
+export async function toggleEntityTypePublicVisibilityAction(
+  entityTypeId: string,
+  worldId: string
+): Promise<{ isHiddenFromPublic: boolean }> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) throw new Error("Unauthorized");
+
+  const verified = await verifyWorldOwnership(worldId, session.user.id);
+  if (!verified) throw new Error("Forbidden");
+
+  const [current] = await db
+    .select({ isHiddenFromPublic: entityTypes.isHiddenFromPublic })
+    .from(entityTypes)
+    .where(and(eq(entityTypes.id, entityTypeId), eq(entityTypes.worldId, verified)))
+    .limit(1);
+  if (!current) throw new Error("Not found");
+
+  const next = !current.isHiddenFromPublic;
+
+  await db
+    .update(entityTypes)
+    .set({ isHiddenFromPublic: next })
+    .where(and(eq(entityTypes.id, entityTypeId), eq(entityTypes.worldId, verified)));
+
+  revalidatePath("/worlds");
+
+  return { isHiddenFromPublic: next };
 }

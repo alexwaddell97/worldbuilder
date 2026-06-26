@@ -450,9 +450,10 @@ interface InnerGraphProps {
   relations: GraphRelation[];
   allTags: string[];
   initialSettings: GraphSettingsInit;
+  readOnly?: boolean;
 }
 
-function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relations, allTags, initialSettings }: InnerGraphProps) {
+function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relations, allTags, initialSettings, readOnly = false }: InnerGraphProps) {
   const { fitView, zoomIn, zoomOut } = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -862,24 +863,27 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
               <TooltipContent side="top">Reset layout</TooltipContent>
             </Tooltip>
 
-            <div className="w-px h-5 bg-border mx-0.5" />
-
-            {/* Edit relations */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="sm"
-                  variant={editMode ? "default" : "ghost"}
-                  className="gap-1.5 h-8 px-3"
-                  onClick={() => setEditMode((v) => !v)}
-                >
-                  {editMode ? <><X size={13} />Done</> : <><Pencil size={13} />Edit</>}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                {editMode ? "Exit edit mode" : "Draw relationships"}
-              </TooltipContent>
-            </Tooltip>
+            {!readOnly && (
+              <>
+                <div className="w-px h-5 bg-border mx-0.5" />
+                {/* Edit relations */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant={editMode ? "default" : "ghost"}
+                      className="gap-1.5 h-8 px-3"
+                      onClick={() => setEditMode((v) => !v)}
+                    >
+                      {editMode ? <><X size={13} />Done</> : <><Pencil size={13} />Edit</>}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {editMode ? "Exit edit mode" : "Draw relationships"}
+                  </TooltipContent>
+                </Tooltip>
+              </>
+            )}
 
             <div className="w-px h-5 bg-border mx-0.5" />
 
@@ -1051,6 +1055,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
           entityType={drawerEntityType}
           worldSlug={worldSlug}
           open={drawerOpen}
+          readOnly={readOnly}
           onClose={() => {
             setDrawerOpen(false);
             setDrawerEntity(null);
@@ -1073,6 +1078,7 @@ export interface RelationshipGraphProps {
   relations: GraphRelation[];
   allTags: string[];
   initialSettings: GraphSettingsInit;
+  readOnly?: boolean;
 }
 
 export function RelationshipGraph({ nodes, worldSlug, worldName, ...rest }: RelationshipGraphProps) {

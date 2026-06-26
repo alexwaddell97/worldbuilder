@@ -9,7 +9,7 @@ import { Markdown } from "@tiptap/markdown";
 import { WikilinkExtension } from "@/lib/tiptap/wikilink-extension";
 import { WikilinkAutocomplete } from "@/components/tiptap/wikilink-autocomplete";
 import type { WikilinkAutocompleteHandle } from "@/components/tiptap/wikilink-autocomplete";
-import { saveWritingDocumentContentAction, updateWritingDocumentTitleAction, setWordTargetAction } from "@/lib/actions/writing";
+import { saveWritingDocumentContentAction, updateWritingDocumentTitleAction, setWordTargetAction, togglePublishDocumentAction } from "@/lib/actions/writing";
 import { getEntityWithTypeByIdAction } from "@/lib/actions/entities";
 import { EntityPreviewDrawer } from "@/components/entities/entity-preview-drawer";
 import type { Entity, EntityType } from "@/lib/db/schema";
@@ -19,7 +19,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import {
   Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3,
   List, ListOrdered, Quote, CodeSquare, Minus, Undo2, Redo2, Link2,
-  Flag, AlignCenter, Target, Maximize2, Minimize2,
+  Flag, AlignCenter, Target, Maximize2, Minimize2, Globe, Lock,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -32,6 +32,7 @@ interface WritingEditorProps {
   initialUpdatedAt?: Date | string | null;
   initialWordCount?: number;
   initialWordTarget?: number | null;
+  initialIsPublished?: boolean;
 }
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -70,7 +71,7 @@ function countWords(text: string): number {
   return trimmed.split(/\s+/).length;
 }
 
-export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initialContent, initialUpdatedAt, initialWordCount = 0, initialWordTarget = null }: WritingEditorProps) {
+export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initialContent, initialUpdatedAt, initialWordCount = 0, initialWordTarget = null, initialIsPublished = false }: WritingEditorProps) {
   const router = useRouter();
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -96,6 +97,10 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
 
   // Focus mode
   const [focusMode, setFocusMode] = useState(false);
+
+  // Publish state
+  const [isPublished, setIsPublished] = useState(initialIsPublished);
+  const [publishPending, setPublishPending] = useState(false);
 
   // Drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -402,6 +407,31 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
             docProgress={docProgress}
             onSetTarget={handleSetWordTarget}
           />
+
+          {/* Publish toggle */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                disabled={publishPending}
+                onClick={async () => {
+                  setPublishPending(true);
+                  try {
+                    const { isPublished: next } = await togglePublishDocumentAction(docId, worldId, worldSlug);
+                    setIsPublished(next);
+                  } finally {
+                    setPublishPending(false);
+                  }
+                }}
+                className={`flex items-center gap-1 h-6 px-1.5 rounded transition-colors disabled:opacity-50 ${isPublished ? "text-green-600 dark:text-green-400 bg-green-500/10 hover:bg-green-500/20" : "hover:text-foreground hover:bg-muted"}`}
+              >
+                {isPublished ? <Globe className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}
+                <span className="text-[11px]">{isPublished ? "Published" : "Draft"}</span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs">
+              {isPublished ? "Click to unpublish (hide from public view)" : "Click to publish (visible in public world)"}
+            </TooltipContent>
+          </Tooltip>
 
           {/* Typewriter mode */}
           <Tooltip>

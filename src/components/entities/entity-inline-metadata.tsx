@@ -1,16 +1,16 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import type { KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
-import { updateEntityAction } from "@/lib/actions/entities";
+import { updateEntityAction, toggleEntityPublicVisibilityAction } from "@/lib/actions/entities";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { CustomFieldsForm } from "@/components/entities/custom-fields-form";
 import { DeleteEntityDialog } from "@/components/entities/delete-entity-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
-import { Trash2, X } from "lucide-react";
+import { Trash2, X, EyeOff, Eye } from "lucide-react";
 import type { Entity, EntityType, CustomFieldValues } from "@/lib/db/schema";
 
 interface EntityInlineMetadataProps {
@@ -30,6 +30,15 @@ export function EntityInlineMetadata({ entity, entityType, worldId, worldSlug }:
   const [isDirty, setIsDirty] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(entity.isHiddenFromPublic);
+  const [visibilityPending, startVisibilityTransition] = useTransition();
+
+  function handleToggleVisibility() {
+    startVisibilityTransition(async () => {
+      const result = await toggleEntityPublicVisibilityAction(entity.id, worldId);
+      setIsHidden(result.isHiddenFromPublic);
+    });
+  }
 
   useEffect(() => {
     function handleContentDirty() { setIsDirty(true); }
@@ -122,14 +131,27 @@ export function EntityInlineMetadata({ entity, entityType, worldId, worldSlug }:
               </div>
             </div>
 
-            {/* Type */}
-            <div className="flex items-center gap-2 mt-2">
-              <DynamicIcon
-                name={entityType.icon ?? ""}
-                size={13}
-                className="text-muted-foreground"
-              />
-              <span className="text-sm text-muted-foreground">{entityType.name}</span>
+            {/* Type + visibility */}
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center gap-2">
+                <DynamicIcon
+                  name={entityType.icon ?? ""}
+                  size={13}
+                  className="text-muted-foreground"
+                />
+                <span className="text-sm text-muted-foreground">{entityType.name}</span>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={visibilityPending}
+                onClick={handleToggleVisibility}
+                className={`h-7 gap-1.5 text-xs ${isHidden ? "text-muted-foreground" : "text-muted-foreground"}`}
+              >
+                {isHidden ? <EyeOff size={12} /> : <Eye size={12} />}
+                {isHidden ? "Hidden" : "Visible"}
+              </Button>
             </div>
 
             {/* Tags */}

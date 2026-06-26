@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, EyeOff, Eye } from "lucide-react";
 import { EditEntityTypeDialog } from "@/components/entity-types/edit-entity-type-dialog";
 import { DeleteEntityTypeDialog } from "@/components/entity-types/delete-entity-type-dialog";
+import { toggleEntityTypePublicVisibilityAction } from "@/lib/actions/entity-types";
 import type { EntityType } from "@/lib/db/schema";
 
 interface EntityTypeRowActionsProps {
@@ -24,6 +26,15 @@ export function EntityTypeRowActions({
 }: EntityTypeRowActionsProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(entityType.isHiddenFromPublic);
+  const [pending, startTransition] = useTransition();
+
+  function handleToggleVisibility() {
+    startTransition(async () => {
+      const result = await toggleEntityTypePublicVisibilityAction(entityType.id, worldId);
+      setIsHidden(result.isHiddenFromPublic);
+    });
+  }
 
   return (
     <>
@@ -38,6 +49,14 @@ export function EntityTypeRowActions({
             <Pencil size={14} className="mr-2" />
             Edit
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleToggleVisibility} disabled={pending}>
+            {isHidden ? (
+              <><Eye size={14} className="mr-2" />Show in public</>
+            ) : (
+              <><EyeOff size={14} className="mr-2" />Hide from public</>
+            )}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => setDeleteOpen(true)}
             className="text-destructive focus:text-destructive"

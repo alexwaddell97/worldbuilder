@@ -13,6 +13,8 @@ export const CreateWorldSchema = z.object({
     .max(500, { error: "Description must be 500 characters or fewer." })
     .optional(),
   preset: z.enum(PRESET_IDS as [string, ...string[]]).default("blank"),
+  imageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
+  backgroundImageUrl: z.string().url({ error: "Must be a valid URL." }).optional().or(z.literal("")),
 });
 
 export const UpdateWorldSchema = z.object({

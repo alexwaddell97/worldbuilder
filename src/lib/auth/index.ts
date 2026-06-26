@@ -25,7 +25,12 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }: { user: { email: string }; url: string }) => {
-      await sendVerificationEmail(user.email, url);
+      const parsed = new URL(url);
+      const callbackURL = parsed.searchParams.get("callbackURL") ?? "/dashboard";
+      const base = callbackURL === "/" ? "/dashboard" : callbackURL;
+      const separator = base.includes("?") ? "&" : "?";
+      parsed.searchParams.set("callbackURL", `${base}${separator}verified=true`);
+      await sendVerificationEmail(user.email, parsed.toString());
     },
   },
   socialProviders: {

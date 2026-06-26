@@ -28,7 +28,9 @@ interface EntityPreviewDrawerProps {
   open: boolean;
   loading?: boolean;
   hideOverlay?: boolean;
+  readOnly?: boolean;
   onClose: () => void;
+  fetchEntity?: (entityId: string) => Promise<{ entity: Entity; entityType: EntityType } | null>;
 }
 
 export function EntityPreviewDrawer({
@@ -38,7 +40,9 @@ export function EntityPreviewDrawer({
   open,
   loading = false,
   hideOverlay = false,
+  readOnly = false,
   onClose,
+  fetchEntity,
 }: EntityPreviewDrawerProps) {
   const [linkedEntity, setLinkedEntity] = useState<Entity | null>(null);
   const [linkedEntityType, setLinkedEntityType] = useState<EntityType | null>(null);
@@ -49,13 +53,14 @@ export function EntityPreviewDrawer({
   const handleWikilinkClick = useCallback(
     async (entityId: string) => {
       if (!entity) return;
-      const result = await getEntityWithTypeByIdAction(entity.worldId, entityId);
+      const resolver = fetchEntity ?? ((id) => getEntityWithTypeByIdAction(entity.worldId, id));
+      const result = await resolver(entityId);
       if (result) {
         setLinkedEntity(result.entity);
         setLinkedEntityType(result.entityType);
       }
     },
-    [entity]
+    [entity, fetchEntity]
   );
 
   function handleClose() {
@@ -128,12 +133,14 @@ export function EntityPreviewDrawer({
             <SheetHeader className="p-0 space-y-1 text-left">
               <div className="flex items-start justify-between gap-3 pr-6">
                 <SheetTitle className="text-lg leading-snug">{activeEntity.name}</SheetTitle>
-                <Button asChild size="sm" variant="outline" className="shrink-0 h-8 gap-1.5 text-xs">
-                  <Link href={editHref}>
-                    <Pencil size={12} />
-                    Edit
-                  </Link>
-                </Button>
+                {!readOnly && (
+                  <Button asChild size="sm" variant="outline" className="shrink-0 h-8 gap-1.5 text-xs">
+                    <Link href={editHref}>
+                      <Pencil size={12} />
+                      Edit
+                    </Link>
+                  </Button>
+                )}
               </div>
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <DynamicIcon name={activeEntityType.icon ?? ""} size={12} />

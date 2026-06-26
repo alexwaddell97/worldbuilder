@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { worlds } from "@/lib/db/schema";
+import { worlds, writingDocuments } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import {
   createWritingDocument,
@@ -151,4 +151,29 @@ export async function deleteWritingProjectAction(
   } catch {
     return { success: false };
   }
+}
+
+export async function togglePublishDocumentAction(
+  docId: string,
+  worldId: string,
+  worldSlug: string
+): Promise<{ isPublished: boolean }> {
+  await requireWorldOwner(worldId);
+
+  const [current] = await db
+    .select({ isPublished: writingDocuments.isPublished })
+    .from(writingDocuments)
+    .where(and(eq(writingDocuments.id, docId), eq(writingDocuments.worldId, worldId)))
+    .limit(1);
+
+  if (!current) throw new Error("Document not found");
+
+  const next = !current.isPublished;
+  await db
+    .update(writingDocuments)
+    .set({ isPublished: next })
+    .where(and(eq(writingDocuments.id, docId), eq(writingDocuments.worldId, worldId)));
+
+  revalidateWriting(worldSlug);
+  return { isPublished: next };
 }

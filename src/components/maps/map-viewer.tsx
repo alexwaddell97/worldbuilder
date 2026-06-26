@@ -52,6 +52,10 @@ interface MapViewerProps {
   allMaps: Map[];
   /** Ancestor maps navigated through to reach this one */
   trail?: { slug: string; name: string }[];
+  /** Disables all editing controls */
+  readOnly?: boolean;
+  /** Base path for map navigation links, defaults to /worlds/${worldSlug}/maps */
+  mapsBasePath?: string;
 }
 
 export function MapViewer({
@@ -61,7 +65,10 @@ export function MapViewer({
   allEntities,
   allMaps,
   trail = [],
+  readOnly = false,
+  mapsBasePath,
 }: MapViewerProps) {
+  const effectiveMapsBase = mapsBasePath ?? `/worlds/${worldSlug}/maps`;
   const router = useRouter();
   const transformRef = useRef<ReactZoomPanPinchRef>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -128,9 +135,8 @@ export function MapViewer({
       setDrawerEntityType(pin.entity.entityType);
       setDrawerOpen(true);
     } else if (pin.linkedMap) {
-      // Build the new trail: existing trail + current map
       const newTrail = [...trail.map((t) => t.slug), map.slug].join(",");
-      router.push(`/worlds/${worldSlug}/maps/${pin.linkedMap.slug}?trail=${newTrail}`);
+      router.push(`${effectiveMapsBase}/${pin.linkedMap.slug}?trail=${newTrail}`);
     }
   }
 
@@ -221,15 +227,14 @@ export function MapViewer({
       <div className="absolute top-3 left-3 flex items-stretch gap-2 z-30">
         <div className="flex items-center gap-1 bg-background/80 backdrop-blur-md rounded-lg border border-border/50 shadow-sm px-3 py-1.5 text-sm leading-none">
           <Link
-            href={`/worlds/${worldSlug}/maps`}
+            href={effectiveMapsBase}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             Maps
           </Link>
           {trail.map((ancestor, i) => {
-            // Link back to ancestor, preserving the trail up to (but not including) it
             const ancestorTrail = trail.slice(0, i).map((t) => t.slug).join(",");
-            const href = `/worlds/${worldSlug}/maps/${ancestor.slug}${ancestorTrail ? `?trail=${ancestorTrail}` : ""}`;
+            const href = `${effectiveMapsBase}/${ancestor.slug}${ancestorTrail ? `?trail=${ancestorTrail}` : ""}`;
             return (
               <span key={ancestor.slug} className="contents">
                 <ChevronRight size={13} className="text-muted-foreground/50 shrink-0" />
@@ -246,32 +251,34 @@ export function MapViewer({
           <span className="font-medium">{map.name}</span>
         </div>
 
-        <div className="bg-background/80 backdrop-blur-md rounded-lg border border-border/50 shadow-sm">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-full w-8" aria-label="Map options">
-                <MoreHorizontal size={15} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={() => setCreateMapOpen(true)}>
-                <Plus size={13} className="mr-2" />
-                New map
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setEditMapOpen(true)}>
-                <Pencil size={13} className="mr-2" />
-                Edit map
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setDeleteMapOpen(true)}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 size={13} className="mr-2" />
-                Delete map
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        {!readOnly && (
+          <div className="bg-background/80 backdrop-blur-md rounded-lg border border-border/50 shadow-sm">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-full w-8" aria-label="Map options">
+                  <MoreHorizontal size={15} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => setCreateMapOpen(true)}>
+                  <Plus size={13} className="mr-2" />
+                  New map
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setEditMapOpen(true)}>
+                  <Pencil size={13} className="mr-2" />
+                  Edit map
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setDeleteMapOpen(true)}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 size={13} className="mr-2" />
+                  Delete map
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
       </div>
 
       {/* ── Edit mode hint pill ───────────────────────────────────────── */}
@@ -314,23 +321,26 @@ export function MapViewer({
             <TooltipContent side="top">Reset view</TooltipContent>
           </Tooltip>
 
-          <div className="w-px h-5 bg-border mx-0.5" />
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                size="sm"
-                variant={editMode ? "default" : "ghost"}
-                onClick={() => setEditMode((v) => !v)}
-                className="gap-1.5 h-8 px-3"
-              >
-                {editMode ? <><X size={13} />Done</> : <><Pencil size={13} />Edit pins</>}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              {editMode ? "Exit edit mode" : "Add or edit pins"}
-            </TooltipContent>
-          </Tooltip>
+          {!readOnly && (
+            <>
+              <div className="w-px h-5 bg-border mx-0.5" />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant={editMode ? "default" : "ghost"}
+                    onClick={() => setEditMode((v) => !v)}
+                    className="gap-1.5 h-8 px-3"
+                  >
+                    {editMode ? <><X size={13} />Done</> : <><Pencil size={13} />Edit pins</>}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  {editMode ? "Exit edit mode" : "Add or edit pins"}
+                </TooltipContent>
+              </Tooltip>
+            </>
+          )}
         </div>
       </TooltipProvider>
 
@@ -342,6 +352,7 @@ export function MapViewer({
           worldSlug={worldSlug}
           open={drawerOpen}
           hideOverlay
+          readOnly={readOnly}
           onClose={() => {
             setDrawerOpen(false);
             setDrawerEntity(null);

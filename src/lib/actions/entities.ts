@@ -228,3 +228,34 @@ export async function saveEntityContentAction(
 
   revalidatePath("/worlds");
 }
+
+// ─── toggleEntityPublicVisibilityAction ──────────────────────────────────────
+
+export async function toggleEntityPublicVisibilityAction(
+  entityId: string,
+  worldId: string
+): Promise<{ isHiddenFromPublic: boolean }> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) throw new Error("Unauthorized");
+
+  const verified = await verifyWorldOwnership(worldId, session.user.id);
+  if (!verified) throw new Error("Forbidden");
+
+  const [current] = await db
+    .select({ isHiddenFromPublic: entities.isHiddenFromPublic })
+    .from(entities)
+    .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)))
+    .limit(1);
+  if (!current) throw new Error("Not found");
+
+  const next = !current.isHiddenFromPublic;
+
+  await db
+    .update(entities)
+    .set({ isHiddenFromPublic: next })
+    .where(and(eq(entities.id, entityId), eq(entities.worldId, verified)));
+
+  revalidatePath("/worlds");
+
+  return { isHiddenFromPublic: next };
+}

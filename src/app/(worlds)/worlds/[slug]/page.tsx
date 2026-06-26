@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { WorldDetailActions } from "./world-detail-actions";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { CopyPublicLink } from "@/components/worlds/copy-public-link";
 
 export const dynamic = "force-dynamic";
 
@@ -63,9 +64,9 @@ export default async function WorldDetailPage({
             </>
           )}
         </Badge>
-        <span className="font-mono text-sm text-muted-foreground">
-          /worlds/{world.slug}
-        </span>
+        {world.isPublic && world.publicSlug && (
+          <CopyPublicLink publicSlug={world.publicSlug} />
+        )}
       </div>
 
       <Separator />
