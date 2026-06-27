@@ -38,7 +38,7 @@ export default async function HomePage() {
           aria-hidden="true"
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-background/ backdrop-blur-xs" />
+        <div className="absolute inset-0 bg-background/15 backdrop-blur-xs" />
         {/* Bottom fade into page */}
         <div
           className="absolute inset-x-0 bottom-0 h-96 pointer-events-none bg-linear-to-t from-muted via-muted/80 to-transparent"
@@ -61,7 +61,7 @@ export default async function HomePage() {
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity"
           >
             Start building, it&apos;s free
-            <ChevronRight size={16} />
+            <ChevronRight size={16} aria-hidden="true" />
           </Link>
           <a
             href="#features"
@@ -82,37 +82,37 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
             {[
               {
-                icon: <BookOpen size={24} />,
+                icon: <BookOpen size={24} aria-hidden="true" />,
                 title: "Custom entity types",
                 description:
                   "Characters, locations, factions, artefacts, or anything your world needs. Define as many types as you like, each with its own icon and tags. Build your world's vocabulary from scratch.",
               },
               {
-                icon: <Link2 size={24} />,
+                icon: <Link2 size={24} aria-hidden="true" />,
                 title: "Linked lore",
                 description:
                   "Connect entities with typed relationships and explore the web of connections as an interactive graph. Wikilink any entity from anywhere; every link survives a rename.",
               },
               {
-                icon: <Layers size={24} />,
+                icon: <Layers size={24} aria-hidden="true" />,
                 title: "Nested maps",
                 description:
                   "Upload a map and pin entities directly to it. Drill into sub-maps for regions, dungeons, or floor plans, all navigable from a single tree.",
               },
               {
-                icon: <FileText size={24} />,
+                icon: <FileText size={24} aria-hidden="true" />,
                 title: "Writing workspace",
                 description:
                   "A focused editor built into your world. Organise documents into projects, insert wikilinks inline, set word goals, and switch to focus mode when it's time to write.",
               },
               {
-                icon: <Eye size={24} />,
+                icon: <Eye size={24} aria-hidden="true" />,
                 title: "Granular sharing",
                 description:
                   "Toggle visibility per entity, map, or document. Share a public link with your players or readers and reveal lore as your story unfolds, one entry at a time.",
               },
               {
-                icon: <Download size={24} />,
+                icon: <Download size={24} aria-hidden="true" />,
                 title: "Markdown export",
                 description:
                   "Export your entire world as Markdown with wikilinks at any time, for free. Opens cleanly in Obsidian, Logseq, or any editor that supports [[wikilinks]].",
@@ -180,7 +180,7 @@ export default async function HomePage() {
             className="bg-card border border-border rounded-lg p-8"
           >
             <div className="flex items-center gap-2">
-              <PenLine size={16} className="text-muted-foreground" />
+              <PenLine size={16} className="text-muted-foreground" aria-hidden="true" />
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
                 Fiction Authors
               </span>
@@ -192,7 +192,7 @@ export default async function HomePage() {
               Build your lore bible, then open the writing workspace and draft with your world a wikilink away. Set session goals, track word counts, and switch to focus mode when it&apos;s time to write.
             </p>
             <p className="mt-4 text-sm font-medium text-foreground flex items-center gap-1">
-              <ChevronRight size={14} /> Private by default. Share publicly when you&apos;re ready.
+              <ChevronRight size={14} aria-hidden="true" /> Private by default. Share publicly when you&apos;re ready.
             </p>
           </div>
 
@@ -202,7 +202,7 @@ export default async function HomePage() {
             className="bg-card border border-border rounded-lg p-8"
           >
             <div className="flex items-center gap-2">
-              <Swords size={16} className="text-muted-foreground" />
+              <Swords size={16} className="text-muted-foreground" aria-hidden="true" />
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
                 TTRPG Game Masters
               </span>
@@ -216,7 +216,7 @@ export default async function HomePage() {
               entity, one secret at a time.
             </p>
             <p className="mt-4 text-sm font-medium text-foreground flex items-center gap-1">
-              <ChevronRight size={14} /> Built-in reveal system. Players see only what you unlock.
+              <ChevronRight size={14} aria-hidden="true" /> Built-in reveal system. Players see only what you unlock.
             </p>
           </div>
 
@@ -226,7 +226,7 @@ export default async function HomePage() {
             className="bg-card border border-border rounded-lg p-8"
           >
             <div className="flex items-center gap-2">
-              <Globe size={16} className="text-muted-foreground" />
+              <Globe size={16} className="text-muted-foreground" aria-hidden="true" />
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
                 Worldbuilders
               </span>
@@ -242,7 +242,7 @@ export default async function HomePage() {
               cosmologies, maps.
             </p>
             <p className="mt-4 text-sm font-medium text-foreground flex items-center gap-1">
-              <ChevronRight size={14} /> No end goal required.
+              <ChevronRight size={14} aria-hidden="true" /> No end goal required.
             </p>
           </div>
         </div>
@@ -252,7 +252,7 @@ export default async function HomePage() {
       {/* ── Section: CTA ──────────────────────────────────────────────── */}
       <section
         className="py-24 text-center px-4 sm:px-6 w-full"
-        style={{ backgroundColor: "#faf8f5", backgroundImage: "linear-gradient(rgba(250,248,245,0.6), rgba(250,248,245,0.6)), url('/topography.svg')" }}
+        style={{ backgroundColor: "hsl(var(--background))", backgroundImage: "linear-gradient(hsl(var(--background) / 0.6), hsl(var(--background) / 0.6)), url('/topography.svg')" }}
       >
         <div className="max-w-xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
@@ -266,7 +266,7 @@ export default async function HomePage() {
             className="mt-8 inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:opacity-90 transition-opacity"
           >
             Start building, it&apos;s free
-            <ChevronRight size={16} />
+            <ChevronRight size={16} aria-hidden="true" />
           </Link>
         </div>
       </section>

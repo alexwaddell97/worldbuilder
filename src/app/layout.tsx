@@ -43,6 +43,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} ${ubuntu.variable}`}>
       <body className="antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium"
+        >
+          Skip to content
+        </a>
         {children}
         <Toaster />
         <Suspense fallback={null}>

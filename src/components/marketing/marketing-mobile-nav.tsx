@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { AppWordmark } from "@/components/ui/app-wordmark";
 
 const links = [
@@ -25,6 +25,7 @@ export function MarketingMobileNav() {
         </SheetTrigger>
 
         <SheetContent side="right" className="p-0 w-72 flex flex-col">
+          <SheetTitle className="sr-only">Navigation menu</SheetTitle>
           {/* Wordmark */}
           <div className="h-14 flex items-end gap-2 px-4 pb-2.5 border-b border-border shrink-0">
             <AppWordmark />

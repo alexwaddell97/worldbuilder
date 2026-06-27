@@ -22,7 +22,7 @@ export function MarketingHeader() {
 
   const transparent = isHome && !scrolled;
   const navLinkClass = `hidden md:block text-sm transition-colors hover:text-foreground ${
-    transparent ? "text-foreground/60" : "text-muted-foreground"
+    transparent ? "text-foreground" : "text-foreground/70"
   }`;
 
   return (
@@ -38,7 +38,7 @@ export function MarketingHeader() {
         <div className="flex items-center gap-4">
           <LogoLink />
         </div>
-        <nav className="flex items-center gap-4 md:gap-6">
+        <nav aria-label="Main" className="flex items-center gap-4 md:gap-6">
           <AnchorNavLink
             href="/#features"
             anchor="features"
