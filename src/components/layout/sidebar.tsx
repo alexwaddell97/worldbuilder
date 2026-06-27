@@ -62,18 +62,18 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
   const pathname = usePathname();
   const router = useRouter();
 
-  const entityListRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const [canScrollDown, setCanScrollDown] = useState(false);
 
-  function checkEntityScroll() {
-    const el = entityListRef.current;
+  function checkNavScroll() {
+    const el = navRef.current;
     if (!el) return;
     setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 4);
   }
 
   useEffect(() => {
-    checkEntityScroll();
-  }, [worldEntityTypes]);
+    checkNavScroll();
+  }, [worldEntityTypes, worlds]);
 
   async function handleSignOut() {
     try {
@@ -109,7 +109,8 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
       </div>
 
       {/* Nav items */}
-      <nav className="flex-1 py-2 px-2 space-y-0.5">
+      <div className="relative flex-1 min-h-0">
+      <nav ref={navRef} onScroll={checkNavScroll} className="h-full overflow-y-auto scrollbar-sidebar py-2 px-2 space-y-0.5">
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
@@ -134,7 +135,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
 
         {/* Worlds list */}
         {worlds && worlds.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-border">
+          <div className="mt-3 pt-3 border-t border-border space-y-0.5">
             {worlds.map((world) => {
               const href = `/worlds/${world.slug}`;
               const isActive = pathname.startsWith(href);
@@ -163,13 +164,13 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
 
         {/* World entity type nav — shown only when worldEntityTypes are provided */}
         {worldEntityTypes && worldSlug && (
-          <div className="mt-3 pt-3 border-t border-border">
+          <div className="mt-3 pt-3 border-t border-border space-y-0.5">
             {/* World home */}
             <NavTooltip label={worldName ?? "World"} collapsed={!sidebarOpen}>
               <Link
                 href={`/worlds/${worldSlug}`}
                 className={`
-                  flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors mb-1
+                  flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
                   ${pathname === `/worlds/${worldSlug}`
                     ? "bg-muted text-foreground font-medium"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -252,55 +253,40 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
             })()}
 
             {worldEntityTypes.length > 0 && (
-              <div className="relative pt-2 mt-2 border-t border-border">
-                <div
-                  ref={entityListRef}
-                  onScroll={checkEntityScroll}
-                  className="space-y-0.5 overflow-y-auto max-h-72 scrollbar-sidebar"
-                >
-                  {worldEntityTypes.map((type) => {
-                    const href = `/worlds/${worldSlug}/entities/${type.slug}`;
-                    const isActive = pathname.startsWith(href);
-                    return (
-                      <NavTooltip key={type.id} label={type.name} collapsed={!sidebarOpen}>
-                        <Link
-                          href={href}
-                          className={`
-                            flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
-                            ${isActive
-                              ? "bg-muted text-foreground font-medium"
-                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                            }
-                          `}
-                        >
-                          <span className="shrink-0">
-                            <DynamicIcon name={type.icon ?? ""} size={16} />
-                          </span>
-                          {sidebarOpen && <span className="truncate">{type.name}</span>}
-                        </Link>
-                      </NavTooltip>
-                    );
-                  })}
-                </div>
-                {canScrollDown && (
-                  <button
-                    onClick={() => entityListRef.current?.scrollBy({ top: 144, behavior: "smooth" })}
-                    className="absolute bottom-0 left-0 right-0 h-7 bg-linear-to-t from-background to-transparent flex items-end justify-center pb-0.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer w-full"
-                  >
-                    <ChevronDown size={16} />
-                  </button>
-                )}
+              <div className="space-y-0.5">
+                {worldEntityTypes.map((type) => {
+                  const href = `/worlds/${worldSlug}/entities/${type.slug}`;
+                  const isActive = pathname.startsWith(href);
+                  return (
+                    <NavTooltip key={type.id} label={type.name} collapsed={!sidebarOpen}>
+                      <Link
+                        href={href}
+                        className={`
+                          flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
+                          ${isActive
+                            ? "bg-muted text-foreground font-medium"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          }
+                        `}
+                      >
+                        <span className="shrink-0">
+                          <DynamicIcon name={type.icon ?? ""} size={16} />
+                        </span>
+                        {sidebarOpen && <span className="truncate">{type.name}</span>}
+                      </Link>
+                    </NavTooltip>
+                  );
+                })}
               </div>
             )}
-            <div className="border-t border-border mt-2 mb-1" />
             <NavTooltip label="Entity Types" collapsed={!sidebarOpen}>
               <Link
                 href={`/worlds/${worldSlug}/entity-types`}
                 className={`
-                  flex items-center gap-3 pl-2.75 pr-2 h-8 rounded-md text-xs transition-colors
+                  flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors
                   ${pathname === `/worlds/${worldSlug}/entity-types`
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-muted text-foreground font-medium"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }
                 `}
               >
@@ -311,9 +297,18 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
           </div>
         )}
       </nav>
+      {canScrollDown && (
+        <button
+          onClick={() => navRef.current?.scrollBy({ top: 144, behavior: "smooth" })}
+          className="absolute bottom-0 left-0 right-0 h-7 bg-linear-to-t from-background to-transparent flex items-end justify-center pb-0.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer w-full"
+        >
+          <ChevronDown size={16} />
+        </button>
+      )}
+      </div>
 
       {/* Bottom nav: Settings + Sign out */}
-      <div className="px-2 pb-2 space-y-0.5">
+      <div className="px-2 pb-2 pt-2 space-y-0.5 shrink-0 border-t border-border">
         <NavTooltip label="Account" collapsed={!sidebarOpen}>
           <Link
             href="/settings"
@@ -342,7 +337,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
       </div>
 
       {/* Collapse toggle */}
-      <div className="px-2 pb-3 border-t border-border pt-2">
+      <div className="px-2 pb-3 border-t border-border pt-2 shrink-0">
         <button
           onClick={toggleSidebar}
           aria-label="Toggle sidebar"

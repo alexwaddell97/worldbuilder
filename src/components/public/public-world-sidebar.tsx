@@ -41,17 +41,17 @@ export function PublicWorldSidebar({
   const pathname = usePathname();
   const base = `/w/${worldSlug}`;
 
-  const entityListRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const [canScrollDown, setCanScrollDown] = useState(false);
 
-  function checkEntityScroll() {
-    const el = entityListRef.current;
+  function checkNavScroll() {
+    const el = navRef.current;
     if (!el) return;
     setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 4);
   }
 
   useEffect(() => {
-    checkEntityScroll();
+    checkNavScroll();
   }, [entityTypes]);
 
   function navLink(href: string, icon: React.ReactNode, label: string) {
@@ -97,7 +97,8 @@ export function PublicWorldSidebar({
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-2 px-2 space-y-0.5">
+        <div className="relative flex-1 min-h-0">
+        <nav ref={navRef} onScroll={checkNavScroll} className="h-full overflow-y-auto scrollbar-sidebar py-2 px-2 space-y-0.5">
           {/* World home — separated from world nav links like Dashboard from world buttons */}
           <NavTooltip label={worldName} collapsed={!sidebarOpen}>
             <Link
@@ -124,37 +125,32 @@ export function PublicWorldSidebar({
             {navLink(`${base}/stories`, <BookOpen size={16} />, "Stories")}
           </div>
 
-          {/* Entity types — scrollable with chevron */}
+          {/* Entity types */}
           {entityTypes.length > 0 && (
-            <div className="relative pt-2 mt-2 border-t border-border">
-              <div
-                ref={entityListRef}
-                onScroll={checkEntityScroll}
-                className="space-y-0.5 overflow-y-auto max-h-72 scrollbar-sidebar"
-              >
-                {entityTypes.map((et) =>
-                  navLink(
-                    `${base}/entities/${et.slug}`,
-                    <DynamicIcon name={et.icon ?? ""} size={16} />,
-                    et.namePlural ?? et.name
-                  )
-                )}
-              </div>
-              {canScrollDown && (
-                <button
-                  onClick={() => entityListRef.current?.scrollBy({ top: 144, behavior: "smooth" })}
-                  className="absolute bottom-0 left-0 right-0 h-7 bg-linear-to-t from-background to-transparent flex items-end justify-center pb-0.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer w-full"
-                >
-                  <ChevronDown size={16} />
-                </button>
+            <div className="space-y-0.5 mt-0.5">
+              {entityTypes.map((et) =>
+                navLink(
+                  `${base}/entities/${et.slug}`,
+                  <DynamicIcon name={et.icon ?? ""} size={16} />,
+                  et.namePlural ?? et.name
+                )
               )}
             </div>
           )}
         </nav>
+        {canScrollDown && (
+          <button
+            onClick={() => navRef.current?.scrollBy({ top: 144, behavior: "smooth" })}
+            className="absolute bottom-0 left-0 right-0 h-7 bg-linear-to-t from-background to-transparent flex items-end justify-center pb-0.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer w-full"
+          >
+            <ChevronDown size={16} />
+          </button>
+        )}
+        </div>
 
         {/* Bottom: sign in CTA — only shown to logged-out visitors once session is known */}
         {sidebarOpen && !sessionPending && !session && (
-          <div className="px-3 pb-3 pt-2 border-t border-border space-y-1.5">
+          <div className="px-3 pb-3 pt-2 border-t border-border space-y-1.5 shrink-0">
             <Link
               href="/signup"
               className="flex items-center justify-center w-full h-8 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity"
@@ -171,7 +167,7 @@ export function PublicWorldSidebar({
         )}
 
         {/* Collapse toggle */}
-        <div className="px-2 pb-3 border-t border-border pt-2">
+        <div className="px-2 pb-3 border-t border-border pt-2 shrink-0">
           <button
             onClick={toggleSidebar}
             aria-label="Toggle sidebar"
