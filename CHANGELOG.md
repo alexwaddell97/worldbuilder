@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/alexwaddell97/worldbuilder/compare/v1.0.0...v1.0.1) (2026-06-30)
+
+
+### Bug Fixes
+
+* release please token added for discord webhook support ([8c053b3](https://github.com/alexwaddell97/worldbuilder/commit/8c053b3a9cc3a3a1bc4ec222ec14851d5eacb00a))
+
 ## 1.0.0 (2026-06-30)
 
 
