@@ -37,15 +37,15 @@ export default function MarketingLayout({
           <div className="flex flex-wrap justify-center md:justify-end gap-x-10 gap-y-6 text-sm text-muted-foreground">
             <nav aria-label="Updates" className="flex flex-col gap-2">
               <p className="text-xs font-semibold uppercase tracking-widest text-foreground/50">Updates</p>
-              <a href="/changelog" className="hover:text-foreground transition-colors">Changelog</a>
-              <a href="/roadmap" className="hover:text-foreground transition-colors">Roadmap</a>
-              <a href="/announcements" className="hover:text-foreground transition-colors">Announcements</a>
+              <Link href="/changelog" className="hover:text-foreground transition-colors">Changelog</Link>
+              <Link href="/roadmap" className="hover:text-foreground transition-colors">Roadmap</Link>
+              <Link href="/announcements" className="hover:text-foreground transition-colors">Announcements</Link>
             </nav>
             <nav aria-label="Legal" className="flex flex-col gap-2">
               <p className="text-xs font-semibold uppercase tracking-widest text-foreground/50">Legal</p>
-              <a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a>
-              <a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a>
-              <a href="/cookies" className="hover:text-foreground transition-colors">Cookies</a>
+              <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
+              <Link href="/cookies" className="hover:text-foreground transition-colors">Cookies</Link>
             </nav>
           </div>
         </div>

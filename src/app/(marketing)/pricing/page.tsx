@@ -138,7 +138,7 @@ export default function PricingPage() {
 
                   <div className="flex flex-col gap-2">
                     <Link
-                      href={tier.ctaHref}
+                      href={tier.ctaHref!}
                       className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition-opacity hover:opacity-90 bg-primary text-primary-foreground"
                     >
                       {tier.cta}

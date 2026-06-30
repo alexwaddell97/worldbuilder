@@ -11,7 +11,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-semibold text-base mb-2">1. Acceptance</h2>
           <p className="text-muted-foreground">
-            By creating an account or using {APP_NAME} (the "Service"), you agree to these Terms.
+            By creating an account or using {APP_NAME} (the &ldquo;Service&rdquo;), you agree to these Terms.
             If you do not agree, do not use the Service. These Terms are governed by English law.
           </p>
         </section>

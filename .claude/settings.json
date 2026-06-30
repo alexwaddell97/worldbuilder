@@ -32,7 +32,9 @@
       "Bash(git remote *)",
       "Bash(mkdir -p \"/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/\\(marketing\\)/announcements/[slug]\")",
       "Bash(curl -s http://localhost:3000/announcements/building-in-public)",
-      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); deps={**p.get\\('dependencies',{}\\), **p.get\\('devDependencies',{}\\)}; [print\\(k,v\\) for k,v in sorted\\(deps.items\\(\\)\\)]\")"
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); deps={**p.get\\('dependencies',{}\\), **p.get\\('devDependencies',{}\\)}; [print\\(k,v\\) for k,v in sorted\\(deps.items\\(\\)\\)]\")",
+      "Bash(pnpm tsc *)",
+      "Bash(pnpm lint *)"
     ],
     "additionalDirectories": [
       "/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/public/[worldSlug]",

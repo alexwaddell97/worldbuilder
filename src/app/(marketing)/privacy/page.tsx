@@ -53,7 +53,7 @@ export default function PrivacyPage() {
           <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
             <li>Access the personal data we hold about you.</li>
             <li>Request correction of inaccurate data.</li>
-            <li>Request deletion of your data ("right to be forgotten").</li>
+            <li>Request deletion of your data (&ldquo;right to be forgotten&rdquo;).</li>
             <li>Export your data at any time via the Markdown export feature.</li>
             <li>Lodge a complaint with the ICO (UK) or your local supervisory authority.</li>
           </ul>

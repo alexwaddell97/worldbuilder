@@ -106,7 +106,7 @@ export default function TwoFactorSetupPage() {
         <form onSubmit={handlePasswordSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="password">Confirm your password</Label>
-            <p className="text-xs text-muted-foreground">We need to verify it's you before enabling 2FA.</p>
+            <p className="text-xs text-muted-foreground">We need to verify it&apos;s you before enabling 2FA.</p>
             <Input
               id="password"
               type="password"
