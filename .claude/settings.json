@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(artifact-design)",
+      "Skill(artifact-design:*)",
+      "WebFetch(domain:elementor.com)",
+      "WebFetch(domain:getaccessguard.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.tpgi.com)",
+      "WebFetch(domain:philipcdavis.com)",
+      "WebFetch(domain:www.deque.com)",
+      "WebFetch(domain:cdn.jsdelivr.net)",
+      "WebFetch(domain:www.notion.com)",
+      "WebFetch(domain:www.accessibilitychecker.org)",
+      "WebFetch(domain:blog.superhuman.com)",
+      "Bash(npx shadcn@latest add command --yes)",
+      "Bash(npx shadcn@latest add command)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(mkdir -p /Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/public/\\\\[worldSlug\\\\]/search)",
+      "Bash(mkdir -p \"/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/worlds/[slug]/search\")",
+      "Bash(grep -E \"\\\\.tsx?$\")",
+      "Bash(python3 -c \"import sys,json; p=json.load\\(sys.stdin\\)['dependencies']; print\\('\\\\n'.join\\(k+': '+v for k,v in sorted\\(p.items\\(\\)\\)\\)\\)\")",
+      "Bash(node -e \"const data = require\\('./node_modules/@iconify-json/game-icons/icons.json'\\); const names = Object.keys\\(data.icons\\); console.log\\('Total icons:', names.length\\); console.log\\(names.filter\\(n => /dragon|sword|shield|skull|castle|wolf|goblin|wizard|knight|torch|potion|scroll|crown|gem|key|dungeon|magic|crystal|rune|treasure|axe|dagger|bow|spear|hammer|forest|mountain|tower|demon|vampire|bear|horse|eagle|ring|coins|fire|rune/.test\\(n\\)\\).join\\('\\\\n'\\)\\);\")",
+      "Bash(node -e ' *)",
+      "Bash(node -e \"const pkg = require\\('./node_modules/@iconify/react/package.json'\\); console.log\\(pkg.version, pkg.exports?.['.']?.types || pkg.types || 'no types'\\)\")",
+      "Bash(node -e \"const api = Object.keys\\(require\\('./node_modules/@iconify/react'\\)\\); console.log\\(api.join\\(', '\\)\\)\")",
+      "Bash(npx tsx *)",
+      "Bash(node -e \"const d = require\\('/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/lib/game-icons-mini.json'\\); console.log\\(Object.keys\\(d.icons\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(node -e \"const d = require\\('/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/lib/constants/game-icons-mini.json'\\); console.log\\(Object.keys\\(d.icons\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; j=json.load\\(sys.stdin\\); print\\(j['entries'][-1]\\)\")"
+    ],
+    "additionalDirectories": [
+      "/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/public/[worldSlug]",
+      "/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/worlds/[slug]"
+    ]
+  }
+}

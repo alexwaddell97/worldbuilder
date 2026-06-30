@@ -45,6 +45,7 @@ export const CreateMapPinSchema = z.object({
   y: z.number().min(0).max(100),
   icon: z.string().optional().nullable(),
   color: z.string().optional().nullable(),
+  shape: z.enum(["circle", "shield", "square", "diamond"]).optional().nullable(),
 });
 
 export const UpdateMapPinSchema = z.object({
@@ -53,6 +54,7 @@ export const UpdateMapPinSchema = z.object({
   label: z.string().max(80).optional().nullable(),
   icon: z.string().optional().nullable(),
   color: z.string().optional().nullable(),
+  shape: z.enum(["circle", "shield", "square", "diamond"]).optional().nullable(),
 });
 
 export type CreateMapInput = z.infer<typeof CreateMapSchema>;

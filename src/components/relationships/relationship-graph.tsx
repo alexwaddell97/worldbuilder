@@ -30,12 +30,8 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
-  Pencil,
   X,
-  Tag,
   RotateCcw,
-  Trash2,
-  Network,
   ChevronRight,
   Eye,
   EyeOff,
@@ -290,7 +286,7 @@ function EntityNode({ data, isConnectable, id }: NodeProps<GraphNode>) {
         </button>
         {!editMode && (
           <button
-            className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4 rounded flex items-center justify-center bg-background/90 border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted"
+            className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity w-4 h-4 rounded flex items-center justify-center bg-background/90 border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
             onClick={(e) => { e.stopPropagation(); onHideEntity(id); }}
             title="Hide entity"
           >
@@ -365,7 +361,7 @@ function RelationPopup({
         </span>
         <button
           onClick={onClose}
-          className="h-5 w-5 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          className="h-5 w-5 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
         >
           <X size={12} />
         </button>
@@ -395,7 +391,7 @@ function RelationPopup({
               key={s}
               type="button"
               onClick={() => setLabel(s)}
-              className={`text-[10px] px-1.5 py-0.5 rounded-md border transition-colors ${
+              className={`text-[10px] px-1.5 py-0.5 rounded-md border transition-colors cursor-pointer ${
                 label === s
                   ? "bg-primary text-primary-foreground border-primary"
                   : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
@@ -416,7 +412,7 @@ function RelationPopup({
               onClick={onDelete}
               disabled={pending}
             >
-              <Trash2 size={12} className="mr-1" />
+              <DynamicIcon name="gi:trash-can" size={12} className="mr-1" />
               Delete
             </Button>
           )}
@@ -753,7 +749,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
   if (rawNodes.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3 text-muted-foreground bg-background">
-        <Network size={40} strokeWidth={1.5} />
+        <DynamicIcon name="gi:family-tree" size={40} />
         <div className="text-center">
           <p className="text-sm font-medium text-foreground">No relationships yet</p>
           <p className="text-sm mt-1">
@@ -877,7 +873,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                     >
                       {editMode
                         ? <><X size={13} /><span className="hidden sm:inline">Done</span></>
-                        : <><Pencil size={13} /><span className="hidden sm:inline">Edit</span></>}
+                        : <><DynamicIcon name="gi:pencil" size={13} /><span className="hidden sm:inline">Edit</span></>}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="top">
@@ -921,7 +917,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                         <button
                           key={type.id}
                           onClick={() => handleToggleType(type.id)}
-                          className={`flex items-center gap-2 text-xs px-2 py-1.5 rounded-md transition-colors w-full text-left ${
+                          className={`flex items-center gap-2 text-xs px-2 py-1.5 rounded-md transition-colors w-full text-left cursor-pointer ${
                             hidden ? "text-muted-foreground" : "hover:bg-muted"
                           }`}
                         >
@@ -946,7 +942,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                             try { localStorage.removeItem(`rel:${worldId}:hiddenEntities`); } catch { /* ignore */ }
                             saveGraphSettingsAction(worldId, { hiddenEntityIds: [] });
                           }}
-                          className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                          className="text-[10px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                         >
                           Show all
                         </button>
@@ -958,7 +954,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                             <span className="text-muted-foreground truncate flex-1">{n.data.label}</span>
                             <button
                               onClick={() => handleShowEntity(n.id)}
-                              className="text-[10px] text-primary hover:text-primary/70 transition-colors shrink-0 font-medium"
+                              className="text-[10px] text-primary hover:text-primary/70 transition-colors shrink-0 font-medium cursor-pointer"
                             >
                               Show
                             </button>
@@ -985,7 +981,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                         className="gap-1.5 h-8 px-2 sm:px-3"
                         onClick={() => setTagFilterOpen((v) => !v)}
                       >
-                        <Tag size={13} />
+                        <DynamicIcon name="gi:price-tag" size={13} />
                         <span className="hidden sm:inline">
                           {selectedTags.size > 0 ? `Tags (${selectedTags.size})` : "Filter"}
                         </span>
@@ -1003,7 +999,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                         {selectedTags.size > 0 && (
                           <button
                             onClick={() => setSelectedTags(new Set())}
-                            className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                            className="text-[10px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                           >
                             Clear all
                           </button>
@@ -1024,7 +1020,7 @@ function InnerGraph({ worldId, worldSlug, worldName, rawNodes, wikiEdges, relati
                                   return next;
                                 });
                               }}
-                              className="flex items-center gap-1.5 text-xs px-2 py-1 rounded-md border transition-all"
+                              className="flex items-center gap-1.5 text-xs px-2 py-1 rounded-md border transition-all cursor-pointer"
                               style={
                                 active
                                   ? { backgroundColor: color, borderColor: color, color: "white" }

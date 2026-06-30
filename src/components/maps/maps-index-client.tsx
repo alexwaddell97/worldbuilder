@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Map as MapIcon } from "lucide-react";
+import { Search } from "lucide-react";
+import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { Input } from "@/components/ui/input";
 import { MapTree } from "@/components/maps/map-tree";
 import { CreateMapDialog } from "@/components/maps/create-map-dialog";
@@ -44,7 +45,7 @@ export function MapsIndexClient({ maps, worldId, worldSlug, basePath }: MapsInde
 
       {maps.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 gap-4 text-muted-foreground">
-          <MapIcon size={40} strokeWidth={1} />
+          <DynamicIcon name="gi:treasure-map" size={40} />
           <div className="text-center">
             <p className="text-sm font-medium text-foreground">No maps yet</p>
             <p className="text-sm mt-1">Create a map and pin entities to bring your world to life.</p>
@@ -67,7 +68,7 @@ export function MapsIndexClient({ maps, worldId, worldSlug, basePath }: MapsInde
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={blobDisplayUrl(map.imageUrl)} alt={map.name} className="h-full w-full object-cover" />
                   ) : (
-                    <MapIcon size={32} strokeWidth={1} className="text-muted-foreground/40" />
+                    <DynamicIcon name="gi:treasure-map" size={32} className="text-muted-foreground/40" />
                   )}
                 </div>
                 <div className="px-4 pt-3 pb-3">

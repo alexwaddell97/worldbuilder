@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getPublicWorldBySlug, getPublicEntityTypes } from "@/lib/db/queries/public";
 import { PublicWorldSidebar } from "@/components/public/public-world-sidebar";
 import { PublicMobileHeader } from "@/components/public/public-mobile-header";
+import { SearchCommand } from "@/components/search/search-command";
 import { blobDisplayUrl } from "@/lib/utils";
 
 export default async function PublicWorldLayout({
@@ -51,6 +52,11 @@ export default async function PublicWorldLayout({
           {children}
         </main>
       </div>
+      <SearchCommand
+        searchApiUrl={`/api/public/${worldSlug}/search`}
+        entityBasePath={`/w/${worldSlug}`}
+        writingPath="stories"
+      />
     </div>
   );
 }

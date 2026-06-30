@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { Input } from "@/components/ui/input";
 
 interface Story {
@@ -62,7 +63,7 @@ export function PublicStoriesView({ groups, basePath, hasProjects }: PublicStori
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3 text-muted-foreground">
-          <BookOpen size={36} strokeWidth={1} />
+          <DynamicIcon name="gi:quill" size={36} />
           <p className="text-sm">{q ? "No stories match your search." : "No stories published yet."}</p>
         </div>
       ) : (

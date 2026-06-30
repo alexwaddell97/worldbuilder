@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { createWritingDocumentAction } from "@/lib/actions/writing";
 import { redirect, notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -32,7 +32,7 @@ export default async function WritingIndexPage({
 
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground">
-      <FileText size={40} strokeWidth={1.5} />
+      <DynamicIcon name="gi:quill" size={40} />
       <div className="text-center">
         <p className="text-sm font-medium text-foreground">No documents yet</p>
         <p className="text-sm mt-1">Create your first document to start writing.</p>
@@ -42,7 +42,7 @@ export default async function WritingIndexPage({
           type="submit"
           className="mt-1 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          <FileText size={15} />
+          <DynamicIcon name="gi:quill" size={15} />
           New document
         </button>
       </form>

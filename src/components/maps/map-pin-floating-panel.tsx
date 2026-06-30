@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/select";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { createMapPinAction, updateMapPinAction } from "@/lib/actions/maps";
-import { ICON_PICKER_OPTIONS } from "@/lib/constants/icon-picker";
+import { ICON_PICKER_OPTIONS, DEFAULT_GAME_ICONS } from "@/lib/constants/icon-picker";
+import { GAME_ICON_NAMES } from "@/lib/constants/game-icon-names";
 import { cn } from "@/lib/utils";
+import { Search } from "lucide-react";
 import type { MapPinWithRefs } from "@/lib/db/queries/maps";
 import type { Entity, EntityType, Map } from "@/lib/db/schema";
 
@@ -33,6 +35,13 @@ const PIN_COLORS = [
 
 const NONE_VALUE = "__none__";
 
+const PIN_SHAPES = [
+  { value: "circle",  label: "Circle",  previewClass: "rounded-full" },
+  { value: "shield",  label: "Shield",  previewClass: "rounded-none", previewStyle: { clipPath: "polygon(0% 0%, 100% 0%, 100% 65%, 50% 100%, 0% 65%)" } as React.CSSProperties },
+  { value: "square",  label: "Square",  previewClass: "rounded-md" },
+  { value: "diamond", label: "Diamond", previewClass: "rounded-sm rotate-45" },
+];
+
 interface MapPinFloatingPanelProps {
   /** Screen coordinates relative to the map container */
   screenPos: { x: number; y: number };
@@ -48,7 +57,7 @@ interface MapPinFloatingPanelProps {
 }
 
 const PANEL_W = 256;
-const PANEL_H = 420; // used for flip calculation
+const PANEL_H = 400; // used for flip calculation
 const OFFSET = 12;  // gap between cursor and panel edge
 
 export function MapPinFloatingPanel({
@@ -67,10 +76,17 @@ export function MapPinFloatingPanel({
   const [label, setLabel] = useState(existingPin?.label ?? "");
   const [icon, setIcon] = useState(existingPin?.icon ?? "map-pin");
   const [color, setColor] = useState(existingPin?.color ?? "#3b82f6");
+  const [shape, setShape] = useState(existingPin?.shape ?? "circle");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [iconsExpanded, setIconsExpanded] = useState(false);
+  const [iconSearch, setIconSearch] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const iconResults = useMemo(() => {
+    const q = iconSearch.trim().toLowerCase();
+    if (!q) return null;
+    return GAME_ICON_NAMES.filter((n) => n.includes(q)).slice(0, 42).map((n) => `gi:${n}`);
+  }, [iconSearch]);
   const selectOpenRef = useRef(false);
 
   // Reset form when existingPin changes
@@ -80,6 +96,7 @@ export function MapPinFloatingPanel({
     setLabel(existingPin?.label ?? "");
     setIcon(existingPin?.icon ?? "map-pin");
     setColor(existingPin?.color ?? "#3b82f6");
+    setShape(existingPin?.shape ?? "circle");
   }, [existingPin]);
 
   // Close on outside click — but ignore clicks while a Select dropdown is open
@@ -121,6 +138,7 @@ export function MapPinFloatingPanel({
       label: label.trim() || null,
       icon,
       color,
+      shape,
     };
 
     const result = existingPin
@@ -154,7 +172,7 @@ export function MapPinFloatingPanel({
         <button
           type="button"
           onClick={onClose}
-          className="h-5 w-5 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          className="h-5 w-5 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
           aria-label="Close"
         >
           <X size={12} />
@@ -227,53 +245,72 @@ export function MapPinFloatingPanel({
             onChange={(e) => setLabel(e.target.value)}
             placeholder="Optional…"
             maxLength={80}
-            className="h-7 text-xs"
+            className="h-7 text-xs md:text-xs"
           />
         </div>
 
-        {/* Icon grid */}
-        <div className="space-y-0.5">
-          <div className="flex items-center justify-between">
-            <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">
-              Icon
-            </Label>
-            <button
-              type="button"
-              onClick={() => setIconsExpanded((v) => !v)}
-              className="text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {iconsExpanded ? "Show less" : "Show all"}
-            </button>
+        {/* Icon picker */}
+        <div className="space-y-1">
+          <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">
+            Icon
+          </Label>
+          <div className="relative">
+            <Search size={10} className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search icons…"
+              value={iconSearch}
+              onChange={(e) => setIconSearch(e.target.value)}
+              className="w-full h-7 rounded-md border border-input bg-background pl-5 pr-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
           </div>
-          {/* Selected icon preview + collapsed first row */}
-          <div
-            className={cn(
-              "flex flex-wrap gap-1 overflow-hidden transition-all",
-              iconsExpanded ? "max-h-none" : "max-h-13"
-            )}
-          >
-            {ICON_PICKER_OPTIONS.map((name) => (
+          <div className="grid grid-cols-7 gap-0.5 max-h-24 overflow-y-auto p-0.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/30">
+            {(iconResults ?? [...new Set([...ICON_PICKER_OPTIONS, ...DEFAULT_GAME_ICONS])]).map((name) => (
               <button
                 key={name}
                 type="button"
-                title={name}
+                title={name.startsWith("gi:") ? name.slice(3).replace(/-/g, " ") : name}
                 onClick={() => setIcon(name)}
                 className={cn(
-                  "h-6 w-6 flex items-center justify-center rounded border transition-colors",
+                  "h-6 w-full flex items-center justify-center rounded transition-colors cursor-pointer",
                   icon === name
-                    ? "border-primary bg-primary/10"
-                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                    ? "bg-primary/15 ring-1 ring-primary/50"
+                    : "hover:bg-muted"
                 )}
               >
                 <DynamicIcon name={name} size={12} />
               </button>
             ))}
+            {iconResults?.length === 0 && (
+              <p className="col-span-7 py-2 text-center text-[10px] text-muted-foreground">No icons found</p>
+            )}
           </div>
-          {!iconsExpanded && !(ICON_PICKER_OPTIONS as readonly string[]).slice(0, 16).includes(icon) && (
-            <p className="text-[10px] text-muted-foreground">
-              Selected: <span className="font-medium">{icon}</span> — click &ldquo;Show all&rdquo; to change
-            </p>
-          )}
+        </div>
+
+        {/* Shape picker */}
+        <div className="space-y-0.5">
+          <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">
+            Shape
+          </Label>
+          <div className="flex gap-1.5">
+            {PIN_SHAPES.map((s) => (
+              <button
+                key={s.value}
+                type="button"
+                title={s.label}
+                onClick={() => setShape(s.value)}
+                className={cn(
+                  "h-7 w-7 flex items-center justify-center rounded border-2 transition-colors cursor-pointer",
+                  shape === s.value ? "border-primary" : "border-transparent hover:border-muted-foreground/40"
+                )}
+              >
+                <div
+                  className={cn("h-4 w-4 bg-foreground/70", s.previewClass)}
+                  style={s.previewStyle}
+                />
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Colour */}
@@ -281,7 +318,7 @@ export function MapPinFloatingPanel({
           <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">
             Colour
           </Label>
-          <div className="flex gap-1.5 overflow-x-auto py-0.5 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/30">
+          <div className="flex gap-1.5 overflow-x-hidden py-0.5 px-0.5">
             {PIN_COLORS.map((c) => (
               <button
                 key={c.value}
@@ -289,7 +326,7 @@ export function MapPinFloatingPanel({
                 title={c.label}
                 onClick={() => setColor(c.value)}
                 className={cn(
-                  "h-5 w-5 rounded-full border-2 transition-transform",
+                  "h-5 w-5 rounded-full border-2 transition-transform cursor-pointer",
                   color === c.value
                     ? "border-foreground scale-110"
                     : c.value === "#ffffff"

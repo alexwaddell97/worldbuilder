@@ -3,7 +3,7 @@
 
 import { db } from "@/lib/db";
 import { worlds, entityTypes, entities, maps, mapPins, entityRelations, writingDocuments, writingProjects } from "@/lib/db/schema";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, ilike } from "drizzle-orm";
 import type { Map, MapPin, Entity, EntityType, WritingDocument, WritingProject } from "@/lib/db/schema";
 import type { MapPinWithRefs, MapWithPins } from "./maps";
 
@@ -25,6 +25,47 @@ export async function getPublicWorldById(worldId: string) {
     .where(and(eq(worlds.id, worldId), eq(worlds.isPublic, true)))
     .limit(1);
   return world ?? null;
+}
+
+// ─── Search ───────────────────────────────────────────────────────────────────
+
+export type PublicAutocompleteResult = {
+  id: string;
+  name: string;
+  slug: string;
+  entityTypeId: string;
+  entityTypeName: string;
+  entityTypeSlug: string;
+  entityTypeIcon: string | null;
+};
+
+export async function getPublicEntitiesForAutocomplete(
+  worldId: string,
+  search: string,
+  limit = 40
+): Promise<PublicAutocompleteResult[]> {
+  return db
+    .select({
+      id: entities.id,
+      name: entities.name,
+      slug: entities.slug,
+      entityTypeId: entityTypes.id,
+      entityTypeName: entityTypes.name,
+      entityTypeSlug: entityTypes.slug,
+      entityTypeIcon: entityTypes.icon,
+    })
+    .from(entities)
+    .innerJoin(entityTypes, eq(entities.entityTypeId, entityTypes.id))
+    .where(
+      and(
+        eq(entities.worldId, worldId),
+        ilike(entities.name, `%${search}%`),
+        eq(entities.isHiddenFromPublic, false),
+        eq(entityTypes.isHiddenFromPublic, false)
+      )
+    )
+    .orderBy(asc(entityTypes.name), asc(entities.name))
+    .limit(limit);
 }
 
 // ─── Entity Types ─────────────────────────────────────────────────────────────

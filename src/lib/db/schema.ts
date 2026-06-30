@@ -179,6 +179,8 @@ export const mapPins = pgTable("map_pins", {
   icon: text("icon"),
   // hex or tailwind colour token (e.g. "#ef4444")
   color: text("color"),
+  // pin shape: "circle" | "shield" | "square" | "diamond"
+  shape: text("shape").default("circle"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

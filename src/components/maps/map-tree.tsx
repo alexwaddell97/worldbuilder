@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Map as MapIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { blobDisplayUrl } from "@/lib/utils";
 import type { MapTreeNode } from "@/lib/db/queries/maps";
 
@@ -21,7 +22,7 @@ function SubMapRow({ node, basePath, depth }: { node: MapTreeNode; basePath: str
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className={`shrink-0 p-1 text-muted-foreground transition-colors ${hasChildren ? "hover:text-foreground" : "invisible pointer-events-none"}`}
+          className={`shrink-0 p-1 text-muted-foreground transition-colors cursor-pointer ${hasChildren ? "hover:text-foreground" : "invisible pointer-events-none"}`}
         >
           <ChevronDown size={11} className={`transition-transform ${expanded ? "" : "-rotate-90"}`} />
         </button>
@@ -34,7 +35,7 @@ function SubMapRow({ node, basePath, depth }: { node: MapTreeNode; basePath: str
               // eslint-disable-next-line @next/next/no-img-element
               <img src={blobDisplayUrl(node.imageUrl)} alt={node.name} className="w-full h-full object-cover" />
             ) : (
-              <MapIcon size={12} strokeWidth={1.5} className="text-muted-foreground/50" />
+              <DynamicIcon name="gi:treasure-map" size={12} className="text-muted-foreground/50" />
             )}
           </div>
           <span className="text-sm text-foreground group-hover:underline underline-offset-4 truncate">{node.name}</span>
@@ -69,7 +70,7 @@ function MapCard({ node, basePath }: { node: MapTreeNode; basePath: string }) {
               className="h-full w-full object-cover"
             />
           ) : (
-            <MapIcon size={32} strokeWidth={1} className="text-muted-foreground/40" />
+            <DynamicIcon name="gi:treasure-map" size={32} className="text-muted-foreground/40" />
           )}
         </div>
         <div className="px-4 pt-3 pb-3">
@@ -86,7 +87,7 @@ function MapCard({ node, basePath }: { node: MapTreeNode; basePath: string }) {
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className={`flex items-center justify-between w-full px-4 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors ${expanded ? "" : "rounded-b-xl"}`}
+            className={`flex items-center justify-between w-full px-4 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors cursor-pointer ${expanded ? "" : "rounded-b-xl"}`}
           >
             <span>{node.children.length} {node.children.length === 1 ? "sub-map" : "sub-maps"}</span>
             <ChevronDown size={12} className={`transition-transform ${expanded ? "" : "-rotate-90"}`} />

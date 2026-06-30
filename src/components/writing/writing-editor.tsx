@@ -19,8 +19,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import {
   Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3,
   List, ListOrdered, Quote, CodeSquare, Minus, Undo2, Redo2, Link2,
-  Flag, AlignCenter, Target, Maximize2, Minimize2, Globe, Lock,
+  Flag, AlignCenter, Target, Maximize2, Minimize2,
 } from "lucide-react";
+import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { useRouter } from "next/navigation";
 
 interface WritingEditorProps {
@@ -426,7 +427,7 @@ export function WritingEditor({ docId, worldId, worldSlug, initialTitle, initial
                 }}
                 className={`flex items-center gap-1 h-6 px-1.5 rounded transition-colors disabled:opacity-50 ${isPublished ? "text-green-600 dark:text-green-400 bg-green-500/10 hover:bg-green-500/20" : "hover:text-foreground hover:bg-muted"}`}
               >
-                {isPublished ? <Globe className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}
+                {isPublished ? <DynamicIcon name="gi:globe" size={14} /> : <DynamicIcon name="gi:locked-chest" size={14} />}
                 <span className="text-[11px]">{isPublished ? "Published" : "Draft"}</span>
               </button>
             </TooltipTrigger>
@@ -705,7 +706,6 @@ function DocTargetButton({ wordCount, wordTarget, docProgress, onSetTarget }: {
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { DynamicIcon } from "@/components/entity-types/icon-picker";
 
 type EntityTypeFilter = { id: string; name: string; icon: string | null; slug: string };
 type AutocompleteResult = { id: string; name: string; slug: string; entityTypeId: string; entityTypeName: string; entityTypeIcon: string | null };

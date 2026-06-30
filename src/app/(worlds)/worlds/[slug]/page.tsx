@@ -1,7 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { Lock, Globe } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getWorldBySlug } from "@/lib/db/queries/worlds";
 import { getEntityTypesByWorld } from "@/lib/db/queries/entity-types";
@@ -54,12 +53,12 @@ export default async function WorldDetailPage({
         <Badge variant="outline" className="text-muted-foreground gap-1">
           {world.isPublic ? (
             <>
-              <Globe size={12} />
+              <DynamicIcon name="gi:globe" size={12} />
               Public
             </>
           ) : (
             <>
-              <Lock size={12} />
+              <DynamicIcon name="gi:locked-chest" size={12} />
               Private
             </>
           )}

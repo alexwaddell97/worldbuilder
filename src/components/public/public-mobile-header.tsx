@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Map, Network, BookOpen } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { WorldAvatar } from "@/components/ui/world-avatar";
 import { AppWordmark } from "@/components/ui/app-wordmark";
@@ -91,9 +91,9 @@ export function PublicMobileHeader({
           {/* Nav */}
           <nav className="flex-1 px-2 py-1 space-y-0.5 overflow-y-auto">
             <div className="space-y-0.5">
-              {navLink(`${base}/maps`, <Map size={16} />, "Maps")}
-              {navLink(`${base}/relationships`, <Network size={16} />, "Relationships")}
-              {navLink(`${base}/stories`, <BookOpen size={16} />, "Stories")}
+              {navLink(`${base}/maps`, <DynamicIcon name="gi:treasure-map" size={16} />, "Maps")}
+              {navLink(`${base}/relationships`, <DynamicIcon name="gi:family-tree" size={16} />, "Relationships")}
+              {navLink(`${base}/stories`, <DynamicIcon name="gi:quill" size={16} />, "Stories")}
             </div>
 
             {entityTypes.length > 0 && (

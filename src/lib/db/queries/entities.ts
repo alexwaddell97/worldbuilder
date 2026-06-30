@@ -112,6 +112,7 @@ export type AutocompleteResult = {
   slug: string;
   entityTypeId: string;
   entityTypeName: string;
+  entityTypeSlug: string;
   entityTypeIcon: string | null;
 };
 
@@ -133,6 +134,7 @@ export async function getEntitiesForAutocomplete(
       slug: entities.slug,
       entityTypeId: entityTypes.id,
       entityTypeName: entityTypes.name,
+      entityTypeSlug: entityTypes.slug,
       entityTypeIcon: entityTypes.icon,
     })
     .from(entities)

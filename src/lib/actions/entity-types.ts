@@ -140,20 +140,7 @@ export async function deleteEntityTypeAction(
   const verified = await verifyWorldOwnership(worldId, session.user.id);
   if (!verified) return { error: "World not found." };
 
-  // Check for existing entities — DB has onDelete: "restrict" on entityTypeId FK,
-  // so the delete would throw. Return a user-friendly error instead.
-  const [hasEntities] = await db
-    .select({ id: entities.id })
-    .from(entities)
-    .where(eq(entities.entityTypeId, entityTypeId))
-    .limit(1);
-
-  if (hasEntities) {
-    return {
-      error:
-        "This entity type has entities. Delete all its entities before removing the type.",
-    };
-  }
+  await db.delete(entities).where(eq(entities.entityTypeId, entityTypeId));
 
   await db
     .delete(entityTypes)

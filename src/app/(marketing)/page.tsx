@@ -2,18 +2,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import {
-  BookOpen,
-  Link2,
-  Download,
-  FileText,
-  ChevronRight,
-  PenLine,
-  Swords,
-  Layers,
-  Eye,
-  Globe,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { DynamicIcon } from "@/components/entity-types/icon-picker";
 
 export default async function HomePage() {
   // D-04: authenticated users redirect to /dashboard
@@ -82,37 +72,37 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
             {[
               {
-                icon: <BookOpen size={24} aria-hidden="true" />,
+                icon: <DynamicIcon name="gi:spell-book" size={24} className="text-foreground" />,
                 title: "Custom entity types",
                 description:
                   "Characters, locations, factions, artefacts, or anything your world needs. Define as many types as you like, each with its own icon and tags. Build your world's vocabulary from scratch.",
               },
               {
-                icon: <Link2 size={24} aria-hidden="true" />,
+                icon: <DynamicIcon name="gi:linked-rings" size={24} className="text-foreground" />,
                 title: "Linked lore",
                 description:
                   "Connect entities with typed relationships and explore the web of connections as an interactive graph. Wikilink any entity from anywhere; every link survives a rename.",
               },
               {
-                icon: <Layers size={24} aria-hidden="true" />,
+                icon: <DynamicIcon name="gi:treasure-map" size={24} className="text-foreground" />,
                 title: "Nested maps",
                 description:
                   "Upload a map and pin entities directly to it. Drill into sub-maps for regions, dungeons, or floor plans, all navigable from a single tree.",
               },
               {
-                icon: <FileText size={24} aria-hidden="true" />,
+                icon: <DynamicIcon name="gi:quill" size={24} className="text-foreground" />,
                 title: "Writing workspace",
                 description:
                   "A focused editor built into your world. Organise documents into projects, insert wikilinks inline, set word goals, and switch to focus mode when it's time to write.",
               },
               {
-                icon: <Eye size={24} aria-hidden="true" />,
+                icon: <DynamicIcon name="gi:key" size={24} className="text-foreground" />,
                 title: "Granular sharing",
                 description:
                   "Toggle visibility per entity, map, or document. Share a public link with your players or readers and reveal lore as your story unfolds, one entry at a time.",
               },
               {
-                icon: <Download size={24} aria-hidden="true" />,
+                icon: <DynamicIcon name="gi:scroll-unfurled" size={24} className="text-foreground" />,
                 title: "Markdown export",
                 description:
                   "Export your entire world as Markdown with wikilinks at any time, for free. Opens cleanly in Obsidian, Logseq, or any editor that supports [[wikilinks]].",
@@ -180,7 +170,7 @@ export default async function HomePage() {
             className="bg-card border border-border rounded-lg p-8"
           >
             <div className="flex items-center gap-2">
-              <PenLine size={16} className="text-muted-foreground" aria-hidden="true" />
+              <DynamicIcon name="gi:quill" size={16} className="text-muted-foreground" />
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
                 Fiction Authors
               </span>
@@ -202,7 +192,7 @@ export default async function HomePage() {
             className="bg-card border border-border rounded-lg p-8"
           >
             <div className="flex items-center gap-2">
-              <Swords size={16} className="text-muted-foreground" aria-hidden="true" />
+              <DynamicIcon name="gi:crossed-swords" size={16} className="text-muted-foreground" />
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
                 TTRPG Game Masters
               </span>
@@ -226,7 +216,7 @@ export default async function HomePage() {
             className="bg-card border border-border rounded-lg p-8"
           >
             <div className="flex items-center gap-2">
-              <Globe size={16} className="text-muted-foreground" aria-hidden="true" />
+              <DynamicIcon name="gi:world" size={16} className="text-muted-foreground" />
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide bg-muted px-2 py-1 rounded">
                 Worldbuilders
               </span>

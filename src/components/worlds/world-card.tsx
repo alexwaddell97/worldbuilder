@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MoreHorizontal, Pencil, Trash2, Lock, Globe, Link2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Link2 } from "lucide-react";
+import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -88,7 +89,7 @@ export function WorldCard({ world }: { world: World }) {
           {/* Privacy pill — top left */}
           <div className="absolute top-3 left-3">
             <span className="inline-flex items-center gap-1 text-[10px] font-medium text-white/80 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full border border-white/10">
-              {world.isPublic ? <Globe size={10} /> : <Lock size={10} />}
+              {world.isPublic ? <DynamicIcon name="gi:globe" size={10} /> : <DynamicIcon name="gi:locked-chest" size={10} />}
               {world.isPublic ? "Public" : "Private"}
             </span>
           </div>

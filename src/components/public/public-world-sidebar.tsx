@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Map, Network, BookOpen, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Search } from "lucide-react";
 import { WorldAvatar } from "@/components/ui/world-avatar";
 import { AppWordmark } from "@/components/ui/app-wordmark";
 import { AppIcon } from "@/components/ui/app-icon";
@@ -36,7 +36,7 @@ export function PublicWorldSidebar({
   worldImageUrl,
   entityTypes,
 }: PublicWorldSidebarProps) {
-  const { sidebarOpen, toggleSidebar } = useUIStore();
+  const { sidebarOpen, toggleSidebar, setSearchOpen } = useUIStore();
   const { data: session, isPending: sessionPending } = useSession();
   const pathname = usePathname();
   const base = `/w/${worldSlug}`;
@@ -120,9 +120,24 @@ export function PublicWorldSidebar({
 
           {/* World nav links */}
           <div className="mt-3 pt-3 border-t border-border space-y-0.5">
-            {navLink(`${base}/maps`, <Map size={16} />, "Maps")}
-            {navLink(`${base}/relationships`, <Network size={16} />, "Relationships")}
-            {navLink(`${base}/stories`, <BookOpen size={16} />, "Stories")}
+            {/* Search */}
+            <NavTooltip label="Search (⌘K)" collapsed={!sidebarOpen}>
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="w-full flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+              >
+                <span className="shrink-0"><Search size={16} /></span>
+                {sidebarOpen && (
+                  <>
+                    <span className="truncate flex-1 text-left">Search</span>
+                    <span className="text-[10px] text-muted-foreground/60 font-mono shrink-0">⌘K</span>
+                  </>
+                )}
+              </button>
+            </NavTooltip>
+            {navLink(`${base}/maps`, <DynamicIcon name="gi:treasure-map" size={16} />, "Maps")}
+            {navLink(`${base}/relationships`, <DynamicIcon name="gi:family-tree" size={16} />, "Relationships")}
+            {navLink(`${base}/stories`, <DynamicIcon name="gi:quill" size={16} />, "Stories")}
           </div>
 
           {/* Entity types */}
@@ -171,7 +186,7 @@ export function PublicWorldSidebar({
           <button
             onClick={toggleSidebar}
             aria-label="Toggle sidebar"
-            className="flex items-center justify-center w-full py-1.5 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+            className="flex items-center justify-center w-full py-1.5 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted cursor-pointer"
           >
             {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
           </button>

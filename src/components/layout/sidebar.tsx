@@ -4,16 +4,11 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Home,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   LogOut,
-  Map,
-  UserCircle,
-  Layers,
-  Network,
-  BookOpen,
+  Search,
 } from "lucide-react";
 import { APP_NAME } from "@/config/app";
 import { AppWordmark } from "@/components/ui/app-wordmark";
@@ -35,7 +30,7 @@ const navItems: NavItem[] = [
   {
     href: "/dashboard",
     label: "Dashboard",
-    icon: <Home size={18} />,
+    icon: <DynamicIcon name="gi:compass" size={18} />,
   },
 ];
 
@@ -58,7 +53,7 @@ function NavTooltip({ label, collapsed, children }: { label: string; collapsed: 
 }
 
 export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes, worlds }: SidebarProps = {}) {
-  const { sidebarOpen, toggleSidebar } = useUIStore();
+  const { sidebarOpen, toggleSidebar, setSearchOpen } = useUIStore();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -165,6 +160,21 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
         {/* World entity type nav — shown only when worldEntityTypes are provided */}
         {worldEntityTypes && worldSlug && (
           <div className="mt-3 pt-3 border-t border-border space-y-0.5">
+            {/* Search */}
+            <NavTooltip label="Search (⌘K)" collapsed={!sidebarOpen}>
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="w-full flex items-center gap-3 pl-2.75 pr-2 h-9 rounded-md text-sm transition-colors text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+              >
+                <span className="shrink-0"><Search size={16} /></span>
+                {sidebarOpen && (
+                  <>
+                    <span className="truncate flex-1 text-left">Search</span>
+                    <span className="text-[10px] text-muted-foreground/60 font-mono shrink-0">⌘K</span>
+                  </>
+                )}
+              </button>
+            </NavTooltip>
             {/* World home */}
             <NavTooltip label={worldName ?? "World"} collapsed={!sidebarOpen}>
               <Link
@@ -199,7 +209,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
                       }
                     `}
                   >
-                    <span className="shrink-0"><Map size={16} /></span>
+                    <span className="shrink-0"><DynamicIcon name="gi:treasure-map" size={16} /></span>
                     {sidebarOpen && <span className="truncate">Maps</span>}
                   </Link>
                 </NavTooltip>
@@ -222,7 +232,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
                       }
                     `}
                   >
-                    <span className="shrink-0"><Network size={16} /></span>
+                    <span className="shrink-0"><DynamicIcon name="gi:family-tree" size={16} /></span>
                     {sidebarOpen && <span className="truncate">Relationships</span>}
                   </Link>
                 </NavTooltip>
@@ -245,7 +255,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
                       }
                     `}
                   >
-                    <span className="shrink-0"><BookOpen size={16} /></span>
+                    <span className="shrink-0"><DynamicIcon name="gi:quill" size={16} /></span>
                     {sidebarOpen && <span className="truncate">Writing</span>}
                   </Link>
                 </NavTooltip>
@@ -290,7 +300,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
                   }
                 `}
               >
-                <span className="shrink-0"><Layers size={16} /></span>
+                <span className="shrink-0"><DynamicIcon name="gi:book-pile" size={16} /></span>
                 {sidebarOpen && <span>Entity Types</span>}
               </Link>
             </NavTooltip>
@@ -320,7 +330,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
               }
             `}
           >
-            <span className="shrink-0"><UserCircle size={18} /></span>
+            <span className="shrink-0"><DynamicIcon name="gi:portrait" size={18} /></span>
             {sidebarOpen && <span className="truncate">Account</span>}
           </Link>
         </NavTooltip>
@@ -341,7 +351,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
         <button
           onClick={toggleSidebar}
           aria-label="Toggle sidebar"
-          className="flex items-center justify-center w-full py-1.5 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted"
+          className="flex items-center justify-center w-full py-1.5 text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-muted cursor-pointer"
         >
           {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
         </button>

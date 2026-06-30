@@ -12,18 +12,20 @@ A builder's world data belongs to them and never disappears — beautiful to use
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Builders can create and manage worlds with custom entity types (characters, locations, factions, events + user-defined) — *Phases 2–3*
+- [x] Content editor supports both rich (Tiptap) and raw markdown modes, togglable per-builder preference — *Phase 4*
+- [x] Entities link to each other via a visual relationship graph (nodes + typed edges) — *Phase 5*
+- [x] Full world export as Obsidian-compatible markdown (YAML frontmatter, [[wikilinks]], all assets) — *Phase 6*
+- [x] No AI generation, no ads, no lock-in — stated principles enforced at the product level — *core constraint upheld*
+- [x] Interactive maps with pinned entities, hierarchical nesting, public viewer — *Phase 7 (shipped beyond original scope)*
+- [x] Long-form writing (documents + projects) with word tracking and publish toggle — *Phase 8 (shipped beyond original scope)*
+- [x] Public read-only world access (Explorer level) — entities, maps, stories, graph — *partial Milestone 2 shipped*
 
 ### Active
 
-- [ ] Builders can create and manage worlds with custom entity types (characters, locations, factions, events + user-defined)
-- [ ] Content editor supports both rich (Tiptap) and raw markdown modes, togglable per-builder preference
-- [ ] Entities link to each other via a visual relationship graph (nodes + typed edges)
-- [ ] Three-tier access model: Builder (owns/edits), Player (interacts within revealed scope), Explorer (anonymous read-only)
+- [ ] Three-tier access model: Builder (owns/edits), Player (interacts within revealed scope), Explorer (anonymous read-only) — Explorer is live; Player role not yet built
 - [ ] Builders control what Players see — spoiler/reveal system hides lore until explicitly unlocked
 - [ ] Public world discovery: browse/search page for published worlds + builder-authored newsletter updates and short stories
-- [ ] Full world export as Obsidian-compatible markdown (YAML frontmatter, [[wikilinks]], all assets)
-- [ ] No AI generation, no ads, no lock-in — stated principles enforced at the product level
 
 ### Out of Scope
 
@@ -79,4 +81,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-18 after initialization*
+*Last updated: 2026-06-29 — reconciled against live codebase after Milestone 1 completion*

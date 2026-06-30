@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MapIcon, Network, BookOpen } from "lucide-react";
 import { getPublicWorldBySlug, getPublicEntityTypes } from "@/lib/db/queries/public";
 import { DynamicIcon } from "@/components/entity-types/icon-picker";
 import { FadeImage } from "@/components/ui/fade-image";
@@ -58,21 +57,21 @@ export default async function PublicWorldPage({
             href={`${basePath}/maps`}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-sm font-medium"
           >
-            <MapIcon size={16} className="text-muted-foreground" />
+            <DynamicIcon name="gi:treasure-map" size={16} className="text-muted-foreground" />
             Maps
           </Link>
           <Link
             href={`${basePath}/relationships`}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-sm font-medium"
           >
-            <Network size={16} className="text-muted-foreground" />
+            <DynamicIcon name="gi:family-tree" size={16} className="text-muted-foreground" />
             Relationships
           </Link>
           <Link
             href={`${basePath}/stories`}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-sm font-medium"
           >
-            <BookOpen size={16} className="text-muted-foreground" />
+            <DynamicIcon name="gi:quill" size={16} className="text-muted-foreground" />
             Stories
           </Link>
         </div>

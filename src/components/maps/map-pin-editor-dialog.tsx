@@ -17,12 +17,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DynamicIcon } from "@/components/entity-types/icon-picker";
+import { DynamicIcon, IconPicker } from "@/components/entity-types/icon-picker";
 import { createMapPinAction, updateMapPinAction } from "@/lib/actions/maps";
-import { ICON_PICKER_OPTIONS } from "@/lib/constants/icon-picker";
 import type { MapPinWithRefs, MapWithPins } from "@/lib/db/queries/maps";
 import type { Entity, EntityType, Map } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
+
+const PIN_SHAPES = [
+  { value: "circle",  label: "Circle",  previewClass: "rounded-full" },
+  { value: "shield",  label: "Shield",  previewClass: "rounded-none", previewStyle: { clipPath: "polygon(0% 0%, 100% 0%, 100% 65%, 50% 100%, 0% 65%)" } as React.CSSProperties },
+  { value: "square",  label: "Square",  previewClass: "rounded-md" },
+  { value: "diamond", label: "Diamond", previewClass: "rounded-sm rotate-45" },
+];
 
 const PIN_COLORS = [
   { label: "Red", value: "#ef4444" },
@@ -68,6 +74,7 @@ export function MapPinEditorDialog({
   const [label, setLabel] = useState("");
   const [icon, setIcon] = useState("map-pin");
   const [color, setColor] = useState("#3b82f6");
+  const [shape, setShape] = useState("circle");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,12 +86,14 @@ export function MapPinEditorDialog({
       setLabel(existingPin.label ?? "");
       setIcon(existingPin.icon ?? "map-pin");
       setColor(existingPin.color ?? "#3b82f6");
+      setShape(existingPin.shape ?? "circle");
     } else {
       setEntityId(NONE_VALUE);
       setLinkedMapId(NONE_VALUE);
       setLabel("");
       setIcon("map-pin");
       setColor("#3b82f6");
+      setShape("circle");
     }
   }, [existingPin, open]);
 
@@ -99,6 +108,7 @@ export function MapPinEditorDialog({
       label: label.trim() || null,
       icon,
       color,
+      shape,
     };
 
     let result: { success: boolean; error?: string };
@@ -202,21 +212,28 @@ export function MapPinEditorDialog({
           {/* Icon picker */}
           <div className="space-y-1.5">
             <Label>Icon</Label>
-            <div className="flex flex-wrap gap-1.5">
-              {ICON_PICKER_OPTIONS.map((name) => (
+            <IconPicker value={icon} onChange={setIcon} />
+          </div>
+
+          {/* Shape picker */}
+          <div className="space-y-1.5">
+            <Label>Shape</Label>
+            <div className="flex gap-2">
+              {PIN_SHAPES.map((s) => (
                 <button
-                  key={name}
+                  key={s.value}
                   type="button"
-                  title={name}
-                  onClick={() => setIcon(name)}
+                  title={s.label}
+                  onClick={() => setShape(s.value)}
                   className={cn(
-                    "h-8 w-8 flex items-center justify-center rounded border transition-colors",
-                    icon === name
-                      ? "border-primary bg-primary/10"
-                      : "border-border hover:border-primary/40 hover:bg-accent/50"
+                    "h-9 w-9 flex items-center justify-center rounded border-2 transition-colors cursor-pointer",
+                    shape === s.value ? "border-primary" : "border-border hover:border-muted-foreground/40"
                   )}
                 >
-                  <DynamicIcon name={name} size={14} />
+                  <div
+                    className={cn("h-5 w-5 bg-foreground/70", s.previewClass)}
+                    style={s.previewStyle}
+                  />
                 </button>
               ))}
             </div>
@@ -233,7 +250,7 @@ export function MapPinEditorDialog({
                   title={c.label}
                   onClick={() => setColor(c.value)}
                   className={cn(
-                    "h-7 w-7 rounded-full border-2 transition-transform",
+                    "h-7 w-7 rounded-full border-2 transition-transform cursor-pointer",
                     color === c.value
                       ? "border-foreground scale-110"
                       : "border-transparent hover:scale-105"

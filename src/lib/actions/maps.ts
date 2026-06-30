@@ -163,6 +163,7 @@ export async function createMapPinAction(
         y: parsed.data.y,
         icon: parsed.data.icon ?? null,
         color: parsed.data.color ?? null,
+        shape: parsed.data.shape ?? "circle",
       })
       .returning({ id: mapPins.id });
 
@@ -201,6 +202,7 @@ export async function updateMapPinAction(
         label: parsed.data.label ?? null,
         icon: parsed.data.icon ?? null,
         color: parsed.data.color ?? null,
+        shape: parsed.data.shape ?? "circle",
       })
       .where(eq(mapPins.id, pinId));
 

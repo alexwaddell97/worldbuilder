@@ -5,6 +5,7 @@ import { getWorldBySlug } from "@/lib/db/queries/worlds";
 import { getEntityTypesByWorld } from "@/lib/db/queries/entity-types";
 import { Sidebar } from "@/components/layout/sidebar";
 import { AppMobileHeader } from "@/components/layout/app-mobile-header";
+import { SearchCommand } from "@/components/search/search-command";
 import { blobDisplayUrl } from "@/lib/utils";
 
 export default async function WorldLayout({
@@ -54,6 +55,10 @@ export default async function WorldLayout({
         />
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
+      <SearchCommand
+        searchApiUrl={`/api/worlds/${slug}/search`}
+        entityBasePath={`/worlds/${slug}`}
+      />
     </div>
   );
 }

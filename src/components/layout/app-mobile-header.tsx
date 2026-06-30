@@ -4,13 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
-  Home,
-  Map,
-  Network,
-  BookOpen,
-  UserCircle,
   LogOut,
-  Layers,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { AppWordmark } from "@/components/ui/app-wordmark";
@@ -98,7 +92,7 @@ export function AppMobileHeader({
               <>
                 {/* Dashboard — always first, same as desktop */}
                 <div className="space-y-0.5">
-                  {navLink("/dashboard", <Home size={16} />, "Dashboard", true)}
+                  {navLink("/dashboard", <DynamicIcon name="gi:compass" size={16} />, "Dashboard", true)}
                 </div>
 
                 {/* World-specific nav */}
@@ -119,9 +113,9 @@ export function AppMobileHeader({
                     </Link>
                   </SheetClose>
                   <div className="space-y-0.5">
-                    {navLink(`/worlds/${worldSlug}/maps`, <Map size={16} />, "Maps")}
-                    {navLink(`/worlds/${worldSlug}/relationships`, <Network size={16} />, "Relationships")}
-                    {navLink(`/worlds/${worldSlug}/writing`, <BookOpen size={16} />, "Writing")}
+                    {navLink(`/worlds/${worldSlug}/maps`, <DynamicIcon name="gi:treasure-map" size={16} />, "Maps")}
+                    {navLink(`/worlds/${worldSlug}/relationships`, <DynamicIcon name="gi:family-tree" size={16} />, "Relationships")}
+                    {navLink(`/worlds/${worldSlug}/writing`, <DynamicIcon name="gi:quill" size={16} />, "Writing")}
                   </div>
                 </div>
 
@@ -140,7 +134,7 @@ export function AppMobileHeader({
                 <div className="pt-1 mt-1 border-t border-border">
                   {navLink(
                     `/worlds/${worldSlug}/entity-types`,
-                    <Layers size={16} />,
+                    <DynamicIcon name="gi:book-pile" size={16} />,
                     "Entity Types",
                     true
                   )}
@@ -148,7 +142,7 @@ export function AppMobileHeader({
               </>
             ) : (
               <>
-                {navLink("/dashboard", <Home size={18} />, "Dashboard", true)}
+                {navLink("/dashboard", <DynamicIcon name="gi:compass" size={18} />, "Dashboard", true)}
 
                 {worlds && worlds.length > 0 && (
                   <div className="pt-2 mt-2 border-t border-border space-y-0.5">
@@ -178,13 +172,13 @@ export function AppMobileHeader({
                   }
                 `}
               >
-                <span className="shrink-0"><UserCircle size={18} /></span>
+                <span className="shrink-0"><DynamicIcon name="gi:portrait" size={18} /></span>
                 <span>Account</span>
               </Link>
             </SheetClose>
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-3 px-3 h-10 w-full rounded-md text-sm text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+              className="flex items-center gap-3 px-3 h-10 w-full rounded-md text-sm text-muted-foreground hover:text-destructive hover:bg-muted transition-colors cursor-pointer"
             >
               <span className="shrink-0"><LogOut size={18} /></span>
               <span>Sign out</span>

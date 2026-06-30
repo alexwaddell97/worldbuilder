@@ -11,12 +11,9 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
-  Pencil,
   X,
   ChevronRight,
-  Map as MapIconLucide,
   MoreHorizontal,
-  Trash2,
   Plus,
   Eye,
   EyeOff,
@@ -221,12 +218,12 @@ export function MapViewer({
         </TransformWrapper>
       ) : (
         <div className="h-full flex flex-col items-center justify-center gap-3 text-muted-foreground">
-          <MapIconLucide size={40} strokeWidth={1} />
+          <DynamicIcon name="gi:treasure-map" size={40} />
           <p className="text-sm font-medium">No map image uploaded yet</p>
           <p className="text-xs">
             <button
               type="button"
-              className="underline underline-offset-4 hover:text-foreground transition-colors"
+              className="underline underline-offset-4 hover:text-foreground transition-colors cursor-pointer"
               onClick={() => setEditMapOpen(true)}
             >
               Add an image
@@ -278,7 +275,7 @@ export function MapViewer({
                   New map
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setEditMapOpen(true)}>
-                  <Pencil size={13} className="mr-2" />
+                  <DynamicIcon name="gi:pencil" size={13} className="mr-2" />
                   Edit map
                 </DropdownMenuItem>
                 {isPublicWorld && (
@@ -294,7 +291,7 @@ export function MapViewer({
                   onClick={() => setDeleteMapOpen(true)}
                   className="text-destructive focus:text-destructive"
                 >
-                  <Trash2 size={13} className="mr-2" />
+                  <DynamicIcon name="gi:trash-can" size={13} className="mr-2" />
                   Delete map
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -356,7 +353,7 @@ export function MapViewer({
                   >
                     {editMode
                       ? <><X size={13} /><span className="hidden sm:inline">Done</span></>
-                      : <><Pencil size={13} /><span className="hidden sm:inline">Edit pins</span></>}
+                      : <><DynamicIcon name="gi:pencil" size={13} /><span className="hidden sm:inline">Edit pins</span></>}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">
@@ -434,9 +431,34 @@ interface MapPinMarkerProps {
   onDelete: (e: React.MouseEvent) => void;
 }
 
+const SHIELD_PATH_D = "M2,2 L30,2 L30,21 L16,30 L2,21 Z";
+
+function pinShapeStyle(shape: string | null): { className: string; style?: React.CSSProperties } {
+  switch (shape) {
+    case "shield":
+      return { className: "" }; // rendered as layered divs inside the button
+    case "square":
+      return { className: "rounded-md border-2 border-white/70" };
+    case "diamond":
+      return { className: "rounded-sm rotate-45 border-2 border-white/70" };
+    default:
+      return { className: "rounded-full border-2 border-white/70" };
+  }
+}
+
+function isLightColor(hex: string): boolean {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.65;
+}
+
 function MapPinMarker({ pin, scale, editMode, hovered, label, onMouseEnter, onMouseLeave, onClick, onDelete }: MapPinMarkerProps) {
   const color = pin.color ?? "#3b82f6";
   const icon = pin.icon ?? "map-pin";
+  const shape = pin.shape ?? "circle";
+  const lightBg = isLightColor(color);
+  const { className: shapeClass, style: shapeStyle } = pinShapeStyle(shape);
   // Counter-scale so the pin stays the same screen size at any zoom level.
   // transformOrigin "50% 100%" = bottom-center, keeping the anchor point fixed.
   const counterScale = 1 / scale;
@@ -450,14 +472,17 @@ function MapPinMarker({ pin, scale, editMode, hovered, label, onMouseEnter, onMo
         zIndex: hovered ? 20 : 10,
       }}
     >
-      {/* Visual wrapper — translate to anchor + counter-scale from bottom center */}
+      {/* Visual wrapper — hover here so the delete X stays visible when mousing toward it */}
       <div
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         style={{
           transform: `translate(-50%, -100%) scale(${counterScale})`,
           transformOrigin: "50% 100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          position: "relative",
         }}
       >
       {hovered && (
@@ -472,29 +497,67 @@ function MapPinMarker({ pin, scale, editMode, hovered, label, onMouseEnter, onMo
       <button
         type="button"
         className={cn(
-          "map-pin-btn relative flex items-center justify-center rounded-full transition-transform focus-visible:outline-none",
-          "h-8 w-8 shadow-md border-2 border-white/70",
+          "map-pin-btn relative flex items-center justify-center transition-transform focus-visible:outline-none",
+          "h-8 w-8",
+          shape !== "shield" && "shadow-md",
+          shapeClass,
           hovered && "scale-125",
-          editMode && "ring-2 ring-offset-1 ring-primary/50"
+          editMode && shape !== "shield" && "ring-2 ring-offset-1 ring-primary/50"
         )}
-        style={{ backgroundColor: color }}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        style={{
+          backgroundColor: shape !== "shield" ? color : undefined,
+          ...shapeStyle,
+        }}
         onClick={onClick}
         aria-label={label}
       >
-        <DynamicIcon name={icon} size={14} className="text-white drop-shadow" />
-        {editMode && hovered && (
-          <button
-            type="button"
-            onClick={onDelete}
-            className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow hover:bg-destructive/80 transition-colors"
-            aria-label="Delete pin"
+        {shape === "shield" && (
+          // SVG-based shield: paint-order renders stroke outside the fill (white border),
+          // and drop-shadow filter on the SVG element correctly follows the path shape.
+          <svg
+            className="absolute inset-0 w-full h-full"
+            viewBox="0 0 32 32"
+            overflow="visible"
+            style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.25))" }}
           >
-            <X size={9} strokeWidth={3} />
-          </button>
+            {editMode && (
+              // Rendered behind main path. Wide stroke + paint-order means the main
+              // path covers the inner half, leaving only the outer ring visible.
+              <path
+                d={SHIELD_PATH_D}
+                fill={color}
+                stroke="hsl(var(--primary) / 0.5)"
+                strokeWidth="8"
+                strokeLinejoin="miter"
+                style={{ paintOrder: "stroke fill" }}
+              />
+            )}
+            <path
+              d={SHIELD_PATH_D}
+              fill={color}
+              stroke="rgba(255,255,255,0.75)"
+              strokeWidth="4"
+              strokeLinejoin="miter"
+              style={{ paintOrder: "stroke fill" }}
+            />
+          </svg>
         )}
+        <DynamicIcon
+          name={icon}
+          size={14}
+          className={cn(lightBg ? "text-gray-700" : "text-white drop-shadow", shape === "diamond" && "-rotate-45", shape === "shield" && "relative z-10")}
+        />
       </button>
+      {editMode && hovered && (
+        <button
+          type="button"
+          onClick={onDelete}
+          className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow hover:bg-destructive/80 transition-colors cursor-pointer"
+          aria-label="Delete pin"
+        >
+          <X size={9} strokeWidth={3} />
+        </button>
+      )}
 
       <div className="w-0.5 h-2 mx-auto" style={{ backgroundColor: color }} />
       </div>{/* end visual wrapper */}
