@@ -1,6 +1,41 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
+interface ReleaseSection {
+  title: string;
+  items: string[];
+}
+
+function parseReleaseBody(body: string): ReleaseSection[] {
+  const sections: ReleaseSection[] = [];
+  let current: ReleaseSection | null = null;
+
+  for (const line of body.split("\n")) {
+    const heading = line.match(/^#{1,3}\s+(.+)/);
+    if (heading) {
+      if (current) sections.push(current);
+      current = { title: heading[1].trim(), items: [] };
+      continue;
+    }
+    const bullet = line.match(/^\*\s+(.+)/);
+    if (bullet && current) {
+      let text = bullet[1];
+      // Strip trailing commit link: ([abcdef](url))
+      text = text.replace(/\s*\(\[[\da-f]+\]\(https?:\/\/[^)]+\)\)\s*$/, "");
+      // Strip bold internal task/scope prefix: **01-01:** or **scope:**
+      text = text.replace(/^\*\*[^*]+\*\*:\s*/, "");
+      text = text.trim();
+      if (text) current.items.push(text);
+    }
+  }
+  if (current) sections.push(current);
+
+  // Drop version-number headings and empty sections
+  return sections.filter(
+    (s) => s.items.length > 0 && !/^\d+\.\d+/.test(s.title)
+  );
+}
+
 interface GitHubRelease {
   id: number;
   tag_name: string;
@@ -84,11 +119,29 @@ export default async function ChangelogPage() {
                 <h2 className="text-lg font-semibold text-foreground mb-3">
                   {release.name || release.tag_name}
                 </h2>
-                {release.body && (
-                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                    {release.body}
-                  </p>
-                )}
+                {release.body && (() => {
+                  const sections = parseReleaseBody(release.body);
+                  if (sections.length === 0) return null;
+                  return (
+                    <div className="space-y-4">
+                      {sections.map((section) => (
+                        <div key={section.title}>
+                          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+                            {section.title}
+                          </p>
+                          <ul className="space-y-1.5">
+                            {section.items.map((item, i) => (
+                              <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/40 shrink-0" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
                 <Link
                   href={release.html_url}
                   target="_blank"
