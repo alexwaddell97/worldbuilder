@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { version } from "../../../package.json";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -355,7 +356,7 @@ export function Sidebar({ worldSlug, worldName, worldImageUrl, worldEntityTypes,
         >
           {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
         </button>
-        <p className="text-center text-[10px] text-muted-foreground/40 mt-1">v0.1.0</p>
+        <p className="text-center text-[10px] text-muted-foreground/40 mt-1">v{version}</p>
       </div>
     </aside>
     </TooltipProvider>

@@ -1,0 +1,80 @@
+name: Discord Notifications
+
+on:
+  release:
+    types: [published]
+  push:
+    branches: [main]
+    paths:
+      - "src/content/announcements.ts"
+      - "src/content/roadmap.ts"
+
+jobs:
+  changelog:
+    name: Notify changelog
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Discord
+        env:
+          TITLE: ${{ github.event.release.name }}
+          BODY: ${{ github.event.release.body }}
+          URL: ${{ github.event.release.html_url }}
+          TAG: ${{ github.event.release.tag_name }}
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_CHANGELOG }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg title "$TITLE" \
+            --arg desc "$BODY" \
+            --arg url "$URL" \
+            --arg tag "$TAG" \
+            '{embeds: [{title: $title, description: $desc, url: $url, color: 858152, footer: {text: $tag}}]}')
+          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "$WEBHOOK"
+
+  detect-changes:
+    name: Detect content changes
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      announcements: ${{ steps.changes.outputs.announcements }}
+      roadmap: ${{ steps.changes.outputs.roadmap }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Check changed files
+        id: changes
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD)
+          echo "$CHANGED" | grep -q 'src/content/announcements.ts' \
+            && echo "announcements=true" >> $GITHUB_OUTPUT \
+            || echo "announcements=false" >> $GITHUB_OUTPUT
+          echo "$CHANGED" | grep -q 'src/content/roadmap.ts' \
+            && echo "roadmap=true" >> $GITHUB_OUTPUT \
+            || echo "roadmap=false" >> $GITHUB_OUTPUT
+
+  announcements:
+    name: Notify announcements
+    needs: detect-changes
+    if: needs.detect-changes.outputs.announcements == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Discord
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_ANNOUNCEMENTS }}
+        run: |
+          PAYLOAD=$(jq -n '{embeds: [{title: "📢 New Announcement", description: "A new announcement has been posted on subcreation.app.", url: "https://subcreation.app/announcements", color: 858152}]}')
+          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "$WEBHOOK"
+
+  roadmap:
+    name: Notify roadmap
+    needs: detect-changes
+    if: needs.detect-changes.outputs.roadmap == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Discord
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_ROADMAP }}
+        run: |
+          PAYLOAD=$(jq -n '{embeds: [{title: "🗺️ Roadmap Updated", description: "The Subcreation roadmap has been updated.", url: "https://subcreation.app/roadmap", color: 858152}]}')
+          curl -s -H "Content-Type: application/json" -d "$PAYLOAD" "$WEBHOOK"

@@ -28,11 +28,15 @@
       "Bash(npx tsx *)",
       "Bash(node -e \"const d = require\\('/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/lib/game-icons-mini.json'\\); console.log\\(Object.keys\\(d.icons\\).join\\('\\\\n'\\)\\)\")",
       "Bash(node -e \"const d = require\\('/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/lib/constants/game-icons-mini.json'\\); console.log\\(Object.keys\\(d.icons\\).join\\('\\\\n'\\)\\)\")",
-      "Bash(python3 -c \"import json,sys; j=json.load\\(sys.stdin\\); print\\(j['entries'][-1]\\)\")"
+      "Bash(python3 -c \"import json,sys; j=json.load\\(sys.stdin\\); print\\(j['entries'][-1]\\)\")",
+      "Bash(git remote *)",
+      "Bash(mkdir -p \"/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/\\(marketing\\)/announcements/[slug]\")",
+      "Bash(curl -s http://localhost:3000/announcements/building-in-public)"
     ],
     "additionalDirectories": [
       "/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/public/[worldSlug]",
-      "/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/worlds/[slug]"
+      "/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/worlds/[slug]",
+      "/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/(marketing)/announcements"
     ]
   }
 }

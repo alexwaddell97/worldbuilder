@@ -9,18 +9,18 @@ import { MarketingMobileNav } from "./marketing-mobile-nav";
 
 export function MarketingHeader() {
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  const isHero = pathname === "/" || /^\/announcements\/.+/.test(pathname);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    if (!isHome) return;
+    if (!isHero) return;
     const onScroll = () => setScrolled(window.scrollY > 80);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isHome]);
+  }, [isHero]);
 
-  const transparent = isHome && !scrolled;
+  const transparent = isHero && !scrolled;
   const navLinkClass = `hidden md:block text-sm transition-colors hover:text-foreground ${
     transparent ? "text-foreground" : "text-foreground/70"
   }`;
