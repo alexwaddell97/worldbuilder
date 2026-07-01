@@ -58,7 +58,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-card rounded-lg border border-border p-8 shadow-sm">
+    <div>
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight">Sign in</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -81,7 +81,7 @@ export default function LoginPage() {
           <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-card px-2 text-muted-foreground">or</span>
+          <span className="bg-[#eeece7] px-2 text-muted-foreground">or</span>
         </div>
       </div>
 

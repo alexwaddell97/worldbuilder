@@ -34,7 +34,21 @@
       "Bash(curl -s http://localhost:3000/announcements/building-in-public)",
       "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); deps={**p.get\\('dependencies',{}\\), **p.get\\('devDependencies',{}\\)}; [print\\(k,v\\) for k,v in sorted\\(deps.items\\(\\)\\)]\")",
       "Bash(pnpm tsc *)",
-      "Bash(pnpm lint *)"
+      "Bash(pnpm lint *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)",
+      "Bash(git push *)",
+      "Bash(npx eslint *)",
+      "Bash(python3 -c ' *)",
+      "Bash(lsof -ti:3000)",
+      "Bash(curl -s http://localhost:3000/ -o /tmp/home.html -w \"%{http_code}\\\\n\")",
+      "Read(//tmp/**)",
+      "Bash(ps -p 21650 -o pid,command)",
+      "Bash(curl -s -w 'HTTP:%{http_code}\\\\n' http://localhost:3000/ -o /private/tmp/claude-501/-Users-alexanderwaddell-Documents-Projects-Personal-worldbuilder/30d315b9-77f8-440e-aa4a-7abb71b78212/scratchpad/home.html)",
+      "Bash(grep -iE \"playwright|puppeteer|cypress\" package.json; echo \"---\"; which google-chrome chromium chromium-browser 2>&1; ls /Applications | grep -i -E \"chrome|chromium|brave\" 2>&1)",
+      "Read(//Applications/**)",
+      "WebFetch(domain:resend.com)",
+      "Bash(xargs -I{} sh -c 'echo \"--- {} ---\"; head -15 \"{}\"')"
     ],
     "additionalDirectories": [
       "/Users/alexanderwaddell/Documents/Projects/Personal/worldbuilder/src/app/api/public/[worldSlug]",

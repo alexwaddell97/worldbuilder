@@ -39,7 +39,7 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="bg-card rounded-lg border border-border p-8 shadow-sm text-center">
+      <div className="text-center">
         <div className="text-2xl mb-3">✉️</div>
         <h2 className="text-lg font-semibold">Check your email</h2>
         <p className="text-sm text-muted-foreground mt-2">
@@ -55,7 +55,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="bg-card rounded-lg border border-border p-8 shadow-sm">
+    <div>
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight">Create an account</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -78,7 +78,7 @@ export default function SignupPage() {
           <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-card px-2 text-muted-foreground">or</span>
+          <span className="bg-[#eeece7] px-2 text-muted-foreground">or</span>
         </div>
       </div>
 

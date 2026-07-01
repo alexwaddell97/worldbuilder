@@ -40,7 +40,7 @@ export const auth = betterAuth({
     },
   },
   appName: "Subcreation",
-  plugins: [nextCookies(), twoFactor({ issuer: "Subcreation" })],
+  plugins: [twoFactor({ issuer: "Subcreation" }), nextCookies()],
 });
 
 export type Session = typeof auth.$Infer.Session;
