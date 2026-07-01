@@ -1,6 +1,6 @@
 {
   "name": "odins-archive",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "dev": "npx vercel env pull .env.local &&next dev",

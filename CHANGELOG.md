@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/alexwaddell97/worldbuilder/compare/v1.0.1...v1.1.0) (2026-07-01)
+
+
+### Features
+
+* **12:** marketing re-design for go-live ([b8708cb](https://github.com/alexwaddell97/worldbuilder/commit/b8708cb27ac95ccd9f9de669b1653af3a6fadf33))
+
 ## [1.0.1](https://github.com/alexwaddell97/worldbuilder/compare/v1.0.0...v1.0.1) (2026-06-30)
 
 
